@@ -1,0 +1,84 @@
+@startuml
+title Admin User Flow with Alternative Paths
+
+actor Admin
+participant "Frontend UI" as UI
+participant "Backend System" as BE
+database DB
+
+== Authentication ==
+
+Admin -> UI : Enter credentials
+UI -> BE : Send login request
+BE -> DB : Validate admin account
+
+alt Invalid credentials
+    DB --> BE : No matching admin
+    BE --> UI : Login failed
+    UI --> Admin : Show error message
+else Valid credentials
+    DB --> BE : Admin record found
+    BE --> UI : Login success
+    UI --> Admin : Redirect to dashboard
+
+    == Manage Menu ==
+
+    Admin -> UI : Add / Edit / Delete menu item
+    UI -> BE : Submit menu request
+
+    alt Invalid input
+        BE --> UI : Validation failed
+        UI --> Admin : Show input error
+    else Valid input
+        BE -> DB : Save menu changes
+        alt Database save failed
+            DB --> BE : Save error
+            BE --> UI : Operation failed
+            UI --> Admin : Show failure message
+        else Save successful
+            DB --> BE : Menu updated
+            BE --> UI : Operation successful
+            UI --> Admin : Refresh menu list
+        end
+    end
+
+    == Manage Orders ==
+
+    Admin -> UI : View customer orders
+    UI -> BE : Request order list
+    BE -> DB : Fetch orders
+    DB --> BE : Return orders
+    BE --> UI : Display orders
+
+    Admin -> UI : Select order and update status
+    UI -> BE : Submit status update
+    BE -> DB : Validate and update order
+
+    alt Invalid status transition
+        DB --> BE : Update rejected
+        BE --> UI : Status update failed
+        UI --> Admin : Show invalid status message
+    else Update successful
+        DB --> BE : Order updated
+        BE --> UI : Status updated
+        UI --> Admin : Refresh order details
+    end
+
+    == Search Orders ==
+
+    Admin -> UI : Search order by ID or date
+    UI -> BE : Submit search request
+    BE -> DB : Query matching orders
+
+    alt No matching order found
+        DB --> BE : No results
+        BE --> UI : Empty result
+        UI --> Admin : Show "No orders found"
+    else Orders found
+        DB --> BE : Matching orders
+        BE --> UI : Return results
+        UI --> Admin : Display matching orders
+    end
+end
+
+@enduml
