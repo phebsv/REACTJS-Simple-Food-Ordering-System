@@ -1,0 +1,31 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "username": "admin",
+      "password": "1234"
+    },
+    {
+      "name": "christian Demetillo",
+      "email": "dmtchrs@gmail.com",
+      "phone": "09617095667",
+      "password": "ninja123",
+      "id": "OcZ4bjEAvBs"
+    },
+    {
+      "name": "Hello World",
+      "email": "villerboy123@gmail.com",
+      "phone": "09617095668",
+      "password": "ninja123",
+      "id": "tIrSAMc1Dts"
+    },
+    {
+      "name": "asdasd asdasdsa",
+      "email": "asdasdas",
+      "phone": "asdasd",
+      "password": "asdasd",
+      "id": "9QVbm93XmJI"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

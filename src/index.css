@@ -1,0 +1,19 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+:root {
+  --red: #C8000A;
+  --red-dark: #9E0008;
+  --pink: #FAE8E8;
+  --cream: #F5EFE0;
+  --white: #FFFFFF;
+  --text: #1A0A0A;
+  --muted: #888080;
+}
