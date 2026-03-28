@@ -1,0 +1,106 @@
+.login-container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--red) 48%, var(--cream) 48%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 1rem 3rem;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.login-card {
+  display: flex;
+  width: 100%;
+  max-width: 880px;
+  min-height: 510px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
+  position: relative;
+  z-index: 1;
+}
+
+.login-form {
+  flex: 1;
+  background: var(--white);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2.5rem 3rem;
+  position: relative;
+}
+
+.login-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 4px 0;
+}
+
+.login-subtitle {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin: 0 0 2px 0;
+}
+
+.login-register-btn {
+  color: var(--red);
+  font-weight: 700;
+  font-size: 0.9rem;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  margin-bottom: 1.5rem;
+}
+
+.login-input-group {
+  margin-bottom: 1.3rem;
+}
+
+.login-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1.2rem;
+}
+
+.login-remember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.login-remember input {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--red);
+  cursor: pointer;
+}
+
+.login-forgot {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--text);
+  font-weight: 500;
+  font-family: inherit;
+}
+
+.login-error {
+  color: red;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.login-btn-container {
+  margin-top: 1.8rem;
+}
