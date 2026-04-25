@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import C from "../constants/colors";
 import { getAdminDashboardData } from "../services/adminDashboardApi";
+import { getOrderStats } from "../utils/adminDashboardHelpers";
 
 import AdminSidebar from "../components/admin/AdminSidebar";
 import AdminHeader from "../components/admin/AdminHeader";
@@ -54,29 +55,7 @@ const filteredOrders = orders.filter((order) => {
 
   return matchesStatus && matchesSearch;
 });
-
-const orderStats = [
-  {
-    label: "TOTAL ORDERS",
-    value: orders.length,
-    icon: "🛍️",
-  },
-  {
-    label: "ON PROCESS",
-    value: orders.filter((order) => order.status === "on process").length,
-    icon: "⟳",
-  },
-  {
-    label: "COMPLETED",
-    value: orders.filter((order) => order.status === "completed").length,
-    icon: "✓",
-  },
-  {
-    label: "CANCELED",
-    value: orders.filter((order) => order.status === "canceled").length,
-    icon: "×",
-  },
-];
+const orderStats = getOrderStats(orders);
 
   return (
     <div
