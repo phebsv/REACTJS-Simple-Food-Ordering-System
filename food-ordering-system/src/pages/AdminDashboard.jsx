@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import C from "../constants/colors";
 
 function AdminDashboard() {
@@ -60,6 +60,15 @@ const orders = [
     status: "canceled",
   },
 ];
+
+const [activeStatus, setActiveStatus] = useState("all");
+
+const orderTabs = ["all", "on process", "completed", "canceled"];
+
+const filteredOrders =
+  activeStatus === "all"
+    ? orders
+    : orders.filter((order) => order.status === activeStatus);
 
   return (
     <div
@@ -432,24 +441,24 @@ const orders = [
       marginBottom: "14px",
     }}
   >
-    {["ALL", "ON PROCESS", "COMPLETED", "CANCELED"].map((tab, index) => (
-      <button
-        key={tab}
-        type="button"
-        disabled
-        style={{
-          border: "none",
-          backgroundColor: index === 0 ? C.red : C.redDark,
-          color: C.white,
-          fontSize: "10px",
-          fontWeight: "900",
-          padding: "10px 6px",
-          cursor: "default",
-        }}
-      >
-        {tab}
-      </button>
-    ))}
+    {orderTabs.map((tab) => (
+  <button
+    key={tab}
+    type="button"
+    onClick={() => setActiveStatus(tab)}
+    style={{
+      border: "none",
+      backgroundColor: activeStatus === tab ? C.red : C.redDark,
+      color: C.white,
+      fontSize: "10px",
+      fontWeight: "900",
+      padding: "10px 6px",
+      cursor: "pointer",
+    }}
+  >
+    {tab.toUpperCase()}
+  </button>
+))}
   </div>
 
   <table
@@ -487,7 +496,7 @@ const orders = [
     </thead>
 
     <tbody>
-      {orders.map((order) => (
+      {filteredOrders.map((order) => (
         <tr key={order.orderId}>
           <td style={tableCellStyle}>{order.orderId}</td>
           <td style={tableCellStyle}>{order.date}</td>
@@ -498,6 +507,20 @@ const orders = [
           <td style={tableCellStyle}>{order.status}</td>
         </tr>
       ))}
+      {filteredOrders.length === 0 && (
+         <tr>
+            <td
+            colSpan="7"
+            style={{
+                padding: "20px",
+                color: C.muted,
+            fontWeight: "700",
+            }}
+            >
+            No orders found for this status.
+            </td>
+        </tr>
+        )}
     </tbody>
   </table>
 </section>
