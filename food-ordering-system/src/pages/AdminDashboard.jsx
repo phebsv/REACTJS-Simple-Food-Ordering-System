@@ -62,13 +62,25 @@ const orders = [
 ];
 
 const [activeStatus, setActiveStatus] = useState("all");
+const [searchTerm, setSearchTerm] = useState("");
 
 const orderTabs = ["all", "on process", "completed", "canceled"];
 
-const filteredOrders =
-  activeStatus === "all"
-    ? orders
-    : orders.filter((order) => order.status === activeStatus);
+const filteredOrders = orders.filter((order) => {
+  const matchesStatus =
+    activeStatus === "all" || order.status === activeStatus;
+
+  const searchValue = searchTerm.toLowerCase();
+
+  const matchesSearch =
+    order.orderId.toLowerCase().includes(searchValue) ||
+    order.date.toLowerCase().includes(searchValue) ||
+    order.customerName.toLowerCase().includes(searchValue) ||
+    order.address.toLowerCase().includes(searchValue) ||
+    order.status.toLowerCase().includes(searchValue);
+
+  return matchesStatus && matchesSearch;
+});
 
   return (
     <div
@@ -219,17 +231,18 @@ const filteredOrders =
                 <span style={{ marginRight: "8px", fontSize: "17px" }}>⌕</span>
 
                 <input
-                  type="text"
-                  placeholder="Search"
-                  disabled
-                  style={{
-                    width: "100%",
-                    border: "none",
-                    outline: "none",
-                    backgroundColor: "transparent",
-                    fontSize: "12px",
-                  }}
-                />
+                    type="text"
+                    placeholder="Search orders..."
+                    value={searchTerm}
+                    onChange={(event) => setSearchTerm(event.target.value)}
+                    style={{
+                        width: "100%",
+                        border: "none",
+                        outline: "none",
+                        backgroundColor: "transparent",
+                        fontSize: "12px",
+                    }}
+                    />
               </div>
 
               <div>
@@ -517,7 +530,7 @@ const filteredOrders =
             fontWeight: "700",
             }}
             >
-            No orders found for this status.
+            No orders found.
             </td>
         </tr>
         )}
