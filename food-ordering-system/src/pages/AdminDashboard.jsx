@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import C from "../constants/colors";
 
 import AdminSidebar from "../components/admin/AdminSidebar";
@@ -8,69 +8,44 @@ import OrdersOverviewChart from "../components/admin/OrdersOverviewChart";
 import OrdersTable from "../components/admin/OrdersTable";
 
 function AdminDashboard() {
+  const [adminProfile, setAdminProfile] = useState({
+    name: "",
+    role: "",
+  });
 
-  const adminProfile = {
-  name: "JASON CONOPIO",
-  role: "Admin",
-};
-
-const orderStats = [
-  {
-    label: "TOTAL ORDERS",
-    value: 5,
-    icon: "🛍️",
-  },
-  {
-    label: "ON PROCESS",
-    value: 3,
-    icon: "⟳",
-  },
-  {
-    label: "COMPLETED",
-    value: 2,
-    icon: "✓",
-  },
-  {
-    label: "CANCELED",
-    value: 0,
-    icon: "×",
-  },
-];
-
-const orders = [
-  {
-    orderId: "ord100",
-    date: "2026-7-22",
-    customerName: "jason conopio",
-    address: "tabunoc, talisay city",
-    quantity: 1,
-    amount: 500,
-    status: "completed",
-  },
-  {
-    orderId: "ord101",
-    date: "2026-10-5",
-    customerName: "ryan cruz",
-    address: "minglanilla",
-    quantity: 3,
-    amount: 750,
-    status: "on process",
-  },
-  {
-    orderId: "ord102",
-    date: "2026-8-20",
-    customerName: "jane yu",
-    address: "naga",
-    quantity: 6,
-    amount: 1500,
-    status: "canceled",
-  },
-];
+const [orderStats, setOrderStats] = useState([]);
+const [orders, setOrders] = useState([]);
 
 const [activeStatus, setActiveStatus] = useState("all");
-const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
-const orderTabs = ["all", "on process", "completed", "canceled"];
+  useEffect(() => {
+    const loadAdminDashboardData = async () => {
+      try {
+        const [profileResponse, statsResponse, ordersResponse] =
+          await Promise.all([
+            fetch("http://localhost:4001/adminProfile"),
+            fetch("http://localhost:4001/orderStats"),
+            fetch("http://localhost:4001/orders"),
+          ]);
+
+        const profileData = await profileResponse.json();
+        const statsData = await statsResponse.json();
+        const ordersData = await ordersResponse.json();
+
+        setAdminProfile(profileData);
+        setOrderStats(statsData);
+        setOrders(ordersData);
+      } catch (error) {
+        console.error("Failed to load admin dashboard data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadAdminDashboardData();
+  }, []);
 
 const filteredOrders = orders.filter((order) => {
   const matchesStatus =
@@ -120,8 +95,20 @@ const filteredOrders = orders.filter((order) => {
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
           />
-
-        {/* Cards and Chart */}
+        {isLoading ? (
+            <section
+              style={{
+                backgroundColor: C.white,
+                borderRadius: "14px",
+                padding: "30px",
+                fontWeight: "800",
+                color: C.text,
+              }}
+            >
+              Loading admin dashboard...
+            </section>
+          ) : (
+            <>
         <section
         style={{
             display: "grid",
@@ -139,6 +126,8 @@ const filteredOrders = orders.filter((order) => {
             activeStatus={activeStatus}
             onStatusChange={setActiveStatus}
           />
+          </>
+          )}
         </main>
       </div>
     </div>
