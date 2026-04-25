@@ -102,7 +102,7 @@ const filteredOrders = orders.filter((order) => {
         {/* Sidebar */}
         <aside
           style={{
-            width: "145px",
+            width: "180px",
             backgroundColor: C.redDark,
             color: C.white,
             padding: "16px 0",
@@ -136,20 +136,25 @@ const filteredOrders = orders.filter((order) => {
 
           <nav style={{ width: "100%" }}>
             {["DASHBOARD", "ORDERS", "MENU", "INVENTORY", "REVIEWS", "SETTINGS"].map(
-              (item) => (
-                <div
-                  key={item}
-                  style={{
-                    padding: "14px 10px",
-                    textAlign: "center",
-                    fontSize: "13px",
-                    fontWeight: "900",
-                    cursor: "pointer",
-                  }}
-                >
-                  {item}
-                </div>
-              )
+              (item) => {
+                const isActive = item === "DASHBOARD";
+                return (
+                  <div
+                    key={item}
+                    style={{
+                      padding: "14px 10px",
+                      textAlign: "center",
+                      fontSize: "13px",
+                      fontWeight: "900",
+                      cursor: "pointer",
+                      backgroundColor: isActive ? C.red : "transparent",
+                    color: C.white,
+                    }}
+                  >
+                    {item}
+                  </div>
+                )
+              }
             )}
           </nav>
 
@@ -170,7 +175,8 @@ const filteredOrders = orders.filter((order) => {
         <main
           style={{
             flex: 1,
-            padding: "22px 28px",
+            padding: "26px 34px",
+            overflowX: "auto",
           }}
         >
           {/* Header */}
@@ -434,15 +440,16 @@ const filteredOrders = orders.filter((order) => {
   </div>
 </section>
 
-            {/* Orders Table */}
-<section
-  style={{
-    backgroundColor: C.white,
-    borderRadius: "10px",
-    padding: "8px 28px 34px",
-    boxSizing: "border-box",
-  }}
->
+                    {/* Orders Table */}
+        <section
+        style={{
+            backgroundColor: C.white,
+            borderRadius: "14px",
+            padding: "14px 28px 34px",
+            boxSizing: "border-box",
+            boxShadow: "0 6px 18px rgba(0, 0, 0, 0.08)",
+        }}
+        >
   <div
     style={{
       width: "430px",
@@ -517,7 +524,11 @@ const filteredOrders = orders.filter((order) => {
           <td style={tableCellStyle}>{order.address}</td>
           <td style={tableCellStyle}>{order.quantity}</td>
           <td style={tableCellStyle}>₱{order.amount.toFixed(1)}</td>
-          <td style={tableCellStyle}>{order.status}</td>
+          <td style={tableCellStyle}>
+            <span style={getStatusBadgeStyle(order.status)}>
+                {order.status}
+            </span>
+          </td>
         </tr>
       ))}
       {filteredOrders.length === 0 && (
@@ -545,6 +556,48 @@ const filteredOrders = orders.filter((order) => {
 const tableCellStyle = {
   padding: "13px 10px",
   borderBottom: "1px solid #bdbdbd",
+};
+
+const getStatusBadgeStyle = (status) => {
+  const baseStyle = {
+    display: "inline-block",
+    minWidth: "82px",
+    padding: "5px 10px",
+    borderRadius: "999px",
+    fontSize: "11px",
+    fontWeight: "800",
+    textTransform: "capitalize",
+  };
+
+  if (status === "completed") {
+    return {
+      ...baseStyle,
+      backgroundColor: "#E8F7EE",
+      color: "#1E7D3A",
+    };
+  }
+
+  if (status === "on process") {
+    return {
+      ...baseStyle,
+      backgroundColor: "#FFF4D8",
+      color: "#9A6A00",
+    };
+  }
+
+  if (status === "canceled") {
+    return {
+      ...baseStyle,
+      backgroundColor: "#FFE5E5",
+      color: C.redDark,
+    };
+  }
+
+  return {
+    ...baseStyle,
+    backgroundColor: "#EEEEEE",
+    color: C.text,
+  };
 };
 
 export default AdminDashboard;
