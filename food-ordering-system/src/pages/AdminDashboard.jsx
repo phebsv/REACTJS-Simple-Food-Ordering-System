@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import C from "../constants/colors";
+import { getAdminDashboardData } from "../services/adminDashboardApi";
 
 import AdminSidebar from "../components/admin/AdminSidebar";
 import AdminHeader from "../components/admin/AdminHeader";
@@ -21,31 +22,23 @@ const [activeStatus, setActiveStatus] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const loadAdminDashboardData = async () => {
-      try {
-        const [profileResponse, statsResponse, ordersResponse] =
-          await Promise.all([
-            fetch("http://localhost:4001/adminProfile"),
-            fetch("http://localhost:4001/orderStats"),
-            fetch("http://localhost:4001/orders"),
-          ]);
+  const loadAdminDashboardData = async () => {
+    try {
+      const data = await getAdminDashboardData();
 
-        const profileData = await profileResponse.json();
-        const statsData = await statsResponse.json();
-        const ordersData = await ordersResponse.json();
+      setAdminProfile(data.adminProfile);
+      setOrderStats(data.orderStats);
+      setOrders(data.orders);
+    } catch (error) {
+      console.error("Failed to load admin dashboard data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-        setAdminProfile(profileData);
-        setOrderStats(statsData);
-        setOrders(ordersData);
-      } catch (error) {
-        console.error("Failed to load admin dashboard data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  loadAdminDashboardData();
+}, []);
 
-    loadAdminDashboardData();
-  }, []);
 
 const filteredOrders = orders.filter((order) => {
   const matchesStatus =
