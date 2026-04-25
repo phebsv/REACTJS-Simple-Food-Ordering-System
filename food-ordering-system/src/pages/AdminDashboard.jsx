@@ -2,6 +2,65 @@ import React from "react";
 import C from "../constants/colors";
 
 function AdminDashboard() {
+
+  const adminProfile = {
+  name: "JASON CONOPIO",
+  role: "Admin",
+};
+
+const orderStats = [
+  {
+    label: "TOTAL ORDERS",
+    value: 5,
+    icon: "🛍️",
+  },
+  {
+    label: "ON PROCESS",
+    value: 3,
+    icon: "⟳",
+  },
+  {
+    label: "COMPLETED",
+    value: 2,
+    icon: "✓",
+  },
+  {
+    label: "CANCELED",
+    value: 0,
+    icon: "×",
+  },
+];
+
+const orders = [
+  {
+    orderId: "ord100",
+    date: "2026-7-22",
+    customerName: "jason conopio",
+    address: "tabunoc, talisay city",
+    quantity: 1,
+    amount: 500,
+    status: "completed",
+  },
+  {
+    orderId: "ord101",
+    date: "2026-10-5",
+    customerName: "ryan cruz",
+    address: "minglanilla",
+    quantity: 3,
+    amount: 750,
+    status: "on process",
+  },
+  {
+    orderId: "ord102",
+    date: "2026-8-20",
+    customerName: "jane yu",
+    address: "naga",
+    quantity: 6,
+    amount: 1500,
+    status: "canceled",
+  },
+];
+
   return (
     <div
       style={{
@@ -173,7 +232,7 @@ function AdminDashboard() {
                     color: C.text,
                   }}
                 >
-                  JASON CONOPIO
+                  {adminProfile.name}
                 </h3>
 
                 <p
@@ -184,7 +243,7 @@ function AdminDashboard() {
                     color: C.text,
                   }}
                 >
-                  Admin
+                  {adminProfile.role}
                 </p>
               </div>
 
