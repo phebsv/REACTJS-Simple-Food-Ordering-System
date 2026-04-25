@@ -17,28 +17,6 @@
     "name": "JASON CONOPIO",
     "role": "Admin"
   },
-  "orderStats": [
-    {
-      "label": "TOTAL ORDERS",
-      "value": 5,
-      "icon": "🛍️"
-    },
-    {
-      "label": "ON PROCESS",
-      "value": 3,
-      "icon": "⟳"
-    },
-    {
-      "label": "COMPLETED",
-      "value": 2,
-      "icon": "✓"
-    },
-    {
-      "label": "CANCELED",
-      "value": 0,
-      "icon": "×"
-    }
-  ],
   "orders": [
     {
       "orderId": "ord100",

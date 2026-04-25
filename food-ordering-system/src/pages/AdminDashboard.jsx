@@ -14,7 +14,7 @@ function AdminDashboard() {
     role: "",
   });
 
-const [orderStats, setOrderStats] = useState([]);
+// const [orderStats, setOrderStats] = useState([]);
 const [orders, setOrders] = useState([]);
 
 const [activeStatus, setActiveStatus] = useState("all");
@@ -27,7 +27,6 @@ const [activeStatus, setActiveStatus] = useState("all");
       const data = await getAdminDashboardData();
 
       setAdminProfile(data.adminProfile);
-      setOrderStats(data.orderStats);
       setOrders(data.orders);
     } catch (error) {
       console.error("Failed to load admin dashboard data:", error);
@@ -55,6 +54,29 @@ const filteredOrders = orders.filter((order) => {
 
   return matchesStatus && matchesSearch;
 });
+
+const orderStats = [
+  {
+    label: "TOTAL ORDERS",
+    value: orders.length,
+    icon: "🛍️",
+  },
+  {
+    label: "ON PROCESS",
+    value: orders.filter((order) => order.status === "on process").length,
+    icon: "⟳",
+  },
+  {
+    label: "COMPLETED",
+    value: orders.filter((order) => order.status === "completed").length,
+    icon: "✓",
+  },
+  {
+    label: "CANCELED",
+    value: orders.filter((order) => order.status === "canceled").length,
+    icon: "×",
+  },
+];
 
   return (
     <div
