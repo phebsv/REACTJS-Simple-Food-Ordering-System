@@ -266,27 +266,63 @@ const orders = [
             </div>
           </header>
 
-          {/* Content placeholder */}
-          <section
-            style={{
-              backgroundColor: C.white,
-              borderRadius: "10px",
-              padding: "30px",
-              minHeight: "480px",
-              boxSizing: "border-box",
-            }}
-          >
-            <h2
+        {/* Order Summary Cards */}
+            <section
               style={{
-                margin: 0,
-                fontSize: "16px",
-                fontWeight: "900",
-                color: C.text,
-              }}
+                display: "grid",
+                gridTemplateColumns: "repeat(4, 1fr)",
+                gap: "20px",
+                marginBottom: "24px",
+             }}
             >
-              Admin dashboard content will go here.
-            </h2>
-          </section>
+        {orderStats.map((stat) => (
+            <div
+                key={stat.label}
+                style={{
+                    minHeight: "115px",
+                    backgroundColor: C.red,
+                    borderRadius: "10px",
+                    color: C.white,
+                    padding: "18px",
+                    boxSizing: "border-box",
+                    position: "relative",
+                }}
+            >
+            <div
+                style={{
+                    position: "absolute",
+                    top: "14px",
+          right: "16px",
+          fontSize: "30px",
+          fontWeight: "900",
+          color: C.text,
+        }}
+      >
+        {stat.icon}
+      </div>
+
+      <h2
+        style={{
+          margin: "28px 0 5px",
+          fontSize: "30px",
+          fontWeight: "900",
+        }}
+      >
+        {stat.value}
+      </h2>
+
+      <p
+        style={{
+          margin: 0,
+          fontSize: "12px",
+          fontWeight: "900",
+        }}
+      >
+        {stat.label}
+      </p>
+    </div>
+  ))}
+</section>
         </main>
       </div>
     </div>
