@@ -21,6 +21,31 @@
     "name": "JASON CONOPIO",
     "role": "Admin"
   },
+<<<<<<< HEAD
+=======
+  "orderStats": [
+    {
+      "label": "TOTAL ORDERS",
+      "value": 5,
+      "icon": "🛍️"
+    },
+    {
+      "label": "ON PROCESS",
+      "value": 3,
+      "icon": "⟳"
+    },
+    {
+      "label": "COMPLETED",
+      "value": 2,
+      "icon": "✓"
+    },
+    {
+      "label": "CANCELED",
+      "value": 0,
+      "icon": "×"
+    }
+  ],
+>>>>>>> 02d1a69 (chore: move admin sample data to db json)
   "orders": [
     {
       "orderId": "ord100",
@@ -52,4 +77,8 @@
   ],
   "$schema": "./node_modules/json-server/schema.json"
 }
+<<<<<<< HEAD
 >>>>>>> feature/admin-dashboard-ui
+=======
+>>>>>>> 270e5ea (chore: move admin sample data to db json)
+>>>>>>> 02d1a69 (chore: move admin sample data to db json)
