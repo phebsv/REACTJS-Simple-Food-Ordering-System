@@ -411,10 +411,104 @@ const orders = [
     </div>
   </div>
 </section>
+
+            {/* Orders Table */}
+<section
+  style={{
+    backgroundColor: C.white,
+    borderRadius: "10px",
+    padding: "8px 28px 34px",
+    boxSizing: "border-box",
+  }}
+>
+  <div
+    style={{
+      width: "430px",
+      display: "grid",
+      gridTemplateColumns: "repeat(4, 1fr)",
+      backgroundColor: C.redDark,
+      borderRadius: "8px",
+      overflow: "hidden",
+      marginBottom: "14px",
+    }}
+  >
+    {["ALL", "ON PROCESS", "COMPLETED", "CANCELED"].map((tab, index) => (
+      <button
+        key={tab}
+        type="button"
+        disabled
+        style={{
+          border: "none",
+          backgroundColor: index === 0 ? C.red : C.redDark,
+          color: C.white,
+          fontSize: "10px",
+          fontWeight: "900",
+          padding: "10px 6px",
+          cursor: "default",
+        }}
+      >
+        {tab}
+      </button>
+    ))}
+  </div>
+
+  <table
+    style={{
+      width: "100%",
+      borderCollapse: "collapse",
+      textAlign: "center",
+      fontSize: "12px",
+      color: C.text,
+    }}
+  >
+    <thead>
+      <tr>
+        {[
+          "order id",
+          "date",
+          "customer name",
+          "address",
+          "quantity",
+          "amount",
+          "status",
+        ].map((heading) => (
+          <th
+            key={heading}
+            style={{
+              padding: "10px",
+              fontWeight: "800",
+              borderBottom: "1px solid #bdbdbd",
+            }}
+          >
+            {heading}
+          </th>
+        ))}
+      </tr>
+    </thead>
+
+    <tbody>
+      {orders.map((order) => (
+        <tr key={order.orderId}>
+          <td style={tableCellStyle}>{order.orderId}</td>
+          <td style={tableCellStyle}>{order.date}</td>
+          <td style={tableCellStyle}>{order.customerName}</td>
+          <td style={tableCellStyle}>{order.address}</td>
+          <td style={tableCellStyle}>{order.quantity}</td>
+          <td style={tableCellStyle}>₱{order.amount.toFixed(1)}</td>
+          <td style={tableCellStyle}>{order.status}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</section>
         </main>
       </div>
     </div>
   );
 }
+const tableCellStyle = {
+  padding: "13px 10px",
+  borderBottom: "1px solid #bdbdbd",
+};
 
 export default AdminDashboard;
