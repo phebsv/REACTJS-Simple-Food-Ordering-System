@@ -171,7 +171,7 @@ const orders = [
                   color: C.text,
                 }}
               >
-                ORDERS
+                DASHBOARD
               </h1>
 
               <p
@@ -266,62 +266,150 @@ const orders = [
             </div>
           </header>
 
-        {/* Order Summary Cards */}
-            <section
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(4, 1fr)",
-                gap: "20px",
-                marginBottom: "24px",
-             }}
-            >
-        {orderStats.map((stat) => (
-            <div
-                key={stat.label}
-                style={{
-                    minHeight: "115px",
-                    backgroundColor: C.red,
-                    borderRadius: "10px",
-                    color: C.white,
-                    padding: "18px",
-                    boxSizing: "border-box",
-                    position: "relative",
-                }}
-            >
-            <div
-                style={{
-                    position: "absolute",
-                    top: "14px",
-          right: "16px",
-          fontSize: "30px",
-          fontWeight: "900",
-          color: C.text,
+{/* Cards and Chart */}
+<section
+  style={{
+    display: "grid",
+    gridTemplateColumns: "320px 1fr",
+    gap: "24px",
+    marginBottom: "24px",
+  }}
+>
+  {/* Order Summary Cards */}
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: "20px",
+    }}
+  >
+    {orderStats.map((stat) => (
+      <div
+        key={stat.label}
+        style={{
+          minHeight: "115px",
+          backgroundColor: C.red,
+          borderRadius: "10px",
+          color: C.white,
+          padding: "18px",
+          boxSizing: "border-box",
+          position: "relative",
         }}
       >
-        {stat.icon}
+        <div
+          style={{
+            position: "absolute",
+            top: "14px",
+            right: "16px",
+            fontSize: "30px",
+            fontWeight: "900",
+            color: C.text,
+          }}
+        >
+          {stat.icon}
+        </div>
+
+        <h2
+          style={{
+            margin: "28px 0 5px",
+            fontSize: "30px",
+            fontWeight: "900",
+          }}
+        >
+          {stat.value}
+        </h2>
+
+        <p
+          style={{
+            margin: 0,
+            fontSize: "12px",
+            fontWeight: "900",
+          }}
+        >
+          {stat.label}
+        </p>
       </div>
+    ))}
+  </div>
 
-      <h2
+  {/* Orders Overview Chart Placeholder */}
+  <div
+    style={{
+      backgroundColor: C.red,
+      borderRadius: "10px",
+      padding: "18px 24px",
+      color: C.white,
+      boxSizing: "border-box",
+    }}
+  >
+    <h2
+      style={{
+        margin: "0 0 12px",
+        fontSize: "18px",
+        fontWeight: "900",
+      }}
+    >
+      ORDERS OVERVIEW
+    </h2>
+
+    <div
+      style={{
+        height: "210px",
+        border: "1px solid rgba(255,255,255,0.28)",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      {[0, 1, 2, 3].map((line) => (
+        <div
+          key={`horizontal-${line}`}
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            top: `${line * 33}%`,
+            borderTop: "1px solid rgba(255,255,255,0.18)",
+          }}
+        />
+      ))}
+
+      {[0, 1, 2, 3, 4, 5].map((line) => (
+        <div
+          key={`vertical-${line}`}
+          style={{
+            position: "absolute",
+            top: 0,
+            bottom: 0,
+            left: `${line * 20}%`,
+            borderLeft: "1px solid rgba(255,255,255,0.18)",
+          }}
+        />
+      ))}
+
+      <svg
+        viewBox="0 0 500 170"
         style={{
-          margin: "28px 0 5px",
-          fontSize: "30px",
-          fontWeight: "900",
+          width: "100%",
+          height: "100%",
+          position: "absolute",
+          left: 0,
+          top: 0,
         }}
       >
-        {stat.value}
-      </h2>
+        <polyline
+          points="0,158 85,150 160,142 245,118 330,154 420,144 500,132"
+          fill="none"
+          stroke="#3d7cff"
+          strokeWidth="2"
+        />
 
-      <p
-        style={{
-          margin: 0,
-          fontSize: "12px",
-          fontWeight: "900",
-        }}
-      >
-        {stat.label}
-      </p>
+        <polygon
+          points="0,158 85,150 160,142 245,118 330,154 420,144 500,132 500,170 0,170"
+          fill="rgba(61,124,255,0.25)"
+        />
+      </svg>
     </div>
-  ))}
+  </div>
 </section>
         </main>
       </div>
