@@ -1,0 +1,69 @@
+.dashboard-container {
+  min-height: 100vh;
+  background: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  padding-top: 64px;
+}
+
+.dashboard-content {
+  text-align: center;
+}
+
+.dashboard-offer {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.dashboard-text {
+  text-align: left;
+  color: var(--text);
+}
+
+.dashboard-hot {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.dashboard-spicy {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.dashboard-chicken {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.dashboard-limited {
+  font-size: 1.2rem;
+  color: var(--red);
+  font-weight: 600;
+}
+
+.dashboard-burger-img {
+  width: 200px;
+  height: 200px;
+}
+
+.dashboard-welcome {
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--red);
+}
+
+.dashboard-logout-btn {
+  margin-top: 24px;
+  padding: 12px 32px;
+  background: var(--red);
+  color: var(--white);
+  border: none;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
