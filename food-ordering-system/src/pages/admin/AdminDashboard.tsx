@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import C from "../constants/colors";
+import C from "../../constants/colors";
 import { getAdminDashboardData } from "../../services/adminDashboardApi";
 import { getOrderStats } from "../../utils/adminDashboardHelpers";
 
