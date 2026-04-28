@@ -1,6 +1,12 @@
 # React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project contains a small food ordering app organized around reusable UI components.
+
+## Project Structure
+
+- `src/components/admin` contains the admin dashboard UI pieces.
+- `src/components/user` contains the user dashboard UI.
+- `src/services` and `src/utils` hold the data access and helper logic for the admin dashboard.
 
 Currently, two official plugins are available:
 
