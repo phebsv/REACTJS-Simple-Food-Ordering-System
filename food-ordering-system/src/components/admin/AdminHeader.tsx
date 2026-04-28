@@ -1,7 +1,22 @@
-import React from "react";
+
 import C from "../../constants/colors";
 
-function AdminHeader({ adminProfile, searchTerm, onSearchChange }) {
+type AdminProfile = {
+  name: string;
+  role: string;
+};
+
+type AdminHeaderProps = {
+  adminProfile: AdminProfile;
+  searchTerm: string;
+  onSearchChange: (value: string) => void;
+};
+
+function AdminHeader({
+  adminProfile,
+  searchTerm,
+  onSearchChange,
+}: AdminHeaderProps) {
   return (
     <header
       style={{
