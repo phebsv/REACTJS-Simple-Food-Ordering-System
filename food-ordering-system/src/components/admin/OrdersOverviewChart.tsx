@@ -12,16 +12,9 @@ function OrdersOverviewChart() {
         boxSizing: "border-box",
       }}
     >
-      <h2
-        style={{
-          margin: "0 0 12px",
-          fontSize: "18px",
-          fontWeight: "900",
-        }}
-      >
+      <h2 style={{ margin: "0 0 12px", fontSize: "18px", fontWeight: "900" }}>
         ORDERS OVERVIEW
       </h2>
-
       <div
         style={{
           height: "210px",
@@ -42,7 +35,6 @@ function OrdersOverviewChart() {
             }}
           />
         ))}
-
         {[0, 1, 2, 3, 4, 5].map((line) => (
           <div
             key={`vertical-${line}`}
@@ -55,7 +47,6 @@ function OrdersOverviewChart() {
             }}
           />
         ))}
-
         <svg
           viewBox="0 0 500 170"
           style={{
@@ -72,7 +63,6 @@ function OrdersOverviewChart() {
             stroke="#3d7cff"
             strokeWidth="2"
           />
-
           <polygon
             points="0,158 85,150 160,142 245,118 330,154 420,144 500,132 500,170 0,170"
             fill="rgba(61,124,255,0.25)"

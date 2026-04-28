@@ -2,7 +2,14 @@ import React from "react";
 import C from "../../constants/colors";
 
 function AdminSidebar() {
-  const menuItems = ["DASHBOARD", "ORDERS", "MENU", "INVENTORY", "REVIEWS", "SETTINGS"];
+  const menuItems = [
+    "DASHBOARD",
+    "ORDERS",
+    "MENU",
+    "INVENTORY",
+    "REVIEWS",
+    "SETTINGS",
+  ];
 
   return (
     <aside
@@ -38,11 +45,9 @@ function AdminSidebar() {
         <br />
         NOW
       </div>
-
       <nav style={{ width: "100%" }}>
         {menuItems.map((item) => {
           const isActive = item === "DASHBOARD";
-
           return (
             <div
               key={item}
@@ -61,7 +66,6 @@ function AdminSidebar() {
           );
         })}
       </nav>
-
       <div
         style={{
           marginTop: "auto",

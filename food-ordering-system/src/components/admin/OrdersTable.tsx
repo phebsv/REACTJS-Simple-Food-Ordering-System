@@ -1,7 +1,27 @@
 import React from "react";
 import C from "../../constants/colors";
 
-function OrdersTable({ orders, activeStatus, onStatusChange }) {
+interface Order {
+  orderId: string;
+  date: string;
+  customerName: string;
+  address: string;
+  quantity: number;
+  amount: number;
+  status: "on process" | "completed" | "canceled" | string;
+}
+
+interface OrdersTableProps {
+  orders: Order[];
+  activeStatus: string;
+  onStatusChange: (status: string) => void;
+}
+
+function OrdersTable({
+  orders,
+  activeStatus,
+  onStatusChange,
+}: OrdersTableProps) {
   const orderTabs = ["all", "on process", "completed", "canceled"];
 
   return (
@@ -44,7 +64,6 @@ function OrdersTable({ orders, activeStatus, onStatusChange }) {
           </button>
         ))}
       </div>
-
       <table
         style={{
           width: "100%",
@@ -78,7 +97,6 @@ function OrdersTable({ orders, activeStatus, onStatusChange }) {
             ))}
           </tr>
         </thead>
-
         <tbody>
           {orders.map((order) => (
             <tr key={order.orderId}>
@@ -89,38 +107,25 @@ function OrdersTable({ orders, activeStatus, onStatusChange }) {
               <td style={tableCellStyle}>{order.quantity}</td>
               <td style={tableCellStyle}>₱{order.amount.toFixed(1)}</td>
               <td style={tableCellStyle}>
-                <span style={getStatusBadgeStyle(order.status)}>{order.status}</span>
+                <span style={getStatusBadgeStyle(order.status)}>
+                  {order.status}
+                </span>
               </td>
             </tr>
           ))}
-
-          {orders.length === 0 && (
-            <tr>
-              <td
-                colSpan="7"
-                style={{
-                  padding: "20px",
-                  color: C.muted,
-                  fontWeight: "700",
-                }}
-              >
-                No orders found.
-              </td>
-            </tr>
-          )}
         </tbody>
       </table>
     </section>
   );
 }
 
-const tableCellStyle = {
+const tableCellStyle: React.CSSProperties = {
   padding: "13px 10px",
   borderBottom: "1px solid #bdbdbd",
 };
 
-const getStatusBadgeStyle = (status) => {
-  const baseStyle = {
+const getStatusBadgeStyle = (status: string): React.CSSProperties => {
+  const baseStyle: React.CSSProperties = {
     display: "inline-block",
     minWidth: "82px",
     padding: "5px 10px",
@@ -130,35 +135,13 @@ const getStatusBadgeStyle = (status) => {
     textTransform: "capitalize",
   };
 
-  if (status === "completed") {
-    return {
-      ...baseStyle,
-      backgroundColor: "#E8F7EE",
-      color: "#1E7D3A",
-    };
-  }
-
-  if (status === "on process") {
-    return {
-      ...baseStyle,
-      backgroundColor: "#FFF4D8",
-      color: "#9A6A00",
-    };
-  }
-
-  if (status === "canceled") {
-    return {
-      ...baseStyle,
-      backgroundColor: "#FFE5E5",
-      color: C.redDark,
-    };
-  }
-
-  return {
-    ...baseStyle,
-    backgroundColor: "#EEEEEE",
-    color: C.text,
-  };
+  if (status === "completed")
+    return { ...baseStyle, backgroundColor: "#E8F7EE", color: "#1E7D3A" };
+  if (status === "on process")
+    return { ...baseStyle, backgroundColor: "#FFF4D8", color: "#9A6A00" };
+  if (status === "canceled")
+    return { ...baseStyle, backgroundColor: "#FFE5E5", color: C.redDark };
+  return { ...baseStyle, backgroundColor: "#EEEEEE", color: C.text };
 };
 
 export default OrdersTable;
