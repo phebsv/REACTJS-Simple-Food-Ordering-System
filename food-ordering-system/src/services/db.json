@@ -1,8 +1,4 @@
 {
-<<<<<<< HEAD
-  "users": [{ "id": 1, "username": "admin", "password": "1234" }]
-}
-=======
   "users": [
     {
       "id": "1",
@@ -21,8 +17,6 @@
     "name": "JASON CONOPIO",
     "role": "Admin"
   },
-<<<<<<< HEAD
-=======
   "orderStats": [
     {
       "label": "TOTAL ORDERS",
@@ -45,7 +39,6 @@
       "icon": "×"
     }
   ],
->>>>>>> 02d1a69 (chore: move admin sample data to db json)
   "orders": [
     {
       "orderId": "ord100",
@@ -77,8 +70,3 @@
   ],
   "$schema": "./node_modules/json-server/schema.json"
 }
-<<<<<<< HEAD
->>>>>>> feature/admin-dashboard-ui
-=======
->>>>>>> 270e5ea (chore: move admin sample data to db json)
->>>>>>> 02d1a69 (chore: move admin sample data to db json)

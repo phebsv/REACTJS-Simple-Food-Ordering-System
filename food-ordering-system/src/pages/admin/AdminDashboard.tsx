@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import C from "../constants/colors";
 import { getAdminDashboardData } from "../../services/adminDashboardApi";
 import { getOrderStats } from "../../utils/adminDashboardHelpers";
@@ -9,24 +9,40 @@ import OrderSummaryCards from "../../components/admin/OrderSummaryCards";
 import OrdersOverviewChart from "../../components/admin/OrdersOverviewChart";
 import OrdersTable from "../../components/admin/OrdersTable";
 
+// 1. Define the shape of a single Order
+interface Order {
+  orderId: string;
+  date: string;
+  customerName: string;
+  address: string;
+  quantity: number;
+  amount: number;
+  status: string;
+}
+
+// 2. Define the Admin Profile shape
+interface AdminProfile {
+  name: string;
+  role: string;
+}
+
 function AdminDashboard() {
-  const [adminProfile, setAdminProfile] = useState({
+  // 3. Apply types to your useState hooks
+  const [adminProfile, setAdminProfile] = useState<AdminProfile>({
     name: "",
     role: "",
   });
 
-  // const [orderStats, setOrderStats] = useState([]);
-  const [orders, setOrders] = useState([]);
-
-  const [activeStatus, setActiveStatus] = useState("all");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [activeStatus, setActiveStatus] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const loadAdminDashboardData = async () => {
       try {
         const data = await getAdminDashboardData();
-
+        // Assuming your API returns { adminProfile, orders }
         setAdminProfile(data.adminProfile);
         setOrders(data.orders);
       } catch (error) {
@@ -54,6 +70,7 @@ function AdminDashboard() {
 
     return matchesStatus && matchesSearch;
   });
+
   const orderStats = getOrderStats(orders);
 
   return (
@@ -75,7 +92,6 @@ function AdminDashboard() {
       >
         <AdminSidebar />
 
-        {/* Main Content */}
         <main
           style={{
             flex: 1,
@@ -95,7 +111,7 @@ function AdminDashboard() {
                 borderRadius: "14px",
                 padding: "30px",
                 fontWeight: "800",
-                color: C.text,
+                color: C.text as string,
               }}
             >
               Loading admin dashboard...
