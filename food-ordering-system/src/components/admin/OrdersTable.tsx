@@ -1,21 +1,6 @@
 import React from "react";
 import C from "../../constants/colors";
-
-interface Order {
-  orderId: string;
-  date: string;
-  customerName: string;
-  address: string;
-  quantity: number;
-  amount: number;
-  status: "on process" | "completed" | "canceled" | string;
-}
-
-interface OrdersTableProps {
-  orders: Order[];
-  activeStatus: string;
-  onStatusChange: (status: string) => void;
-}
+import type { OrdersTableProps } from "../../interfaces";
 
 function OrdersTable({
   orders,

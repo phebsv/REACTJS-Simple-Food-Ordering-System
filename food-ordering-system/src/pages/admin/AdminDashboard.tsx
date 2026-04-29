@@ -8,23 +8,7 @@ import AdminHeader from "../../components/admin/AdminHeader";
 import OrderSummaryCards from "../../components/admin/OrderSummaryCards";
 import OrdersOverviewChart from "../../components/admin/OrdersOverviewChart";
 import OrdersTable from "../../components/admin/OrdersTable";
-
-// 1. Define the shape of a single Order
-interface Order {
-  orderId: string;
-  date: string;
-  customerName: string;
-  address: string;
-  quantity: number;
-  amount: number;
-  status: string;
-}
-
-// 2. Define the Admin Profile shape
-interface AdminProfile {
-  name: string;
-  role: string;
-}
+import type { AdminProfile, Order } from "../../interfaces";
 
 function AdminDashboard() {
   // 3. Apply types to your useState hooks

@@ -1,16 +1,5 @@
-
 import C from "../../constants/colors";
-
-type AdminProfile = {
-  name: string;
-  role: string;
-};
-
-type AdminHeaderProps = {
-  adminProfile: AdminProfile;
-  searchTerm: string;
-  onSearchChange: (value: string) => void;
-};
+import type { AdminHeaderProps } from "../../interfaces";
 
 function AdminHeader({
   adminProfile,
@@ -46,7 +35,8 @@ function AdminHeader({
             color: C.text,
           }}
         >
-          <span style={{ color: C.red, fontWeight: "700" }}>Dashboard</span> / Orders
+          <span style={{ color: C.red, fontWeight: "700" }}>Dashboard</span> /
+          Orders
         </p>
       </div>
 
