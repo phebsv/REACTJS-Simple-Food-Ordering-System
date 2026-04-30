@@ -1,15 +1,30 @@
 import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import C from "../../constants/colors";
+import { useAdmin } from "../../context/AdminContext";
 
 function AdminSidebar() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { logout, adminUser } = useAdmin();
+
   const menuItems = [
-    "DASHBOARD",
-    "ORDERS",
-    "MENU",
-    "INVENTORY",
-    "REVIEWS",
-    "SETTINGS",
+    { label: "DASHBOARD", path: "/admin/dashboard" },
+    { label: "ORDERS", path: "/admin/orders" },
+    { label: "MENU", path: "/admin/menu" },
+    { label: "INVENTORY", path: "/admin/inventory" },
+    { label: "REVIEWS", path: "/admin/reviews" },
+    { label: "SETTINGS", path: "/admin/settings" },
   ];
+
+  const handleLogout = () => {
+    const confirmLogout = window.confirm("Are you sure you want to logout?");
+
+    if (!confirmLogout) return;
+
+    logout();
+    navigate("/admin/login");
+  };
 
   return (
     <aside
@@ -38,19 +53,36 @@ function AdminSidebar() {
           justifyContent: "center",
           textAlign: "center",
           lineHeight: "12px",
-          marginBottom: "26px",
+          marginBottom: "8px",
         }}
       >
         NomNom
         <br />
         NOW
       </div>
+
+      {adminUser?.username && (
+        <div
+          style={{
+            fontSize: "11px",
+            fontWeight: "700",
+            opacity: 0.9,
+            marginBottom: "18px",
+            textAlign: "center",
+          }}
+        >
+          {adminUser.username}
+        </div>
+      )}
+
       <nav style={{ width: "100%" }}>
         {menuItems.map((item) => {
-          const isActive = item === "DASHBOARD";
+          const isActive = location.pathname === item.path;
+
           return (
             <div
-              key={item}
+              key={item.label}
+              onClick={() => navigate(item.path)}
               style={{
                 padding: "14px 10px",
                 textAlign: "center",
@@ -59,24 +91,30 @@ function AdminSidebar() {
                 cursor: "pointer",
                 backgroundColor: isActive ? C.red : "transparent",
                 color: C.white,
+                transition: "0.2s ease",
               }}
             >
-              {item}
+              {item.label}
             </div>
           );
         })}
       </nav>
-      <div
+
+      <button
+        onClick={handleLogout}
         style={{
           marginTop: "auto",
           marginBottom: "8px",
+          background: "transparent",
+          border: "none",
+          color: C.white,
           fontSize: "13px",
           fontWeight: "900",
           cursor: "pointer",
         }}
       >
         LOG OUT
-      </div>
+      </button>
     </aside>
   );
 }
