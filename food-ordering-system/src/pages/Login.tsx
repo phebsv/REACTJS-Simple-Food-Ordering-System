@@ -17,27 +17,58 @@ export default function Login() {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    setError("");
-    if (!email || !password) return setError("Email and password are required");
+  setError("");
 
-    setLoading(true);
-    try {
-      const res = await fetch(`http://localhost:3001/users?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
-      if (!res.ok) throw new Error("Login failed");
-      const users = await res.json();
-      if (!users.length) throw new Error("Invalid email or password");
+  if (!email || !password) {
+    return setError("Email and password are required");
+  }
 
+  setLoading(true);
+
+  try {
+    const userRes = await fetch(
+      `http://localhost:3001/users?email=${encodeURIComponent(
+        email
+      )}&password=${encodeURIComponent(password)}`
+    );
+
+    if (!userRes.ok) throw new Error("Login failed");
+
+    const users = await userRes.json();
+
+    if (users.length > 0) {
       if (remember) {
         localStorage.setItem("currentUser", JSON.stringify(users[0]));
       }
 
       navigate("/dashboard");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
-    } finally {
-      setLoading(false);
+      return;
     }
-  };
+
+    const adminRes = await fetch("http://localhost:3001/admins");
+
+    if (!adminRes.ok) throw new Error("Login failed");
+
+    const admins = await adminRes.json();
+
+    const matchedAdmin = admins.find(
+      (admin: any) =>
+        String(admin.username).trim().toLowerCase() === email.trim().toLowerCase() &&
+        String(admin.password).trim() === password.trim()
+    );
+
+    if (matchedAdmin) {
+      localStorage.setItem("adminUser", JSON.stringify(matchedAdmin));
+      navigate("/admin/dashboard");
+      return;
+    }
+    throw new Error("Invalid email or password");
+  } catch (err) {
+    setError(err instanceof Error ? err.message : "Login failed");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <>
