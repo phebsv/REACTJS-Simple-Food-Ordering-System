@@ -1,0 +1,374 @@
+﻿/* ==================== SEARCH BAR ==================== */
+.inventory-search-bar {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 16px 12px 40px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: all 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #ff6b6b;
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #999;
+}
+
+/* ==================== STATUS FILTER TABS ==================== */
+.status-filter-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.filter-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  color: #666;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.filter-tab:hover {
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+}
+
+.filter-tab.active {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e72 100%);
+  border-color: #ff6b6b;
+  color: white;
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.2);
+}
+
+.filter-count {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+/* ==================== INVENTORY TABLE ==================== */
+.inventory-table-container {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+.inventory-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.inventory-table thead {
+  background: #f5f5f5;
+}
+
+.inventory-table th {
+  padding: 16px;
+  text-align: left;
+  font-weight: 700;
+  color: #1a1a2e;
+  font-size: 13px;
+  border-bottom: 2px solid #e0e0e0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.inventory-table td {
+  padding: 16px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 14px;
+  color: #333;
+}
+
+.inventory-table tbody tr:hover {
+  background: #f9f9f9;
+}
+
+/* Status row styling */
+.inventory-table tbody tr.status-available {
+  border-left: 4px solid #4caf50;
+}
+
+.inventory-table tbody tr.status-low-stock {
+  border-left: 4px solid #ffc107;
+}
+
+.inventory-table tbody tr.status-out-of-stock {
+  border-left: 4px solid #ff6b6b;
+}
+
+.inventory-table tbody tr.status-unavailable {
+  border-left: 4px solid #999;
+}
+
+.item-name {
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.stock-quantity {
+  font-size: 16px;
+}
+
+.stock-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.stock-badge.good {
+  background: #c8e6c9;
+  color: #2e7d32;
+}
+
+.stock-badge.warning {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.stock-badge.critical {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.last-updated {
+  font-size: 13px;
+  color: #999;
+}
+
+/* ==================== STATUS SELECT ==================== */
+.status-select {
+  padding: 8px 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: white;
+  transition: all 0.2s;
+  min-width: 120px;
+}
+
+.status-select:focus {
+  outline: none;
+  border-color: #ff6b6b;
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+}
+
+.status-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #f5f5f5;
+}
+
+.status-select.status-available {
+  border-color: #4caf50;
+  color: #2e7d32;
+}
+
+.status-select.status-low-stock {
+  border-color: #ffc107;
+  color: #856404;
+}
+
+.status-select.status-out-of-stock {
+  border-color: #ff6b6b;
+  color: #c62828;
+}
+
+.status-select.status-unavailable {
+  border-color: #999;
+  color: #333;
+}
+
+/* ==================== ACTION BUTTONS ==================== */
+.action-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.restock-btn {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.restock-btn:hover:not(:disabled) {
+  background: #bbdefb;
+}
+
+.restock-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ==================== RESTOCK FORM ==================== */
+.restock-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #1a1a2e;
+  font-size: 14px;
+}
+
+.current-stock {
+  padding: 12px;
+  background: #f9f9f9;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.form-group input {
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #ff6b6b;
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+}
+
+.form-hint {
+  display: block;
+  font-size: 12px;
+  color: #999;
+  margin-top: 4px;
+}
+
+/* ==================== FORM ACTIONS ==================== */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.cancel-btn,
+.submit-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancel-btn {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background: #e0e0e0;
+}
+
+.cancel-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e72 100%);
+  color: white;
+}
+
+.submit-btn:hover:not(:disabled) {
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ==================== EMPTY STATE ==================== */
+.empty-state-container {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 12px;
+}
+
+.empty-state {
+  color: #999;
+  font-size: 16px;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .inventory-table th,
+  .inventory-table td {
+    padding: 12px;
+    font-size: 12px;
+  }
+
+  .status-filter-tabs {
+    gap: 6px;
+  }
+
+  .filter-tab {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .action-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}
