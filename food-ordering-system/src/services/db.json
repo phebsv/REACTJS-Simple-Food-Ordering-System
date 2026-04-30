@@ -2,8 +2,10 @@
   "users": [
     {
       "id": "1",
-      "username": "admin",
-      "password": "1234"
+      "email": "admin",
+      "password": "1234",
+      "name": "Admin",
+      "role": "admin"
     },
     {
       "name": "christian Demetillo",
@@ -47,8 +49,9 @@
       "id": "admin1",
       "username": "admin",
       "password": "1234",
-      "role": "admin",
-      "createdAt": "2024-01-01T00:00:00Z"
+      "role": "Administrator",
+      "createdAt": "2024-01-01T00:00:00Z",
+      "name": "Admin"
     }
   ],
   "menu": [
