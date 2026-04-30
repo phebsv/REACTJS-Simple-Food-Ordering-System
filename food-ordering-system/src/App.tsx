@@ -1,12 +1,50 @@
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import "./App.css";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import Menu from "./pages/Menu";
+import CartPage from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import MyOrders from "./pages/MyOrders";
+import Profile from "./pages/Profile";
+import { CartProvider } from "./context/CartContext";
+import { AdminProvider } from "./context/AdminContext";
 
-function App() {
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminOrders from "./pages/admin/AdminOrders";
+import AdminMenu from "./pages/admin/AdminMenu";
+import AdminInventory from "./pages/admin/AdminInventory";
+import AdminReviews from "./pages/admin/AdminReviews";
+
+export default function App() {
   return (
-    <div className="App">
-      <AdminDashboard />
-    </div>
+    <CartProvider>
+      <AdminProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* CUSTOMER ROUTES */}
+            <Route path="/" element={<Navigate to="/login" />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/menu" element={<Menu />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/my-orders" element={<MyOrders />} />
+            <Route path="/profile" element={<Profile />} />
+
+            {/* ADMIN ROUTES - temporary unprotected for UI testing */}
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/orders" element={<AdminOrders />} />
+            <Route path="/admin/menu" element={<AdminMenu />} />
+            <Route path="/admin/inventory" element={<AdminInventory />} />
+            <Route path="/admin/reviews" element={<AdminReviews />} />
+
+            {/* Redirect unknown routes */}
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </BrowserRouter>
+      </AdminProvider>
+    </CartProvider>
   );
 }
-
-export default App;
