@@ -28,6 +28,7 @@ export default function Login() {
         const admins = await adminRes.json();
         const admin = admins.find((a: any) => a.password === password);
         if (admin) {
+          localStorage.removeItem("currentUser");
           localStorage.setItem("adminUser", JSON.stringify(admin));
           navigate("/admin/dashboard");
           return;
@@ -39,6 +40,8 @@ export default function Login() {
       if (!userRes.ok) throw new Error("Login failed");
       const users = await userRes.json();
       if (!users.length) throw new Error("Invalid credentials");
+
+      localStorage.removeItem("adminUser");
 
       // Always store currentUser (for session persistence across pages)
       localStorage.setItem("currentUser", JSON.stringify(users[0]));

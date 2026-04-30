@@ -6,10 +6,10 @@ interface ProtectedRouteProps {
 }
 
 export default function ProtectedAdminRoute({ children }: ProtectedRouteProps) {
-  const { isAuthenticated } = useAdmin();
+  const adminUser = localStorage.getItem("adminUser");
 
-  if (!isAuthenticated) {
-    return <Navigate to="/admin/login" replace />;
+  if (!adminUser) {
+    return <Navigate to="/login" replace />;
   }
 
   return <>{children}</>;

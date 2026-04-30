@@ -9,7 +9,6 @@ import MyOrders from "./pages/MyOrders";
 import Profile from "./pages/Profile";
 import { CartProvider } from "./context/CartContext";
 import { AdminProvider } from "./context/AdminContext";
-import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminMenu from "./pages/admin/AdminMenu";
@@ -35,7 +34,6 @@ export default function App() {
             <Route path="/profile" element={<Profile />} />
 
             {/* ==================== ADMIN ROUTES ==================== */}
-            <Route path="/admin/login" element={<AdminLogin />} />
 
             {/* Protected Admin Routes */}
             <Route
