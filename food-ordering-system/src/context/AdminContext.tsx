@@ -1,4 +1,4 @@
-﻿import { createContext, useContext, useMemo, useState, type ReactNode, useCallback } from "react";
+import { createContext, useContext, useMemo, useState, type ReactNode, useCallback } from "react";
 import type { Order, FoodItem, InventoryItem, Review, AdminUser } from "../types";
 
 type AdminContextType = {
@@ -51,7 +51,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const BASE = "http://localhost:4001";
+  const BASE = "http://localhost:3001";
 
   // ==================== AUTH ====================
   const login = useCallback(async (username: string, password: string): Promise<boolean> => {

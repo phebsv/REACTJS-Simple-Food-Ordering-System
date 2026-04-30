@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import { useCart } from "../context/CartContext";
 import "./Dashboard.css";
@@ -81,7 +81,7 @@ export default function Menu() {
     const fetchMenu = async () => {
       try {
         setLoading(true);
-        const res = await fetch("http://localhost:4001/menu");
+        const res = await fetch("http://localhost:3001/menu");
         if (!res.ok) throw new Error("Failed to fetch menu");
         const data = await res.json();
         

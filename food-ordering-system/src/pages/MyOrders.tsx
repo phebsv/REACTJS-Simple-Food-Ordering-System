@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import "./MyOrders.css";
@@ -29,7 +29,7 @@ export default function MyOrders() {
     const fetchOrders = async () => {
       try {
         setLoading(true);
-        const res = await fetch("http://localhost:4001/orders");
+        const res = await fetch("http://localhost:3001/orders");
         if (!res.ok) throw new Error("Failed to fetch orders");
         const data = await res.json();
         
@@ -188,7 +188,7 @@ function OrderDetailsModal({ order, onClose }: { order: Order; onClose: () => vo
 
     setCancelLoading(true);
     try {
-      const res = await fetch(`http://localhost:4001/orders/${order.id}`, {
+      const res = await fetch(`http://localhost:3001/orders/${order.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "Cancelled", updatedAt: new Date().toISOString() })

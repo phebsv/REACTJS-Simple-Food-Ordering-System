@@ -22,7 +22,7 @@ export default function Login() {
 
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:4001/users?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+      const res = await fetch(`http://localhost:3001/users?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
       if (!res.ok) throw new Error("Login failed");
       const users = await res.json();
       if (!users.length) throw new Error("Invalid email or password");

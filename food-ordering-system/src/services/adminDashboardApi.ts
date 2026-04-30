@@ -1,6 +1,6 @@
 import type { AdminProfile, DashboardData, Order } from "../interfaces";
 
-const API_BASE_URL = "http://localhost:4001";
+const API_BASE_URL = "http://localhost:3001";
 
 export async function getAdminDashboardData(): Promise<DashboardData> {
   // Note: I removed statsResponse as it wasn't being used in your original fetch logic

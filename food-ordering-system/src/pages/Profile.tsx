@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import "./Profile.css";
@@ -55,7 +55,7 @@ export default function Profile() {
         address
       };
 
-      const res = await fetch(`http://localhost:4001/users/${currentUser.id}`, {
+      const res = await fetch(`http://localhost:3001/users/${currentUser.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedUser)

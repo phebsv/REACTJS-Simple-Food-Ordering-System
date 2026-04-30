@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useCart } from "../context/CartContext";
@@ -73,7 +73,7 @@ export default function Checkout() {
         updatedAt: new Date().toISOString()
       };
 
-      const res = await fetch("http://localhost:4001/orders", {
+      const res = await fetch("http://localhost:3001/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newOrder)
