@@ -1,0 +1,385 @@
+/* ==================== ADMIN LAYOUT ==================== */
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--cream);
+}
+
+.admin-content {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
+}
+
+/* ==================== HEADER ==================== */
+.admin-header {
+  margin-bottom: 40px;
+}
+
+.admin-header h1 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.admin-subtitle {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.admin-error-banner {
+  padding: 16px;
+  background: var(--pink);
+  border-left: 4px solid var(--red);
+  color: var(--red);
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+/* ==================== STAT CARDS ==================== */
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s;
+}
+
+.stat-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.stat-icon {
+  font-size: 32px;
+  display: inline-block;
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.stat-title {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* Color variants */
+.stat-card-blue {
+  border-left: 4px solid #2196f3;
+}
+.stat-card-green {
+  border-left: 4px solid #4caf50;
+}
+.stat-card-yellow {
+  border-left: 4px solid #ffc107;
+}
+.stat-card-orange {
+  border-left: 4px solid #ff9800;
+}
+.stat-card-red {
+  border-left: 4px solid var(--red);
+}
+
+/* ==================== DASHBOARD GRID ==================== */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+@media (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==================== SECTIONS ==================== */
+.dashboard-section {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-section.full-width {
+  grid-column: 1 / -1;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.section-action-btn {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e72 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.section-action-btn:hover {
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+  transform: translateX(2px);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+}
+
+/* ==================== POPULAR ITEMS ==================== */
+.popular-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.popular-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--pink);
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.popular-item:hover {
+  background: #f0e0e0;
+}
+
+.popular-item-rank {
+  background: var(--red);
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.popular-item-info {
+  flex: 1;
+}
+
+.popular-item-name {
+  font-weight: 600;
+  color: #1a1a2e;
+  font-size: 14px;
+}
+
+.popular-item-count {
+  font-size: 12px;
+  color: #999;
+  margin-top: 2px;
+}
+
+/* ==================== LOW STOCK ITEMS ==================== */
+.low-stock-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.low-stock-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  border-left: 3px solid #ffc107;
+}
+
+.low-stock-info {
+  flex: 1;
+}
+
+.low-stock-name {
+  font-weight: 600;
+  color: #1a1a2e;
+  font-size: 14px;
+}
+
+.low-stock-status {
+  font-size: 12px;
+  color: #ffc107;
+  margin-top: 2px;
+}
+
+.stock-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #fff3cd;
+  color: #856404;
+}
+
+.stock-badge.critical {
+  background: #ffe0e0;
+  color: #d32f2f;
+}
+
+/* ==================== RECENT ORDERS TABLE ==================== */
+.recent-orders-table {
+  overflow-x: auto;
+}
+
+.recent-orders-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.recent-orders-table thead {
+  background: #f5f5f5;
+}
+
+.recent-orders-table th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #1a1a2e;
+  font-size: 13px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.recent-orders-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 14px;
+  color: #333;
+}
+
+.recent-orders-table tbody tr:hover {
+  background: #f9f9f9;
+}
+
+.order-id {
+  font-weight: 600;
+  color: #ff6b6b;
+}
+
+.order-total {
+  font-weight: 600;
+  color: #4caf50;
+}
+
+.order-date {
+  color: #999;
+  font-size: 13px;
+}
+
+/* ==================== STATUS BADGES ==================== */
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.badge-pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.badge-preparing {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.badge-ready {
+  background: #f0f4c3;
+  color: #558b2f;
+}
+
+.badge-delivered {
+  background: #c8e6c9;
+  color: #2e7d32;
+}
+
+.badge-cancelled {
+  background: #ffebee;
+  color: #c62828;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .admin-content {
+    padding: 20px;
+  }
+
+  .admin-header h1 {
+    font-size: 24px;
+  }
+
+  .dashboard-stats {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 16px 12px;
+  }
+
+  .stat-value {
+    font-size: 20px;
+  }
+
+  .recent-orders-table {
+    font-size: 12px;
+  }
+
+  .recent-orders-table th,
+  .recent-orders-table td {
+    padding: 8px;
+  }
+}

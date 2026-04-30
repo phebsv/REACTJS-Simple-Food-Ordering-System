@@ -7,6 +7,12 @@ interface NavbarProps {
   showNavLinks?: boolean;
 }
 
+const handleLogout = () => {
+  localStorage.removeItem("currentUser");
+  localStorage.removeItem("adminUser");
+  window.location.href = "/login";
+};
+
 export default function Navbar({ title, showNavLinks = false }: NavbarProps) {
   return (
     <div style={{
@@ -27,11 +33,26 @@ export default function Navbar({ title, showNavLinks = false }: NavbarProps) {
       </div>
       {showNavLinks && (
         <nav style={{ display: "flex", alignItems: "center", gap: "2rem" }}>
-          <Link to="/dashboard" style={{ textDecoration: "none", color: C.text, fontWeight: 600 }}>Home</Link>
-          <Link to="/about" style={{ textDecoration: "none", color: C.text, fontWeight: 600 }}>About Us</Link>
-          <Link to="/menu" style={{ textDecoration: "none", color: C.text, fontWeight: 600 }}>Menu Page</Link>
-          <Link to="/contact" style={{ textDecoration: "none", color: C.text, fontWeight: 600 }}>Contact Us</Link>
-          <span style={{ fontSize: 24 }}>🛒</span>
+          <Link to="/dashboard" style={{ textDecoration: "none", color: C.text, fontWeight: 600, fontSize: 14 }}>Home</Link>
+          <Link to="/menu" style={{ textDecoration: "none", color: C.text, fontWeight: 600, fontSize: 14 }}>Menu</Link>
+          <Link to="/cart" style={{ textDecoration: "none", color: C.text, fontWeight: 600, fontSize: 20 }}>🛒</Link>
+          <Link to="/my-orders" style={{ textDecoration: "none", color: C.text, fontWeight: 600, fontSize: 14 }}>Orders</Link>
+          <Link to="/profile" style={{ textDecoration: "none", color: C.text, fontWeight: 600, fontSize: 14 }}>Profile</Link>
+          <button 
+            onClick={handleLogout}
+            style={{
+              background: "var(--red)",
+              color: "white",
+              border: "none",
+              padding: "8px 16px",
+              borderRadius: "6px",
+              cursor: "pointer",
+              fontWeight: 600,
+              fontSize: 14,
+            }}
+          >
+            Logout
+          </button>
         </nav>
       )}
     </div>

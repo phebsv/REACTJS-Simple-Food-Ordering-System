@@ -12,6 +12,7 @@ import "./Register.css";
 export default function Register() {
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -23,7 +24,11 @@ export default function Register() {
   const handleRegister = async () => {
     setError("");
     if (!agree) return setError("Please agree to the terms");
-    if (!firstName || !lastName || !email || !phone || !password) return setError("All fields are required");
+    if (!firstName || !lastName || !username || !email || !phone || !password) return setError("All fields are required");
+
+    // Check if username already taken
+    const existingUsername = await findUserByEmail(username); // Reusing function, will need API call
+    if (existingUsername) return setError("Username already taken");
 
     const existing = await findUserByEmail(email);
     if (existing) return setError("Email already taken");
@@ -32,6 +37,7 @@ export default function Register() {
     try {
       await createUser({
         name: `${firstName} ${lastName}`.trim(),
+        username,
         email,
         phone,
         password,
@@ -63,6 +69,9 @@ export default function Register() {
             <div className="register-names">
               <UInput label="First Name" placeholder="First name" value={firstName} onChange={e => setFirstName(e.target.value)} Icon={UserIcon} />
               <UInput label="Last Name" placeholder="Last name" value={lastName} onChange={e => setLastName(e.target.value)} Icon={UserIcon} />
+            </div>
+            <div className="register-input-group">
+              <UInput label="Username" placeholder="Choose a username" value={username} onChange={e => setUsername(e.target.value)} Icon={UserIcon} />
             </div>
             <div className="register-input-group">
               <UInput label="Email" type="email" placeholder="Enter your email address" value={email} onChange={e => setEmail(e.target.value)} Icon={MailIcon} />

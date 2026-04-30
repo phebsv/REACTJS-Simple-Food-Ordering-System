@@ -1,0 +1,97 @@
+/* ==================== ADMIN SIDEBAR ==================== */
+.admin-sidebar {
+  width: 280px;
+  background: var(--white);
+  color: var(--text);
+  padding: 30px 20px;
+  height: 100vh;
+  overflow-y: auto;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  border-right: 1px solid #e0e0e0;
+}
+
+.admin-sidebar-header {
+  margin-bottom: 40px;
+  border-bottom: 2px solid var(--pink);
+  padding-bottom: 20px;
+}
+
+.admin-sidebar-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--red);
+}
+
+.admin-username {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+  text-transform: capitalize;
+}
+
+/* ==================== NAVIGATION ==================== */
+.admin-sidebar-nav {
+  margin-bottom: 40px;
+}
+
+.admin-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  color: var(--text);
+  text-decoration: none;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.admin-nav-item:hover {
+  background: var(--pink);
+  color: var(--red);
+  transform: translateX(4px);
+}
+
+.admin-nav-item.active {
+  background: var(--pink);
+  color: var(--red);
+  box-shadow: 0 4px 12px rgba(200, 0, 10, 0.2);
+}
+
+.admin-nav-item .icon {
+  font-size: 18px;
+  display: inline-block;
+}
+
+/* ==================== LOGOUT BUTTON ==================== */
+.admin-logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--pink);
+  border: 2px solid var(--red);
+  color: var(--red);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.admin-logout-btn:hover {
+  background: var(--red);
+  color: var(--white);
+  transform: translateX(4px);
+}
+
+.admin-logout-btn .icon {
+  font-size: 18px;
+}

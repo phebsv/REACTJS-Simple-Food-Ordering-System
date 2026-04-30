@@ -9,7 +9,7 @@ import { MailIcon, LockIcon } from "../components/UInput";
 import "./Login.css";
 
 export default function Login() {
-  const [email, setEmail] = useState<string>("");
+  const [credential, setCredential] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [remember, setRemember] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
@@ -18,18 +18,30 @@ export default function Login() {
 
   const handleLogin = async () => {
     setError("");
-    if (!email || !password) return setError("Email and password are required");
+    if (!credential || !password) return setError("Username and password are required");
 
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:4001/users?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
-      if (!res.ok) throw new Error("Login failed");
-      const users = await res.json();
-      if (!users.length) throw new Error("Invalid email or password");
-
-      if (remember) {
-        localStorage.setItem("currentUser", JSON.stringify(users[0]));
+      // Check if admin (credential as username in admins table)
+      const adminRes = await fetch(`http://localhost:4001/admins?username=${encodeURIComponent(credential)}`);
+      if (adminRes.ok) {
+        const admins = await adminRes.json();
+        const admin = admins.find((a: any) => a.password === password);
+        if (admin) {
+          localStorage.setItem("adminUser", JSON.stringify(admin));
+          navigate("/admin/dashboard");
+          return;
+        }
       }
+
+      // Check if customer (credential as username in users table)
+      const userRes = await fetch(`http://localhost:4001/users?username=${encodeURIComponent(credential)}&password=${encodeURIComponent(password)}`);
+      if (!userRes.ok) throw new Error("Login failed");
+      const users = await userRes.json();
+      if (!users.length) throw new Error("Invalid credentials");
+
+      // Always store currentUser (for session persistence across pages)
+      localStorage.setItem("currentUser", JSON.stringify(users[0]));
 
       navigate("/dashboard");
     } catch (err) {
@@ -54,7 +66,7 @@ export default function Login() {
             <button onClick={() => navigate("/register")} className="login-register-btn">Register here !</button>
 
             <div className="login-input-group">
-              <UInput label="Email" type="email" placeholder="Enter your email address" value={email} onChange={e => setEmail(e.target.value)} Icon={MailIcon} />
+              <UInput label="Username" type="text" placeholder="Enter your username" value={credential} onChange={e => setCredential(e.target.value)} Icon={MailIcon} />
             </div>
             <UInput label="Password" type="password" placeholder="Enter your Password" value={password} onChange={e => setPassword(e.target.value)} Icon={LockIcon} />
 

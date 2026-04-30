@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+﻿import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import burger1 from "../assets/burger1.png";
 import "./Dashboard.css";
@@ -10,7 +10,7 @@ export default function Dashboard() {
     <>
       <Navbar title="DASHBOARD" showNavLinks={true} />
       <div className="dashboard-container">
-        <div className="dashboard-content">
+        <div className="dashboard-intro">
           <div className="dashboard-offer">
             <div className="dashboard-text">
               <div className="dashboard-hot">hot spicy</div>
@@ -19,8 +19,15 @@ export default function Dashboard() {
             </div>
             <img src={burger1} alt="Burger" className="dashboard-burger-img" />
           </div>
-          <h1 className="dashboard-welcome">Welcome to NomNom!</h1>
-          <button onClick={() => navigate("/login")} className="dashboard-logout-btn">Logout</button>
+          <div className="dashboard-welcome-panel">
+            <h1 className="dashboard-welcome">Welcome to NomNom!</h1>
+            <p className="dashboard-summary">
+              This is your dashboard. Use the menu link above to browse food items and add them to your cart.
+            </p>
+            <button onClick={() => navigate("/menu")} className="dashboard-logout-btn">
+              Go to Menu
+            </button>
+          </div>
         </div>
       </div>
     </>
