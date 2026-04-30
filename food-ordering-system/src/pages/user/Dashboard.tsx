@@ -1,6 +1,6 @@
-﻿import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import burger1 from "../assets/burger1.png";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../../components/Navbar";
+import burger1 from "../../assets/burger1.png";
 import "./Dashboard.css";
 
 export default function Dashboard() {

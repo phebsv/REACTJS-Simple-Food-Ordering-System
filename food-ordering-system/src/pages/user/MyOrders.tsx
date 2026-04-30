@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Navbar from "../../components/Navbar";
 import "./MyOrders.css";
 import type { Order } from "../types";
 
@@ -88,7 +88,7 @@ export default function MyOrders() {
           <div className="my-orders-controls">
             <input
               type="text"
-              placeholder="≡ƒöì Search by Order ID..."
+              placeholder="â‰¡Æ’Ã¶Ã¬ Search by Order ID..."
               value={searchId}
               onChange={(e) => setSearchId(e.target.value)}
               className="my-orders-search"
@@ -211,7 +211,7 @@ function OrderDetailsModal({ order, onClose }: { order: Order; onClose: () => vo
       <div className="order-details-modal">
         <div className="modal-header">
           <h2>Order Details</h2>
-          <button onClick={onClose} className="modal-close">Γ£ò</button>
+          <button onClick={onClose} className="modal-close">Î“Â£Ã²</button>
         </div>
 
         <div className="modal-content">
@@ -253,7 +253,7 @@ function OrderDetailsModal({ order, onClose }: { order: Order; onClose: () => vo
               <div key={idx} className="order-item">
                 <div className="item-info">
                   <h4>{item.name}</h4>
-                  <p>Qty: {item.quantity} ├ù ${item.price.toFixed(2)}</p>
+                  <p>Qty: {item.quantity} â”œÃ¹ ${item.price.toFixed(2)}</p>
                 </div>
                 <span className="item-subtotal">${(item.price * item.quantity).toFixed(2)}</span>
               </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import Navbar from "../components/Navbar";
-import { useCart } from "../context/CartContext";
+import Navbar from "../../components/Navbar";
+import { useCart } from "../../context/CartContext";
 import "./Dashboard.css";
 import "./Menu.css";
 

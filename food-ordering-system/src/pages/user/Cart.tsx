@@ -1,6 +1,6 @@
-﻿import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import { useCart } from "../context/CartContext";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../../components/Navbar";
+import { useCart } from "../../context/CartContext";
 import "./Cart.css";
 import type { FoodItem } from "../types";
 

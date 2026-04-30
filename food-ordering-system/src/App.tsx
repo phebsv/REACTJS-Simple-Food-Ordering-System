@@ -1,12 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
-import Menu from "./pages/Menu";
-import CartPage from "./pages/Cart";
-import Checkout from "./pages/Checkout";
-import MyOrders from "./pages/MyOrders";
-import Profile from "./pages/Profile";
+import Dashboard from "./pages/user/Dashboard";
+import Menu from "./pages/user/Menu";
+import CartPage from "./pages/user/Cart";
+import Checkout from "./pages/user/Checkout";
+import MyOrders from "./pages/user/MyOrders";
+import Profile from "./pages/user/Profile";
 import { CartProvider } from "./context/CartContext";
 import { AdminProvider } from "./context/AdminContext";
 
