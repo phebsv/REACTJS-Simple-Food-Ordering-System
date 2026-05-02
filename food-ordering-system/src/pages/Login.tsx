@@ -1,3 +1,6 @@
+// src/pages/Login.tsx
+// Connected to PHP backend via AuthContext
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
@@ -6,69 +9,46 @@ import BgFood from "../components/BgFood";
 import UInput from "../components/UInput";
 import RedBtn from "../components/RedBtn";
 import { MailIcon, LockIcon } from "../components/UInput";
+import { useAuth } from "../context/AuthContext";
+import { loginAdmin } from "../services/api";
 import "./Login.css";
 
 export default function Login() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [remember, setRemember] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+  const [localError, setLocalError] = useState<string>("");
+
+  const { login, loading, error } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-  setError("");
+    setLocalError("");
 
-  if (!email || !password) {
-    return setError("Email and password are required");
-  }
+    if (!email || !password) {
+      return setLocalError("Email and password are required.");
+    }
 
-  setLoading(true);
-
-  try {
-    const userRes = await fetch(
-      `http://localhost:3001/users?email=${encodeURIComponent(
-        email
-      )}&password=${encodeURIComponent(password)}`
-    );
-
-    if (!userRes.ok) throw new Error("Login failed");
-
-    const users = await userRes.json();
-
-    if (users.length > 0) {
-      if (remember) {
-        localStorage.setItem("currentUser", JSON.stringify(users[0]));
-      }
-
+    // 1. Try customer login first
+    const customerSuccess = await login(email, password);
+    if (customerSuccess) {
       navigate("/dashboard");
       return;
     }
 
-    const adminRes = await fetch("http://localhost:3001/admins");
-
-    if (!adminRes.ok) throw new Error("Login failed");
-
-    const admins = await adminRes.json();
-
-    const matchedAdmin = admins.find(
-      (admin: any) =>
-        String(admin.username).trim().toLowerCase() === email.trim().toLowerCase() &&
-        String(admin.password).trim() === password.trim()
-    );
-
-    if (matchedAdmin) {
-      localStorage.setItem("adminUser", JSON.stringify(matchedAdmin));
+    // 2. Fall back to admin login
+    try {
+      const res = await loginAdmin(email, password);
+      const { token, admin } = res.data;
+      localStorage.setItem("adminToken", token);
+      localStorage.setItem("adminUser", JSON.stringify(admin));
       navigate("/admin/dashboard");
-      return;
+    } catch {
+      setLocalError("Invalid email or password.");
     }
-    throw new Error("Invalid email or password");
-  } catch (err) {
-    setError(err instanceof Error ? err.message : "Login failed");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
+
+  const displayError = localError || error;
 
   return (
     <>
@@ -79,28 +59,48 @@ export default function Login() {
           <LeftPanel />
           <div className="login-form">
             <h1 className="login-title">Sign in</h1>
-            <p className="login-subtitle">
-              If you don't have an account register
-            </p>
-            <button onClick={() => navigate("/register")} className="login-register-btn">Register here !</button>
+            <p className="login-subtitle">If you don't have an account register</p>
+            <button onClick={() => navigate("/register")} className="login-register-btn">
+              Register here !
+            </button>
 
             <div className="login-input-group">
-              <UInput label="Email" type="email" placeholder="Enter your email address" value={email} onChange={e => setEmail(e.target.value)} Icon={MailIcon} />
+              <UInput
+                label="Email"
+                type="email"
+                placeholder="Enter your email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                Icon={MailIcon}
+              />
             </div>
-            <UInput label="Password" type="password" placeholder="Enter your Password" value={password} onChange={e => setPassword(e.target.value)} Icon={LockIcon} />
+            <UInput
+              label="Password"
+              type="password"
+              placeholder="Enter your Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              Icon={LockIcon}
+            />
 
             <div className="login-options">
               <label className="login-remember">
-                <input type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)} />
+                <input
+                  type="checkbox"
+                  checked={remember}
+                  onChange={(e) => setRemember(e.target.checked)}
+                />
                 Remember me
               </label>
               <button className="login-forgot">Forgot Password ?</button>
             </div>
 
-            {error && <p className="login-error">{error}</p>}
+            {displayError && <p className="login-error">{displayError}</p>}
 
             <div className="login-btn-container">
-              <RedBtn onClick={handleLogin} disabled={loading}>{loading ? "Logging in..." : "Login"}</RedBtn>
+              <RedBtn onClick={handleLogin} disabled={loading}>
+                {loading ? "Logging in..." : "Login"}
+              </RedBtn>
             </div>
           </div>
         </div>

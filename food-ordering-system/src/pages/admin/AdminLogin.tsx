@@ -1,11 +1,14 @@
-﻿import { useState } from "react";
+﻿// src/pages/admin/AdminLogin.tsx
+// Connected to PHP /auth/admin_login.php via AdminContext
+
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdmin } from "../../context/AdminContext";
 import LoadingSpinner from "../../components/admin/LoadingSpinner";
 import "./AdminLogin.css";
 
 export default function AdminLogin() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login, loading, error, setError } = useAdmin();
   const navigate = useNavigate();
@@ -14,12 +17,12 @@ export default function AdminLogin() {
     e.preventDefault();
     setError(null);
 
-    if (!username.trim() || !password.trim()) {
-      setError("Please enter username and password");
+    if (!email.trim() || !password.trim()) {
+      setError("Please enter email and password.");
       return;
     }
 
-    const success = await login(username, password);
+    const success = await login(email, password);
     if (success) {
       navigate("/admin/dashboard");
     }
@@ -35,13 +38,13 @@ export default function AdminLogin() {
 
         <form onSubmit={handleSubmit} className="admin-login-form">
           <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="email">Email</label>
             <input
-              id="username"
-              type="text"
-              placeholder="Enter your username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              id="email"
+              type="email"
+              placeholder="admin@quickbite.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               disabled={loading}
               required
             />
@@ -66,6 +69,10 @@ export default function AdminLogin() {
             {loading ? <LoadingSpinner /> : "Login"}
           </button>
         </form>
+
+        <p style={{ textAlign: "center", fontSize: "12px", color: "#999", marginTop: "12px" }}>
+          Default: admin@quickbite.com / admin123
+        </p>
       </div>
     </div>
   );

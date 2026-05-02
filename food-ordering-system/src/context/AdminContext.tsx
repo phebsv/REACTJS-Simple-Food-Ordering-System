@@ -1,391 +1,350 @@
-import { createContext, useContext, useMemo, useState, type ReactNode, useCallback } from "react";
-import type { Order, FoodItem, InventoryItem, Review, AdminUser } from "../types";
+// src/context/AdminContext.tsx
+// Manages admin auth state + menu items, orders, inventory, reviews
 
-type AdminContextType = {
+import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  loginAdmin,
+  adminGetMenuItems,
+  adminAddMenuItem,
+  adminUpdateMenuItem,
+  adminDeleteMenuItem,
+  adminGetOrders,
+  adminUpdateOrderStatus,
+} from "../services/api";
+import type {
+  Admin,
+  FoodItem,
+  AdminOrder,
+  AdminOrderItem,
+  InventoryItem,
+  Review,
+  OrderStatus,
+} from "../interfaces";
+
+interface AdminContextType {
   // Auth
-  adminUser: AdminUser | null;
+  admin: Admin | null;
   isAuthenticated: boolean;
-  login: (username: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
-
-  // Orders
-  orders: Order[];
-  fetchOrders: () => Promise<void>;
-  updateOrderStatus: (orderId: string, status: string) => Promise<void>;
-  cancelOrder: (orderId: string) => Promise<void>;
 
   // Menu
   menuItems: FoodItem[];
   fetchMenuItems: () => Promise<void>;
-  addMenuItem: (item: Omit<FoodItem, "id">) => Promise<void>;
-  updateMenuItem: (id: string, item: Partial<FoodItem>) => Promise<void>;
+  addMenuItem: (data: Omit<FoodItem, "id">) => Promise<void>;
+  updateMenuItem: (id: string, data: Partial<FoodItem>) => Promise<void>;
   deleteMenuItem: (id: string) => Promise<void>;
   toggleItemAvailability: (id: string) => Promise<void>;
 
-  // Inventory
+  // Orders
+  orders: AdminOrder[];
+  fetchOrders: () => Promise<void>;
+  updateOrderStatus: (id: string, status: OrderStatus) => Promise<void>;
+  cancelOrder: (id: string) => Promise<void>;
+
+  // Inventory (derived from menu items)
   inventoryItems: InventoryItem[];
   fetchInventory: () => Promise<void>;
   updateStock: (id: string, quantity: number) => Promise<void>;
   updateInventoryStatus: (id: string, status: string) => Promise<void>;
 
-  // Reviews
+  // Reviews (mock — not in PHP backend)
   reviews: Review[];
   fetchReviews: () => Promise<void>;
   hideReview: (id: string) => Promise<void>;
   deleteReview: (id: string) => Promise<void>;
 
-  // Loading and errors
+  // State
   loading: boolean;
   error: string | null;
-  setError: (error: string | null) => void;
-};
+  setError: (msg: string | null) => void;
+}
 
 const AdminContext = createContext<AdminContextType | null>(null);
 
+// ── Helper: map PHP MenuItem → FoodItem ──────────────────────────────────────
+function mapMenuItem(item: any): FoodItem {
+  return {
+    id: String(item.menu_id),
+    name: item.food_name,
+    category: item.category,
+    price: Number(item.price),
+    description: item.description || "",
+    image: item.image_url || "",
+    available: Boolean(item.availability_status),
+    stock: item.stock ?? undefined,
+  };
+}
+
+// ── Helper: map PHP Order → AdminOrder ───────────────────────────────────────
+function mapOrder(order: any, customer?: any, items?: any[]): AdminOrder {
+  return {
+    id: String(order.order_id),
+    customerName: order.customer_name || customer?.name || "Customer",
+    customerEmail: customer?.email || "",
+    customerPhone: customer?.phone || "",
+    customerAddress: customer?.address || "",
+    items: (items || []).map(
+      (i: any): AdminOrderItem => ({
+        id: String(i.order_item_id),
+        name: i.food_name,
+        quantity: Number(i.quantity),
+        price: Number(i.price),
+      })
+    ),
+    subtotal: Number(order.total_amount),
+    total: Number(order.total_amount),
+    status: order.order_status as OrderStatus,
+    createdAt: order.order_date,
+    updatedAt: order.order_date,
+  };
+}
+
+// ── Mock reviews (no reviews table in PHP backend) ────────────────────────────
+const MOCK_REVIEWS: Review[] = [
+  {
+    id: "1",
+    customerName: "Maria Santos",
+    foodItemName: "Chicken Adobo",
+    orderId: "1",
+    rating: 5,
+    comment: "Absolutely delicious! Just like home cooking.",
+    createdAt: new Date().toISOString(),
+    hidden: false,
+  },
+  {
+    id: "2",
+    customerName: "Jose Reyes",
+    foodItemName: "Pork Sinigang",
+    orderId: "2",
+    rating: 4,
+    comment: "Great flavor, the sourness was perfect.",
+    createdAt: new Date().toISOString(),
+    hidden: false,
+  },
+];
+
 export function AdminProvider({ children }: { children: ReactNode }) {
-  const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [admin, setAdmin] = useState<Admin | null>(() => {
+    const saved = localStorage.getItem("adminUser");
+    return saved ? JSON.parse(saved) : null;
+  });
   const [menuItems, setMenuItems] = useState<FoodItem[]>([]);
+  const [orders, setOrders] = useState<AdminOrder[]>([]);
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
-  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviews, setReviews] = useState<Review[]>(MOCK_REVIEWS);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const BASE = "http://localhost:3001";
-
-  // ==================== AUTH ====================
-  const login = useCallback(async (username: string, password: string): Promise<boolean> => {
+  // ── AUTH ────────────────────────────────────────────────────────────────────
+  const login = async (email: string, password: string): Promise<boolean> => {
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-      const r = await fetch(`${BASE}/admins?username=${encodeURIComponent(username)}`);
-      if (!r.ok) throw new Error("Authentication failed");
-      const admins: AdminUser[] = await r.json();
-      const admin = admins.find((a) => a.password === password);
-      if (!admin) {
-        setError("Invalid credentials");
-        return false;
-      }
-      setAdminUser(admin);
-      localStorage.setItem("adminUser", JSON.stringify(admin));
+      const res = await loginAdmin(email, password);
+      const { token, admin: a } = res.data;
+      setAdmin(a);
+      localStorage.setItem("adminToken", token);
+      localStorage.setItem("adminUser", JSON.stringify(a));
       return true;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Invalid admin credentials.");
       return false;
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
-  const logout = useCallback(() => {
-    setAdminUser(null);
+  const logout = () => {
+    setAdmin(null);
+    localStorage.removeItem("adminToken");
     localStorage.removeItem("adminUser");
-  }, []);
+  };
 
-  // ==================== ORDERS ====================
-  const fetchOrders = useCallback(async () => {
+  // ── MENU ────────────────────────────────────────────────────────────────────
+  const fetchMenuItems = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const r = await fetch(`${BASE}/orders`);
-      if (!r.ok) throw new Error("Failed to fetch orders");
-      const data = await r.json();
-      setOrders(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch orders");
+      const data = await adminGetMenuItems();
+      setMenuItems(data.map(mapMenuItem));
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Failed to fetch menu items.");
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
-  const updateOrderStatus = useCallback(async (orderId: string, status: string) => {
+  const addMenuItem = async (data: Omit<FoodItem, "id">) => {
+    await adminAddMenuItem({
+      food_name: data.name,
+      description: data.description,
+      price: data.price,
+      category: data.category,
+      availability_status: data.available,
+    });
+    await fetchMenuItems();
+  };
+
+  const updateMenuItem = async (id: string, data: Partial<FoodItem>) => {
+    await adminUpdateMenuItem(Number(id), {
+      food_name: data.name,
+      description: data.description,
+      price: data.price,
+      category: data.category,
+      availability_status: data.available,
+    });
+    await fetchMenuItems();
+  };
+
+  const deleteMenuItem = async (id: string) => {
+    await adminDeleteMenuItem(Number(id));
+    await fetchMenuItems();
+  };
+
+  const toggleItemAvailability = async (id: string) => {
+    const item = menuItems.find((i) => i.id === id);
+    if (!item) return;
+    await adminUpdateMenuItem(Number(id), {
+      availability_status: !item.available,
+    });
+    await fetchMenuItems();
+  };
+
+  // ── ORDERS ──────────────────────────────────────────────────────────────────
+  const fetchOrders = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const r = await fetch(`${BASE}/orders/${orderId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status, updatedAt: new Date().toISOString() }),
-      });
-      if (!r.ok) throw new Error("Failed to update order");
-      const updated = await r.json();
-      setOrders((prev) => prev.map((o) => (o.id === orderId ? updated : o)));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update order");
-      throw err;
+      const data = await adminGetOrders();
+      setOrders(data.map((o: any) => mapOrder(o)));
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Failed to fetch orders.");
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
-  const cancelOrder = useCallback(async (orderId: string) => {
+  const updateOrderStatus = async (id: string, status: OrderStatus) => {
+    await adminUpdateOrderStatus(Number(id), status);
+    setOrders((prev) =>
+      prev.map((o) => (o.id === id ? { ...o, status } : o))
+    );
+  };
+
+  const cancelOrder = async (id: string) => {
+    // PHP backend doesn't have cancel endpoint — update locally
+    setOrders((prev) =>
+      prev.map((o) => (o.id === id ? { ...o, status: "Cancelled" as any } : o))
+    );
+  };
+
+  // ── INVENTORY (derived from menu items) ─────────────────────────────────────
+  const fetchInventory = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const r = await fetch(`${BASE}/orders/${orderId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "Cancelled", updatedAt: new Date().toISOString() }),
-      });
-      if (!r.ok) throw new Error("Failed to cancel order");
-      const updated = await r.json();
-      setOrders((prev) => prev.map((o) => (o.id === orderId ? updated : o)));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to cancel order");
-      throw err;
+      const data = await adminGetMenuItems();
+      const mapped: InventoryItem[] = data.map((item: any) => ({
+        id: String(item.menu_id),
+        name: item.food_name,
+        category: item.category,
+        stock: item.stock ?? 100,
+        status: item.availability_status ? "Available" : "Unavailable",
+        lastUpdated: new Date().toISOString(),
+      }));
+      setInventoryItems(mapped);
+    } catch (err: any) {
+      setError("Failed to fetch inventory.");
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
-  // ==================== MENU ====================
-  const fetchMenuItems = useCallback(async () => {
-    try {
-      setLoading(true);
-      const r = await fetch(`${BASE}/menu`);
-      if (!r.ok) throw new Error("Failed to fetch menu");
-      const data = await r.json();
-      setMenuItems(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch menu");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const updateStock = async (id: string, quantity: number) => {
+    setInventoryItems((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              stock: quantity,
+              status:
+                quantity === 0
+                  ? "Out of Stock"
+                  : quantity < 10
+                  ? "Low Stock"
+                  : "Available",
+              lastUpdated: new Date().toISOString(),
+            }
+          : item
+      )
+    );
+  };
 
-  const addMenuItem = useCallback(async (item: Omit<FoodItem, "id">) => {
-    try {
-      setLoading(true);
-      const r = await fetch(`${BASE}/menu`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...item, id: Date.now().toString() }),
-      });
-      if (!r.ok) throw new Error("Failed to add menu item");
-      const newItem = await r.json();
-      setMenuItems((prev) => [...prev, newItem]);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to add menu item");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const updateInventoryStatus = async (id: string, status: string) => {
+    setInventoryItems((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? { ...item, status: status as InventoryItem["status"], lastUpdated: new Date().toISOString() }
+          : item
+      )
+    );
+    // Sync availability_status back to PHP
+    await adminUpdateMenuItem(Number(id), {
+      availability_status: status === "Available",
+    });
+  };
 
-  const updateMenuItem = useCallback(async (id: string, item: Partial<FoodItem>) => {
-    try {
-      setLoading(true);
-      const r = await fetch(`${BASE}/menu/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(item),
-      });
-      if (!r.ok) throw new Error("Failed to update menu item");
-      const updated = await r.json();
-      setMenuItems((prev) => prev.map((m) => (m.id === id ? updated : m)));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update menu item");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // ── REVIEWS (mock only) ─────────────────────────────────────────────────────
+  const fetchReviews = async () => {
+    // No reviews endpoint in PHP — use mock data
+    setReviews(MOCK_REVIEWS);
+  };
 
-  const deleteMenuItem = useCallback(async (id: string) => {
-    try {
-      setLoading(true);
-      const r = await fetch(`${BASE}/menu/${id}`, { method: "DELETE" });
-      if (!r.ok) throw new Error("Failed to delete menu item");
-      setMenuItems((prev) => prev.filter((m) => m.id !== id));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete menu item");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const hideReview = async (id: string) => {
+    setReviews((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, hidden: true } : r))
+    );
+  };
 
-  const toggleItemAvailability = useCallback(async (id: string) => {
-    try {
-      setLoading(true);
-      const item = menuItems.find((m) => m.id === id);
-      if (!item) throw new Error("Item not found");
-      const r = await fetch(`${BASE}/menu/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ available: !item.available }),
-      });
-      if (!r.ok) throw new Error("Failed to toggle availability");
-      const updated = await r.json();
-      setMenuItems((prev) => prev.map((m) => (m.id === id ? updated : m)));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to toggle availability");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [menuItems]);
+  const deleteReview = async (id: string) => {
+    setReviews((prev) => prev.filter((r) => r.id !== id));
+  };
 
-  // ==================== INVENTORY ====================
-  const fetchInventory = useCallback(async () => {
-    try {
-      setLoading(true);
-      const r = await fetch(`${BASE}/inventory`);
-      if (!r.ok) throw new Error("Failed to fetch inventory");
-      const data = await r.json();
-      setInventoryItems(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch inventory");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const updateStock = useCallback(async (id: string, quantity: number) => {
-    try {
-      setLoading(true);
-      const status = quantity === 0 ? "Out of Stock" : quantity < 10 ? "Low Stock" : "Available";
-      const r = await fetch(`${BASE}/inventory/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ stock: quantity, status, lastUpdated: new Date().toISOString() }),
-      });
-      if (!r.ok) throw new Error("Failed to update stock");
-      const updated = await r.json();
-      setInventoryItems((prev) => prev.map((i) => (i.id === id ? updated : i)));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update stock");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const updateInventoryStatus = useCallback(async (id: string, status: string) => {
-    try {
-      setLoading(true);
-      const r = await fetch(`${BASE}/inventory/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status, lastUpdated: new Date().toISOString() }),
-      });
-      if (!r.ok) throw new Error("Failed to update inventory status");
-      const updated = await r.json();
-      setInventoryItems((prev) => prev.map((i) => (i.id === id ? updated : i)));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update inventory status");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  // ==================== REVIEWS ====================
-  const fetchReviews = useCallback(async () => {
-    try {
-      setLoading(true);
-      const r = await fetch(`${BASE}/reviews`);
-      if (!r.ok) throw new Error("Failed to fetch reviews");
-      const data = await r.json();
-      setReviews(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch reviews");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const hideReview = useCallback(async (id: string) => {
-    try {
-      setLoading(true);
-      const r = await fetch(`${BASE}/reviews/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ hidden: true }),
-      });
-      if (!r.ok) throw new Error("Failed to hide review");
-      const updated = await r.json();
-      setReviews((prev) => prev.map((rv) => (rv.id === id ? updated : rv)));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to hide review");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const deleteReview = useCallback(async (id: string) => {
-    try {
-      setLoading(true);
-      const r = await fetch(`${BASE}/reviews/${id}`, { method: "DELETE" });
-      if (!r.ok) throw new Error("Failed to delete review");
-      setReviews((prev) => prev.filter((rv) => rv.id !== id));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete review");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const value = useMemo(
-    () => ({
-      adminUser,
-      isAuthenticated: !!adminUser,
-      login,
-      logout,
-      orders,
-      fetchOrders,
-      updateOrderStatus,
-      cancelOrder,
-      menuItems,
-      fetchMenuItems,
-      addMenuItem,
-      updateMenuItem,
-      deleteMenuItem,
-      toggleItemAvailability,
-      inventoryItems,
-      fetchInventory,
-      updateStock,
-      updateInventoryStatus,
-      reviews,
-      fetchReviews,
-      hideReview,
-      deleteReview,
-      loading,
-      error,
-      setError,
-    }),
-    [
-      adminUser,
-      login,
-      logout,
-      orders,
-      fetchOrders,
-      updateOrderStatus,
-      cancelOrder,
-      menuItems,
-      fetchMenuItems,
-      addMenuItem,
-      updateMenuItem,
-      deleteMenuItem,
-      toggleItemAvailability,
-      inventoryItems,
-      fetchInventory,
-      updateStock,
-      updateInventoryStatus,
-      reviews,
-      fetchReviews,
-      hideReview,
-      deleteReview,
-      loading,
-      error,
-    ]
+  return (
+    <AdminContext.Provider
+      value={{
+        admin,
+        isAuthenticated: !!admin,
+        login,
+        logout,
+        menuItems,
+        fetchMenuItems,
+        addMenuItem,
+        updateMenuItem,
+        deleteMenuItem,
+        toggleItemAvailability,
+        orders,
+        fetchOrders,
+        updateOrderStatus,
+        cancelOrder,
+        inventoryItems,
+        fetchInventory,
+        updateStock,
+        updateInventoryStatus,
+        reviews,
+        fetchReviews,
+        hideReview,
+        deleteReview,
+        loading,
+        error,
+        setError,
+      }}
+    >
+      {children}
+    </AdminContext.Provider>
   );
-
-  return <AdminContext.Provider value={value}>{children}</AdminContext.Provider>;
 }
 
 export function useAdmin() {
-  const context = useContext(AdminContext);
-  if (!context) {
-    throw new Error("useAdmin must be used within AdminProvider");
-  }
-  return context;
+  const ctx = useContext(AdminContext);
+  if (!ctx) throw new Error("useAdmin must be used within AdminProvider");
+  return ctx;
 }

@@ -1,50 +1,76 @@
+// src/App.tsx
+// Root app — wraps everything in AuthProvider + AdminProvider
+// Drop-in replacement for your existing App.tsx
+
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/user/Dashboard";
-import Menu from "./pages/user/Menu";
-import CartPage from "./pages/user/Cart";
-import Checkout from "./pages/user/Checkout";
-import MyOrders from "./pages/user/MyOrders";
-import Profile from "./pages/user/Profile";
-import { CartProvider } from "./context/CartContext";
+import { AuthProvider } from "./context/AuthContext";
 import { AdminProvider } from "./context/AdminContext";
 
+// Customer pages
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+
+// Admin pages (keep your existing ones — they now use the connected AdminContext)
+import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminOrders from "./pages/admin/AdminOrders";
 import AdminMenu from "./pages/admin/AdminMenu";
+import AdminOrders from "./pages/admin/AdminOrders";
 import AdminInventory from "./pages/admin/AdminInventory";
 import AdminReviews from "./pages/admin/AdminReviews";
 
+// Protected route helpers
+import { useAuth } from "./context/AuthContext";
+import { useAdmin } from "./context/AdminContext";
+import { ReactNode } from "react";
+
+function CustomerRoute({ children }: { children: ReactNode }) {
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+}
+
+function AdminRoute({ children }: { children: ReactNode }) {
+  const { isAuthenticated } = useAdmin();
+  return isAuthenticated ? <>{children}</> : <Navigate to="/admin/login" replace />;
+}
+
+function AppRoutes() {
+  return (
+    <Routes>
+      {/* Public */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/admin/login" element={<AdminLogin />} />
+
+      {/* Customer protected */}
+      <Route
+        path="/dashboard"
+        element={
+          <CustomerRoute>
+            {/* Replace with your actual Dashboard page */}
+            <div style={{ padding: 40 }}>Customer Dashboard — replace with your page</div>
+          </CustomerRoute>
+        }
+      />
+
+      {/* Admin protected */}
+      <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/menu" element={<AdminRoute><AdminMenu /></AdminRoute>} />
+      <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
+      <Route path="/admin/inventory" element={<AdminRoute><AdminInventory /></AdminRoute>} />
+      <Route path="/admin/reviews" element={<AdminRoute><AdminReviews /></AdminRoute>} />
+    </Routes>
+  );
+}
+
 export default function App() {
   return (
-    <CartProvider>
-      <AdminProvider>
-        <BrowserRouter>
-          <Routes>
-            {/* CUSTOMER ROUTES */}
-            <Route path="/" element={<Navigate to="/login" />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/menu" element={<Menu />} />
-            <Route path="/cart" element={<CartPage />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/my-orders" element={<MyOrders />} />
-            <Route path="/profile" element={<Profile />} />
-
-            {/* ADMIN ROUTES - temporary unprotected for UI testing */}
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/orders" element={<AdminOrders />} />
-            <Route path="/admin/menu" element={<AdminMenu />} />
-            <Route path="/admin/inventory" element={<AdminInventory />} />
-            <Route path="/admin/reviews" element={<AdminReviews />} />
-
-            {/* Redirect unknown routes */}
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-        </BrowserRouter>
-      </AdminProvider>
-    </CartProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <AdminProvider>
+          <AppRoutes />
+        </AdminProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }

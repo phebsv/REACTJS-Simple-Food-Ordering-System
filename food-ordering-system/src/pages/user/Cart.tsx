@@ -8,45 +8,17 @@ interface CartItem extends FoodItem {
   quantity: number;
 }
 
-function groupItems(items: FoodItem[]): CartItem[] {
-  return items.reduce((acc, item) => {
-    const existing = acc.find((entry) => entry.id === item.id);
-    if (existing) {
-      existing.quantity += 1;
-    } else {
-      acc.push({ ...item, quantity: 1 });
-    }
-    return acc;
-  }, [] as CartItem[]);
-}
-
 export default function Cart() {
-  const { items, removeItem } = useCart();
+  const { items, removeItem, updateQuantity } = useCart();
   const navigate = useNavigate();
-  const grouped = groupItems(items);
-  const total = grouped.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleQuantityChange = (itemId: string, newQuantity: number) => {
     if (newQuantity <= 0) {
       removeItem(itemId);
-    } else {
-      const currentItem = grouped.find(item => item.id === itemId);
-      if (currentItem) {
-        const currentQty = currentItem.quantity;
-        if (newQuantity > currentQty) {
-          // Add items
-          for (let i = currentQty; i < newQuantity; i++) {
-            items.push(currentItem);
-          }
-        } else if (newQuantity < currentQty) {
-          // Remove items
-          const toRemove = currentQty - newQuantity;
-          for (let i = 0; i < toRemove; i++) {
-            removeItem(itemId);
-          }
-        }
-      }
+      return;
     }
+    updateQuantity(itemId, newQuantity);
   };
 
   return (
@@ -59,12 +31,12 @@ export default function Cart() {
           <div className="cart-layout">
             {/* Cart Items */}
             <div className="cart-items-section">
-              {grouped.length === 0 ? (
+              {items.length === 0 ? (
                 <div className="cart-empty-state">
                   <div className="cart-empty-icon">≡ƒ¢Æ</div>
                   <h2>Your cart is empty</h2>
                   <p>Add some delicious food items to get started!</p>
-                  <button 
+                  <button
                     onClick={() => navigate("/menu")}
                     className="cart-start-btn"
                   >
@@ -73,14 +45,14 @@ export default function Cart() {
                 </div>
               ) : (
                 <div className="cart-items-list">
-                  {grouped.map((item) => (
+                  {items.map((item) => (
                     <div key={item.id} className="cart-item-card">
                       {item.image && (
                         <div className="cart-item-image">
                           <img src={item.image} alt={item.name} />
                         </div>
                       )}
-                      
+
                       <div className="cart-item-details">
                         <h3 className="cart-item-name">{item.name}</h3>
                         <p className="cart-item-description">{item.description}</p>
@@ -89,14 +61,14 @@ export default function Cart() {
 
                       <div className="cart-item-controls">
                         <div className="quantity-selector">
-                          <button 
+                          <button
                             onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
                             className="qty-btn"
                           >
-                            ΓêÆ
+                            −
                           </button>
                           <span className="qty-display">{item.quantity}</span>
-                          <button 
+                          <button
                             onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
                             className="qty-btn"
                           >
@@ -108,7 +80,7 @@ export default function Cart() {
                           ${(item.price * item.quantity).toFixed(2)}
                         </div>
 
-                        <button 
+                        <button
                           onClick={() => removeItem(item.id)}
                           className="cart-remove-btn"
                         >
@@ -122,13 +94,13 @@ export default function Cart() {
             </div>
 
             {/* Order Summary */}
-            {grouped.length > 0 && (
+            {items.length > 0 && (
               <div className="cart-summary-section">
                 <div className="cart-summary-card">
                   <h2>Order Summary</h2>
 
                   <div className="summary-items">
-                    {grouped.map((item) => (
+                    {items.map((item) => (
                       <div key={item.id} className="summary-row">
                         <span>{item.name} x {item.quantity}</span>
                         <span>${(item.price * item.quantity).toFixed(2)}</span>
@@ -143,14 +115,14 @@ export default function Cart() {
                     <span className="total-amount">${total.toFixed(2)}</span>
                   </div>
 
-                  <button 
+                  <button
                     onClick={() => navigate("/checkout")}
                     className="checkout-btn"
                   >
                     Proceed to Checkout
                   </button>
 
-                  <button 
+                  <button
                     onClick={() => navigate("/menu")}
                     className="continue-shopping-btn"
                   >
