@@ -1,0 +1,82 @@
+// routes/auth.js
+// POST /auth/register   — Register new customer
+// POST /auth/login      — Customer login
+// POST /auth/admin-login — Admin login
+
+const express = require("express");
+const router = express.Router();
+const { getCollection, setCollection } = require("../db");
+const { generateToken } = require("../middleware/auth");
+
+// ── REGISTER ──────────────────────────────────────────────────────────────────
+router.post("/register", (req, res) => {
+  const { name, email, phone = "", password, address = "" } = req.body;
+
+  if (!name || !email || !password)
+    return res.status(400).json({ message: "Name, email, and password are required." });
+
+  const users = getCollection("users");
+  if (users.find((u) => u.email === email))
+    return res.status(400).json({ message: "Email already registered." });
+
+  const newUser = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2),
+    name,
+    email,
+    phone,
+    password, // plain text — matches your original db.json format
+    address,
+    role: "customer",
+  };
+
+  users.push(newUser);
+  setCollection("users", users);
+
+  const { password: _, ...safeUser } = newUser;
+  const token = generateToken(newUser.id, "customer");
+
+  return res.status(201).json({ message: "Account created successfully.", data: { token, user: safeUser } });
+});
+
+// ── CUSTOMER LOGIN ────────────────────────────────────────────────────────────
+router.post("/login", (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password)
+    return res.status(400).json({ message: "Email and password are required." });
+
+  const users = getCollection("users");
+  const user = users.find((u) => u.email === email && u.password === password);
+
+  if (!user)
+    return res.status(401).json({ message: "Invalid email or password." });
+
+  const token = generateToken(user.id, "customer");
+  const { password: _, ...safeUser } = user;
+
+  return res.json({ message: "Login successful.", data: { token, user: safeUser } });
+});
+
+// ── ADMIN LOGIN ───────────────────────────────────────────────────────────────
+router.post("/admin-login", (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password)
+    return res.status(400).json({ message: "Username and password are required." });
+
+  const admins = getCollection("admins");
+  const admin = admins.find(
+    (a) => String(a.username).toLowerCase() === String(username).toLowerCase()
+      && String(a.password) === String(password)
+  );
+
+  if (!admin)
+    return res.status(401).json({ message: "Invalid admin credentials." });
+
+  const token = generateToken(admin.id, "admin");
+  const { password: _, ...safeAdmin } = admin;
+
+  return res.json({ message: "Admin login successful.", data: { token, admin: safeAdmin } });
+});
+
+module.exports = router;
