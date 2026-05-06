@@ -1,84 +1,60 @@
-type ApiError = {
-  message?: string;
-};
+import axios from "axios";
 
+// ─────────────────────────────────────────────
+// BASE CONFIG
+// ─────────────────────────────────────────────
+const API = axios.create({
+  baseURL: "http://localhost:3001",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+// Optional: attach token automatically
+API.interceptors.request.use((config) => {
+  const token =
+    localStorage.getItem("adminToken") ||
+    localStorage.getItem("customerToken");
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
+
+// ─────────────────────────────────────────────
+// TYPES
+// ─────────────────────────────────────────────
 export type AuthUser = {
   id: string;
   name?: string;
-  firstName?: string;
-  lastName?: string;
-  email: string;
-  phone?: string;
-  address?: string;
-  agreeToTerms?: boolean;
-  createdAt?: string;
-  role?: "admin" | "user";
-  isAdmin?: boolean;
+  email?: string;
+  role?: "admin" | "customer";
 };
 
 export type AuthResponse = {
   message: string;
-  user: AuthUser;
   token: string;
+  user?: AuthUser;
+  admin?: AuthUser;
 };
 
-const JSON_SERVER_BASE = "http://localhost:3001";
-
-async function handleResponse<T>(response: Response): Promise<T> {
-  if (response.ok) {
-    return response.json() as Promise<T>;
-  }
-
-  let errorMessage = "Request failed";
-  try {
-    const data = (await response.json()) as ApiError;
-    if (data?.message) {
-      errorMessage = data.message;
-    }
-  } catch {
-    // Ignore json parse errors
-  }
-
-  throw new Error(errorMessage);
-}
-
-export async function registerUser(payload: {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-  password: string;
-  agreeToTerms: boolean;
-}): Promise<AuthResponse> {
-  const response = await fetch("/api/auth/register", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-
-  return handleResponse<AuthResponse>(response);
-}
-
-export async function loginUser(payload: {
-  email: string;
-  password: string;
-}): Promise<AuthResponse> {
-  const response = await fetch("/api/auth/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-
-  return handleResponse<AuthResponse>(response);
-}
-
+// ─────────────────────────────────────────────
+// AUTH (CUSTOMER)
+// ─────────────────────────────────────────────
 export async function loginCustomer(email: string, password: string) {
-  const data = await loginUser({ email, password });
-  return { data };
+  const res = await API.post("/auth/login", {
+    email,
+    password,
+  });
+
+  return {
+    data: {
+      token: res.data.data.token,
+      customer: res.data.data.user,
+    },
+  };
 }
 
 export async function registerCustomer(data: {
@@ -88,107 +64,104 @@ export async function registerCustomer(data: {
   phone?: string;
   address?: string;
 }) {
-  const [firstName, ...rest] = String(data.name || "")
-    .trim()
-    .split(" ");
-  const lastName = rest.join(" ");
-  const payload = {
-    firstName: firstName || "Customer",
-    lastName: lastName || "User",
+  const res = await API.post("/auth/register", {
+    name: data.name,
     email: data.email,
-    phoneNumber: data.phone || "",
     password: data.password,
-    agreeToTerms: true,
-  };
+    phone: data.phone || "",
+    address: data.address || "",
+  });
 
-  const res = await registerUser(payload);
-  return { data: res };
-}
-
-export async function loginAdmin(email: string, password: string) {
-  const candidates = await fetch(
-    `${JSON_SERVER_BASE}/users?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
-  ).then((res) => res.json());
-
-  if (!Array.isArray(candidates) || candidates.length === 0) {
-    const fallback = await fetch(
-      `${JSON_SERVER_BASE}/users?username=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
-    ).then((res) => res.json());
-
-    if (!Array.isArray(fallback) || fallback.length === 0) {
-      throw new Error("Invalid admin credentials.");
-    }
-
-    const user = fallback[0];
-    return {
-      data: {
-        token: String(user.id || "admin-token"),
-        admin: {
-          admin_id: Number(user.id || 1),
-          name: user.username || user.name || "Admin",
-          email: user.email || "",
-        },
-      },
-    };
-  }
-
-  const user = candidates[0];
   return {
     data: {
-      token: String(user.id || "admin-token"),
-      admin: {
-        admin_id: Number(user.id || 1),
-        name: user.username || user.name || "Admin",
-        email: user.email || "",
-      },
+      token: res.data.data.token,
+      customer: res.data.data.user,
     },
   };
 }
 
+// ─────────────────────────────────────────────
+// AUTH (ADMIN) ✅ FIXED
+// ─────────────────────────────────────────────
+export async function loginAdmin(email: string, password: string) {
+  const res = await API.post("/auth/admin-login", {
+    username: email, // 🔥 IMPORTANT FIX
+    password,
+  });
+
+  return {
+    data: {
+      token: res.data.data.token,
+      admin: res.data.data.admin,
+    },
+  };
+}
+
+// ─────────────────────────────────────────────
+// MENU (ADMIN)
+// ─────────────────────────────────────────────
 export async function adminGetMenuItems() {
-  const response = await fetch(`${JSON_SERVER_BASE}/menu`);
-  return handleResponse<any[]>(response);
+  const res = await API.get("/menu");
+  return res.data;
 }
 
 export async function adminAddMenuItem(data: any) {
-  const response = await fetch(`${JSON_SERVER_BASE}/menu`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-
-  return handleResponse<any>(response);
+  const res = await API.post("/menu", data);
+  return res.data;
 }
 
 export async function adminUpdateMenuItem(id: number, data: any) {
-  const response = await fetch(`${JSON_SERVER_BASE}/menu/${id}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-
-  return handleResponse<any>(response);
+  const res = await API.patch(`/menu/${id}`, data);
+  return res.data;
 }
 
 export async function adminDeleteMenuItem(id: number) {
-  const response = await fetch(`${JSON_SERVER_BASE}/menu/${id}`, {
-    method: "DELETE",
-  });
-
-  return handleResponse<any>(response);
+  const res = await API.delete(`/menu/${id}`);
+  return res.data;
 }
 
+// ─────────────────────────────────────────────
+// ORDERS (ADMIN)
+// ─────────────────────────────────────────────
 export async function adminGetOrders() {
-  const response = await fetch(`${JSON_SERVER_BASE}/orders`);
-  return handleResponse<any[]>(response);
+  const res = await API.get("/orders");
+  return res.data;
 }
 
 export async function adminUpdateOrderStatus(id: number, status: string) {
-  const response = await fetch(`${JSON_SERVER_BASE}/orders/${id}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ status }),
+  const res = await API.patch(`/orders/${id}`, {
+    status,
   });
+  return res.data;
+}
 
-  return handleResponse<any>(response);
+// ─────────────────────────────────────────────
+// INVENTORY
+// ─────────────────────────────────────────────
+export async function getInventory() {
+  const res = await API.get("/inventory");
+  return res.data;
+}
+
+export async function updateInventory(id: string, data: any) {
+  const res = await API.patch(`/inventory/${id}`, data);
+  return res.data;
+}
+
+// ─────────────────────────────────────────────
+// REVIEWS
+// ─────────────────────────────────────────────
+export async function getReviews() {
+  const res = await API.get("/reviews");
+  return res.data;
+}
+
+export async function addReview(data: any) {
+  const res = await API.post("/reviews", data);
+  return res.data;
+}
+
+export async function deleteReview(id: string) {
+  const res = await API.delete(`/reviews/${id}`);
+  return res.data;
 }
