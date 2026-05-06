@@ -10,7 +10,7 @@ import UInput from "../components/UInput";
 import RedBtn from "../components/RedBtn";
 import { MailIcon, LockIcon } from "../components/UInput";
 import { useAuth } from "../context/AuthContext";
-import { loginAdmin } from "../services/api";
+import type { AuthUser } from "../services/api.ts";
 import "./Login.css";
 
 export default function Login() {
@@ -29,23 +29,20 @@ export default function Login() {
       return setLocalError("Email and password are required.");
     }
 
-    // 1. Try customer login first
     const customerSuccess = await login(email, password);
-    if (customerSuccess) {
-      navigate("/dashboard");
+    if (!customerSuccess) {
       return;
     }
 
-    // 2. Fall back to admin login
-    try {
-      const res = await loginAdmin(email, password);
-      const { token, admin } = res.data;
-      localStorage.setItem("adminToken", token);
-      localStorage.setItem("adminUser", JSON.stringify(admin));
+    const rawUser = localStorage.getItem("currentUser");
+    const user = rawUser ? (JSON.parse(rawUser) as AuthUser) : null;
+
+    if (user?.role === "admin" || user?.isAdmin) {
       navigate("/admin/dashboard");
-    } catch {
-      setLocalError("Invalid email or password.");
+      return;
     }
+
+    navigate("/dashboard");
   };
 
   const displayError = localError || error;
@@ -59,8 +56,13 @@ export default function Login() {
           <LeftPanel />
           <div className="login-form">
             <h1 className="login-title">Sign in</h1>
-            <p className="login-subtitle">If you don't have an account register</p>
-            <button onClick={() => navigate("/register")} className="login-register-btn">
+            <p className="login-subtitle">
+              If you don't have an account register
+            </p>
+            <button
+              onClick={() => navigate("/register")}
+              className="login-register-btn"
+            >
               Register here !
             </button>
 

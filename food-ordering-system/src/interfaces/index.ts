@@ -71,19 +71,19 @@ export interface AdminProfile {
 
 // Mapped from PHP MenuItem to match AdminMenu.tsx's FoodItem interface
 export interface FoodItem {
-  id: string;           // menu_id as string
-  name: string;         // food_name
+  id: string; // menu_id as string
+  name: string; // food_name
   category: string;
   price: number;
   description: string;
   image?: string;
-  available: boolean;   // availability_status
+  available: boolean; // availability_status
   stock?: number;
 }
 
 // Mapped from PHP Order to match AdminOrders.tsx's Order interface
 export interface AdminOrder {
-  id: string;           // order_id as string
+  id: string; // order_id as string
   customerName: string;
   customerEmail: string;
   customerPhone: string;
@@ -92,7 +92,7 @@ export interface AdminOrder {
   subtotal: number;
   total: number;
   status: OrderStatus | "Cancelled";
-  createdAt: string;    // order_date
+  createdAt: string; // order_date
   updatedAt: string;
   paymentMethod?: string;
   deliveryNotes?: string;
@@ -126,3 +126,34 @@ export interface Review {
   createdAt: string;
   hidden: boolean;
 }
+
+export type OrderStat = {
+  label: string;
+  value: number;
+  icon: string;
+};
+
+export type DashboardOrder = {
+  orderId: string;
+  date: string;
+  customerName: string;
+  address: string;
+  quantity: number;
+  amount: number;
+  status: string;
+};
+
+export type OrdersTableProps = {
+  orders: DashboardOrder[];
+  activeStatus: string;
+  onStatusChange: (status: string) => void;
+};
+
+export type OrderSummaryCardsProps = {
+  orderStats: OrderStat[];
+};
+
+export type DashboardData = {
+  adminProfile: AdminProfile;
+  orders: DashboardOrder[];
+};

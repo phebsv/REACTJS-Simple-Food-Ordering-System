@@ -1,23 +1,25 @@
 // src/context/AuthContext.tsx
 // Manages customer auth state — token + user stored in localStorage
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { loginCustomer, registerCustomer } from "../services/api";
-import type { Customer } from "../interfaces";
+import { createContext, useContext, useState, useEffect } from "react";
+import type { ReactNode } from "react";
+import { loginUser, registerUser } from "../services/api.ts";
+import type { AuthUser } from "../services/api.ts";
 
 interface AuthContextType {
-  customer: Customer | null;
+  customer: AuthUser | null;
   token: string | null;
   isAuthenticated: boolean;
   loading: boolean;
   error: string;
   login: (email: string, password: string) => Promise<boolean>;
   register: (data: {
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     password: string;
-    phone?: string;
-    address?: string;
+    phoneNumber: string;
+    agreeToTerms: boolean;
   }) => Promise<boolean>;
   logout: () => void;
   setError: (msg: string) => void;
@@ -26,7 +28,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [customer, setCustomer] = useState<Customer | null>(null);
+  const [customer, setCustomer] = useState<AuthUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -45,13 +47,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     setError("");
     try {
-      const res = await loginCustomer(email, password);
-      const { token: t, customer: c } = res.data;
+      const res = await loginUser({ email, password });
+      const { token: t, user } = res;
 
       setToken(t);
-      setCustomer(c);
+      setCustomer(user);
       localStorage.setItem("customerToken", t);
-      localStorage.setItem("currentUser", JSON.stringify(c));
+      localStorage.setItem("currentUser", JSON.stringify(user));
+      if (user.role === "admin" || user.isAdmin) {
+        localStorage.setItem("adminToken", t);
+        localStorage.setItem("adminUser", JSON.stringify(user));
+      } else {
+        localStorage.removeItem("adminToken");
+        localStorage.removeItem("adminUser");
+      }
       return true;
     } catch (err: any) {
       const msg = err.response?.data?.message || "Invalid email or password.";
@@ -63,20 +72,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const register = async (data: {
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     password: string;
-    phone?: string;
-    address?: string;
+    phoneNumber: string;
+    agreeToTerms: boolean;
   }): Promise<boolean> => {
     setLoading(true);
     setError("");
     try {
-      await registerCustomer(data);
+      await registerUser(data);
       return true;
-    } catch (err: any) {
-      const msg = err.response?.data?.message || "Registration failed.";
-      setError(msg);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Registration failed.");
       return false;
     } finally {
       setLoading(false);

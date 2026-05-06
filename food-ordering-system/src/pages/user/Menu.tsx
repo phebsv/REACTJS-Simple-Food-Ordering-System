@@ -4,7 +4,7 @@ import { useCart } from "../../context/CartContext";
 import "./Dashboard.css";
 import "./Menu.css";
 
-import type { FoodItem } from "../types";
+import type { FoodItem } from "../../types";
 
 type MenuItemProps = {
   items: FoodItem[];
@@ -15,7 +15,14 @@ type MenuItemProps = {
   selectedItemId: string | null;
 };
 
-function MenuList({ items, categories, selectedCategories, onCategoryToggle, onAddToCart, selectedItemId }: MenuItemProps) {
+function MenuList({
+  items,
+  categories,
+  selectedCategories,
+  onCategoryToggle,
+  onAddToCart,
+  selectedItemId,
+}: MenuItemProps) {
   return (
     <section className="menu-section">
       <div className="menu-header">
@@ -44,7 +51,10 @@ function MenuList({ items, categories, selectedCategories, onCategoryToggle, onA
 
       <div className="menu-grid">
         {items.map((item) => (
-          <div key={item.id} className={`menu-card ${selectedItemId === item.id ? "menu-card-active" : ""}`}>
+          <div
+            key={item.id}
+            className={`menu-card ${selectedItemId === item.id ? "menu-card-active" : ""}`}
+          >
             <div className="menu-card-title">
               <h4>{item.name}</h4>
               <span>${item.price.toFixed(2)}</span>
@@ -52,8 +62,8 @@ function MenuList({ items, categories, selectedCategories, onCategoryToggle, onA
             <p>{item.description}</p>
             <div className="menu-card-footer">
               <span>{item.category}</span>
-              <button 
-                className="menu-add-btn" 
+              <button
+                className="menu-add-btn"
                 onClick={() => onAddToCart(item)}
                 disabled={item.available === false}
                 title={item.available === false ? "Item unavailable" : ""}
@@ -84,13 +94,17 @@ export default function Menu() {
         const res = await fetch("http://localhost:3001/menu");
         if (!res.ok) throw new Error("Failed to fetch menu");
         const data = await res.json();
-        
+
         // Filter out unavailable items
-        const availableItems = data.filter((item: FoodItem) => item.available !== false);
+        const availableItems = data.filter(
+          (item: FoodItem) => item.available !== false,
+        );
         setAllMenuItems(availableItems);
-        
+
         // Extract unique categories and set as selected by default
-        const uniqueCategories = [...new Set(availableItems.map((item: FoodItem) => item.category))] as string[];
+        const uniqueCategories = [
+          ...new Set(availableItems.map((item: FoodItem) => item.category)),
+        ] as string[];
         setSelectedCategories(uniqueCategories);
         setError(null);
       } catch (err) {
@@ -107,7 +121,9 @@ export default function Menu() {
 
   const handleCategoryToggle = (category: string) => {
     setSelectedCategories((prev) =>
-      prev.includes(category) ? prev.filter((item) => item !== category) : [...prev, category]
+      prev.includes(category)
+        ? prev.filter((item) => item !== category)
+        : [...prev, category],
     );
   };
 
@@ -117,10 +133,14 @@ export default function Menu() {
   };
 
   const visibleMenuItems = allMenuItems.filter(
-    (item) => selectedCategories.length === 0 || selectedCategories.includes(item.category)
+    (item) =>
+      selectedCategories.length === 0 ||
+      selectedCategories.includes(item.category),
   );
 
-  const uniqueCategories = [...new Set(allMenuItems.map((item) => item.category))];
+  const uniqueCategories = [
+    ...new Set(allMenuItems.map((item) => item.category)),
+  ];
 
   return (
     <>
@@ -130,12 +150,15 @@ export default function Menu() {
           <div className="menu-page-top">
             <div className="menu-page-hot">fresh flavors</div>
             <div className="menu-page-meal">choose your meal</div>
-            <div className="menu-page-tagline">add to cart and check your order</div>
+            <div className="menu-page-tagline">
+              add to cart and check your order
+            </div>
           </div>
           <div className="menu-page-welcome-panel">
             <h1 className="menu-page-welcome">Food Menu</h1>
             <p className="menu-page-summary">
-              Browse the food categories and tap Add to Cart on each item to build your order.
+              Browse the food categories and tap Add to Cart on each item to
+              build your order.
             </p>
           </div>
         </div>
@@ -143,15 +166,25 @@ export default function Menu() {
         <div className="menu-page-grid">
           <div className="menu-main">
             {loading ? (
-              <div style={{ textAlign: "center", padding: "40px", color: "#666" }}>
+              <div
+                style={{ textAlign: "center", padding: "40px", color: "#666" }}
+              >
                 <p>Loading menu...</p>
               </div>
             ) : error ? (
-              <div style={{ textAlign: "center", padding: "40px", color: "#d32f2f" }}>
+              <div
+                style={{
+                  textAlign: "center",
+                  padding: "40px",
+                  color: "#d32f2f",
+                }}
+              >
                 <p>Error: {error}</p>
               </div>
             ) : allMenuItems.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "40px", color: "#666" }}>
+              <div
+                style={{ textAlign: "center", padding: "40px", color: "#666" }}
+              >
                 <p>No items available</p>
               </div>
             ) : (

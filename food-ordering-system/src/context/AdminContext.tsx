@@ -1,7 +1,8 @@
 // src/context/AdminContext.tsx
 // Manages admin auth state + menu items, orders, inventory, reviews
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState } from "react";
+import type { ReactNode } from "react";
 import {
   loginAdmin,
   adminGetMenuItems,
@@ -10,7 +11,7 @@ import {
   adminDeleteMenuItem,
   adminGetOrders,
   adminUpdateOrderStatus,
-} from "../services/api";
+} from "../services/api.ts";
 import type {
   Admin,
   FoodItem,
@@ -90,7 +91,7 @@ function mapOrder(order: any, customer?: any, items?: any[]): AdminOrder {
         name: i.food_name,
         quantity: Number(i.quantity),
         price: Number(i.price),
-      })
+      }),
     ),
     subtotal: Number(order.total_amount),
     total: Number(order.total_amount),
@@ -225,15 +226,13 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
   const updateOrderStatus = async (id: string, status: OrderStatus) => {
     await adminUpdateOrderStatus(Number(id), status);
-    setOrders((prev) =>
-      prev.map((o) => (o.id === id ? { ...o, status } : o))
-    );
+    setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status } : o)));
   };
 
   const cancelOrder = async (id: string) => {
     // PHP backend doesn't have cancel endpoint — update locally
     setOrders((prev) =>
-      prev.map((o) => (o.id === id ? { ...o, status: "Cancelled" as any } : o))
+      prev.map((o) => (o.id === id ? { ...o, status: "Cancelled" as any } : o)),
     );
   };
 
@@ -269,12 +268,12 @@ export function AdminProvider({ children }: { children: ReactNode }) {
                 quantity === 0
                   ? "Out of Stock"
                   : quantity < 10
-                  ? "Low Stock"
-                  : "Available",
+                    ? "Low Stock"
+                    : "Available",
               lastUpdated: new Date().toISOString(),
             }
-          : item
-      )
+          : item,
+      ),
     );
   };
 
@@ -282,9 +281,13 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     setInventoryItems((prev) =>
       prev.map((item) =>
         item.id === id
-          ? { ...item, status: status as InventoryItem["status"], lastUpdated: new Date().toISOString() }
-          : item
-      )
+          ? {
+              ...item,
+              status: status as InventoryItem["status"],
+              lastUpdated: new Date().toISOString(),
+            }
+          : item,
+      ),
     );
     // Sync availability_status back to PHP
     await adminUpdateMenuItem(Number(id), {
@@ -300,7 +303,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
   const hideReview = async (id: string) => {
     setReviews((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, hidden: true } : r))
+      prev.map((r) => (r.id === id ? { ...r, hidden: true } : r)),
     );
   };
 

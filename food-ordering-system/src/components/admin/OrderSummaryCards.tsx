@@ -1,4 +1,3 @@
-import React from "react";
 import C from "../../constants/colors";
 import type { OrderSummaryCardsProps } from "../../interfaces";
 

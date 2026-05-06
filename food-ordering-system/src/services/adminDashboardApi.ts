@@ -1,4 +1,8 @@
-import type { AdminProfile, DashboardData, Order } from "../interfaces";
+import type {
+  AdminProfile,
+  DashboardData,
+  DashboardOrder,
+} from "../interfaces";
 
 const API_BASE_URL = "http://localhost:3001";
 
@@ -14,7 +18,7 @@ export async function getAdminDashboardData(): Promise<DashboardData> {
   }
 
   const adminProfile: AdminProfile = await profileResponse.json();
-  const orders: Order[] = await ordersResponse.json();
+  const orders: DashboardOrder[] = await ordersResponse.json();
 
   return {
     adminProfile,

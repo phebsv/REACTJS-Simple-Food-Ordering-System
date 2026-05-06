@@ -34,11 +34,12 @@ export default function Register() {
       return setLocalError("Password must be at least 6 characters.");
 
     const success = await register({
-      name: `${firstName} ${lastName}`.trim(),
+      firstName,
+      lastName,
       email,
       password,
-      phone,
-      address: "",
+      phoneNumber: phone,
+      agreeToTerms: agree,
     });
 
     if (success) {
@@ -56,12 +57,20 @@ export default function Register() {
         <div className="register-card">
           <LeftPanel />
           <div className="register-form">
-            <button onClick={() => navigate("/login")} className="register-back-btn">←</button>
+            <button
+              onClick={() => navigate("/login")}
+              className="register-back-btn"
+            >
+              ←
+            </button>
 
             <h1 className="register-title">Create Account</h1>
             <p className="register-subtitle">
               Already have an account?{" "}
-              <button onClick={() => navigate("/login")} className="register-signin-btn">
+              <button
+                onClick={() => navigate("/login")}
+                className="register-signin-btn"
+              >
                 Sign in here !
               </button>
             </p>
@@ -118,9 +127,8 @@ export default function Register() {
                 onChange={(e) => setAgree(e.target.checked)}
               />
               <span>
-                I agree to the{" "}
-                <button type="button">Terms of Service</button> and{" "}
-                <button type="button">Privacy Policy</button>
+                I agree to the <button type="button">Terms of Service</button>{" "}
+                and <button type="button">Privacy Policy</button>
               </span>
             </label>
 

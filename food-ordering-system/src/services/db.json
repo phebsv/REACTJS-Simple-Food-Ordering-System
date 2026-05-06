@@ -1,47 +1,16 @@
 {
   "users": [
     {
-      "id": "1",
-      "email": "admin",
-      "password": "1234",
-      "name": "Admin",
-      "role": "admin"
-    },
-    {
-      "name": "christian Demetillo",
-      "email": "dmtchrs@gmail.com",
-      "phone": "09617095667",
-      "password": "ninja123",
-      "id": "OcZ4bjEAvBs"
-    },
-    {
-      "name": "Hello World",
-      "email": "villerboy123@gmail.com",
-      "phone": "09617095668",
-      "password": "ninja123",
-      "id": "tIrSAMc1Dts"
-    },
-    {
-      "name": "asdasd asdasdsa",
-      "email": "asdasdas",
-      "phone": "asdasd",
-      "password": "asdasd",
-      "id": "9QVbm93XmJI"
-    },
-    {
-      "name": "Samantha Pasague",
-      "email": "samanthaleonor.pasague.23@usjr.edu.ph",
-      "phone": "09089659262",
-      "password": "potato143!",
-      "id": "7isIEDpkKl0"
-    },
-    {
-      "name": "Christian Demetillo",
-      "username": "ichoy",
-      "email": "christian.demetillo.23@usjr.edu.ph",
-      "phone": "09617095667",
-      "password": "ninja123",
-      "id": "Moa1cWoD05Q"
+      "id": "5844768a-e1aa-4c53-b2a4-a1f0cbc3b7e2",
+      "name": "jiyong gimeno",
+      "firstName": "jiyong",
+      "lastName": "gimeno",
+      "email": "jiyong@gmail.com",
+      "phone": "09291052281",
+      "address": "",
+      "passwordHash": "$2a$10$U78zh0Y6osKinwsAEd0PmuYr9V0w8K7jwqvn5qEbXmaBMp0IATLSu",
+      "agreeToTerms": true,
+      "createdAt": "2026-05-06T11:59:52.883Z"
     }
   ],
   "admins": [

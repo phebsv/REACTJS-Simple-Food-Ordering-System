@@ -9,9 +9,9 @@ import { AdminProvider } from "./context/AdminContext";
 // Customer pages
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Dashboard from "./pages/user/Dashboard";
 
 // Admin pages (keep your existing ones — they now use the connected AdminContext)
-import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminMenu from "./pages/admin/AdminMenu";
 import AdminOrders from "./pages/admin/AdminOrders";
@@ -30,7 +30,7 @@ function CustomerRoute({ children }: { children: ReactNode }) {
 
 function AdminRoute({ children }: { children: ReactNode }) {
   const { isAuthenticated } = useAdmin();
-  return isAuthenticated ? <>{children}</> : <Navigate to="/admin/login" replace />;
+  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
 }
 
 function AppRoutes() {
@@ -40,25 +40,58 @@ function AppRoutes() {
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/admin/login" element={<AdminLogin />} />
 
       {/* Customer protected */}
       <Route
         path="/dashboard"
         element={
           <CustomerRoute>
-            {/* Replace with your actual Dashboard page */}
-            <div style={{ padding: 40 }}>Customer Dashboard — replace with your page</div>
+            <Dashboard />
           </CustomerRoute>
         }
       />
 
       {/* Admin protected */}
-      <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-      <Route path="/admin/menu" element={<AdminRoute><AdminMenu /></AdminRoute>} />
-      <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
-      <Route path="/admin/inventory" element={<AdminRoute><AdminInventory /></AdminRoute>} />
-      <Route path="/admin/reviews" element={<AdminRoute><AdminReviews /></AdminRoute>} />
+      <Route
+        path="/admin/dashboard"
+        element={
+          <AdminRoute>
+            <AdminDashboard />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/menu"
+        element={
+          <AdminRoute>
+            <AdminMenu />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/orders"
+        element={
+          <AdminRoute>
+            <AdminOrders />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/inventory"
+        element={
+          <AdminRoute>
+            <AdminInventory />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/reviews"
+        element={
+          <AdminRoute>
+            <AdminReviews />
+          </AdminRoute>
+        }
+      />
     </Routes>
   );
 }
