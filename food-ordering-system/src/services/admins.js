@@ -3,7 +3,7 @@
 
 const express = require("express");
 const router = express.Router();
-const { getCollection } = require("../db");
+const { getCollection } = require("./db");
 
 router.get("/", (req, res) => {
   let admins = getCollection("admins");
@@ -11,7 +11,9 @@ router.get("/", (req, res) => {
   // Filter by username if provided (original AdminContext does this)
   if (req.query.username) {
     admins = admins.filter(
-      (a) => String(a.username).toLowerCase() === String(req.query.username).toLowerCase()
+      (a) =>
+        String(a.username).toLowerCase() ===
+        String(req.query.username).toLowerCase(),
     );
   }
 

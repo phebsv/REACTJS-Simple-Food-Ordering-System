@@ -3,7 +3,7 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
-import { loginUser, registerUser } from "../services/api.ts";
+import { loginCustomer, registerCustomer } from "../services/api.ts";
 import type { AuthUser } from "../services/api.ts";
 
 interface AuthContextType {
@@ -47,8 +47,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     setError("");
     try {
-      const res = await loginUser({ email, password });
-      const { token: t, user } = res;
+      const res = await loginCustomer(email, password);
+      const { token: t, customer: user } = res.data;
 
       setToken(t);
       setCustomer(user);
@@ -82,7 +82,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     setError("");
     try {
-      await registerUser(data);
+      await registerCustomer({
+        name: `${data.firstName} ${data.lastName}`.trim(),
+        email: data.email,
+        password: data.password,
+        phone: data.phoneNumber,
+        address: "",
+      });
       return true;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed.");

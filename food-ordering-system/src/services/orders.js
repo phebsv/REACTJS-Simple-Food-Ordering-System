@@ -6,7 +6,7 @@
 
 const express = require("express");
 const router = express.Router();
-const { getCollection, setCollection } = require("../db");
+const { getCollection, setCollection } = require("./db");
 
 // GET /orders — supports ?customerId= for customer filtering
 router.get("/", (req, res) => {
@@ -28,13 +28,23 @@ router.get("/:id", (req, res) => {
 // POST /orders — place new order
 router.post("/", (req, res) => {
   const {
-    customerId, customerName, customerEmail, customerPhone,
-    customerAddress, items, subtotal, total, paymentMethod = "cash",
-    deliveryNotes = "", status = "Pending",
+    customerId,
+    customerName,
+    customerEmail,
+    customerPhone,
+    customerAddress,
+    items,
+    subtotal,
+    total,
+    paymentMethod = "cash",
+    deliveryNotes = "",
+    status = "Pending",
   } = req.body;
 
   if (!customerId || !items || items.length === 0)
-    return res.status(400).json({ message: "customerId and items are required." });
+    return res
+      .status(400)
+      .json({ message: "customerId and items are required." });
 
   const orders = getCollection("orders");
   const newOrder = {

@@ -11,6 +11,19 @@
       "passwordHash": "$2a$10$U78zh0Y6osKinwsAEd0PmuYr9V0w8K7jwqvn5qEbXmaBMp0IATLSu",
       "agreeToTerms": true,
       "createdAt": "2026-05-06T11:59:52.883Z"
+    },
+    {
+      "id": "3a9a0408-579f-469a-8ef4-abb57ebe93a8",
+      "name": "Robert Avelino",
+      "firstName": "Robert",
+      "lastName": "Avelino",
+      "email": "robert@gmail.com",
+      "phone": "09611339829",
+      "address": "",
+      "passwordHash": "$2a$10$Xe3psZMff/jpT0v9ypXVWeSoNV6LBsbERQH14uxxclvcKOxKx993C",
+      "agreeToTerms": true,
+      "createdAt": "2026-05-07T04:06:09.995Z",
+      "role": "user"
     }
   ],
   "admins": [

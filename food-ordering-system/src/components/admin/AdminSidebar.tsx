@@ -1,4 +1,3 @@
-import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import C from "../../constants/colors";
 import { useAdmin } from "../../context/AdminContext";
@@ -6,7 +5,7 @@ import { useAdmin } from "../../context/AdminContext";
 function AdminSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout, adminUser } = useAdmin();
+  const { logout, admin } = useAdmin();
 
   const menuItems = [
     { label: "DASHBOARD", path: "/admin/dashboard" },
@@ -23,7 +22,7 @@ function AdminSidebar() {
     if (!confirmLogout) return;
 
     logout();
-    navigate("/admin/login");
+    navigate("/login");
   };
 
   return (
@@ -61,7 +60,7 @@ function AdminSidebar() {
         NOW
       </div>
 
-      {adminUser?.username && (
+      {admin?.name && (
         <div
           style={{
             fontSize: "11px",
@@ -71,7 +70,7 @@ function AdminSidebar() {
             textAlign: "center",
           }}
         >
-          {adminUser.username}
+          {admin.name}
         </div>
       )}
 

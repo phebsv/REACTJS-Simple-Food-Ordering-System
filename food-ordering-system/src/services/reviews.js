@@ -6,7 +6,7 @@
 
 const express = require("express");
 const router = express.Router();
-const { getCollection, setCollection } = require("../db");
+const { getCollection, setCollection } = require("./db");
 
 // GET /reviews
 router.get("/", (req, res) => {
@@ -15,10 +15,20 @@ router.get("/", (req, res) => {
 
 // POST /reviews
 router.post("/", (req, res) => {
-  const { orderId, customerId, customerName, foodItemId, foodItemName, rating, comment } = req.body;
+  const {
+    orderId,
+    customerId,
+    customerName,
+    foodItemId,
+    foodItemName,
+    rating,
+    comment,
+  } = req.body;
 
   if (!orderId || !customerName || !rating)
-    return res.status(400).json({ message: "orderId, customerName, and rating are required." });
+    return res
+      .status(400)
+      .json({ message: "orderId, customerName, and rating are required." });
 
   const reviews = getCollection("reviews");
   const newReview = {

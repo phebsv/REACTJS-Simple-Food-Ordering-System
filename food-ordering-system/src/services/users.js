@@ -5,8 +5,8 @@
 
 const express = require("express");
 const router = express.Router();
-const { getCollection, setCollection } = require("../db");
-const { requireAuth } = require("../middleware/auth");
+const { getCollection, setCollection } = require("./db");
+const { requireAuth } = require("./middleware/auth");
 
 // GET /users?email=&password= — original Login.tsx compatibility
 router.get("/", (req, res) => {
@@ -14,9 +14,7 @@ router.get("/", (req, res) => {
   let users = getCollection("users");
 
   if (email && password) {
-    users = users.filter(
-      (u) => u.email === email && u.password === password
-    );
+    users = users.filter((u) => u.email === email && u.password === password);
     // Strip passwords before returning
     return res.json(users.map(({ password: _, ...u }) => u));
   }

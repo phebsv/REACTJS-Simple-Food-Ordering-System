@@ -4,13 +4,21 @@ import AdminModal from "../../components/admin/AdminModal";
 import ConfirmDialog from "../../components/admin/ConfirmDialog";
 import LoadingSpinner from "../../components/admin/LoadingSpinner";
 import { useAdmin } from "../../context/AdminContext";
-import type { Review } from "../../types";
+import type { Review } from "../../interfaces";
 import "./AdminReviews.css";
 
 type RatingFilter = "All" | 5 | 4 | 3 | 2 | 1;
 
 export default function AdminReviews() {
-  const { reviews, fetchReviews, hideReview, deleteReview, loading, error, setError } = useAdmin();
+  const {
+    reviews,
+    fetchReviews,
+    hideReview,
+    deleteReview,
+    loading,
+    error,
+    setError,
+  } = useAdmin();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [ratingFilter, setRatingFilter] = useState<RatingFilter>("All");
@@ -35,7 +43,8 @@ export default function AdminReviews() {
         review.foodItemName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         review.orderId.toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesRating = ratingFilter === "All" || review.rating === ratingFilter;
+      const matchesRating =
+        ratingFilter === "All" || review.rating === ratingFilter;
       const notHidden = !review.hidden;
 
       return matchesSearch && matchesRating && notHidden;
@@ -105,7 +114,7 @@ export default function AdminReviews() {
 
         {totalHiddenReviews > 0 && (
           <div className="info-banner">
-                    <span className="info-icon">Γä╣∩╕Å</span>
+            <span className="info-icon">ℹ️</span>
             {totalHiddenReviews} review(s) are hidden
           </div>
         )}
@@ -119,7 +128,7 @@ export default function AdminReviews() {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="search-input"
           />
-          <span className="search-icon">≡ƒöì</span>
+          <span className="search-icon">🔍</span>
         </div>
 
         {/* ==================== RATING FILTER ==================== */}
@@ -136,7 +145,8 @@ export default function AdminReviews() {
                 <span className="tab-count">
                   {rating === "All"
                     ? reviews.filter((r) => !r.hidden).length
-                    : reviews.filter((r) => r.rating === rating && !r.hidden).length}
+                    : reviews.filter((r) => r.rating === rating && !r.hidden)
+                        .length}
                 </span>
               </button>
             ))}
@@ -159,7 +169,9 @@ export default function AdminReviews() {
                 <div className="review-header">
                   <div className="review-customer">
                     <h3>{review.customerName}</h3>
-                    <p className="review-meta">Order #{review.orderId.slice(0, 8)}</p>
+                    <p className="review-meta">
+                      Order #{review.orderId.slice(0, 8)}
+                    </p>
                   </div>
                   <div className="review-rating">
                     <RatingStars rating={review.rating} />
@@ -182,19 +194,19 @@ export default function AdminReviews() {
                       className="action-btn view-btn"
                       onClick={() => handleOpenDetails(review)}
                     >
-                      ≡ƒæü∩╕Å View
+                      View
                     </button>
                     <button
                       className="action-btn hide-btn"
                       onClick={() => handleHideClick(review.id)}
                     >
-                      ≡ƒÖê Hide
+                      Hide
                     </button>
                     <button
                       className="action-btn delete-btn"
                       onClick={() => handleDeleteClick(review.id)}
                     >
-                      ≡ƒùæ∩╕Å Delete
+                      Delete
                     </button>
                   </div>
                 </div>
@@ -244,7 +256,9 @@ export default function AdminReviews() {
 
                 <div className="detail-item full-width">
                   <label>Review Comment</label>
-                  <p className="review-comment-text">{selectedReview.comment}</p>
+                  <p className="review-comment-text">
+                    {selectedReview.comment}
+                  </p>
                 </div>
               </div>
 
@@ -274,7 +288,11 @@ export default function AdminReviews() {
         {/* ==================== CONFIRM DIALOG ==================== */}
         <ConfirmDialog
           isOpen={confirmDialog.isOpen}
-          title={confirmDialog.action === "delete" ? "Delete Review?" : "Hide Review?"}
+          title={
+            confirmDialog.action === "delete"
+              ? "Delete Review?"
+              : "Hide Review?"
+          }
           message={
             confirmDialog.action === "delete"
               ? "Are you sure you want to delete this review? This action cannot be undone."

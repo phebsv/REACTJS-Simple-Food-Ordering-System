@@ -7,8 +7,8 @@
 
 const express = require("express");
 const router = express.Router();
-const { getCollection, setCollection } = require("../db");
-const { requireAdmin } = require("../middleware/auth");
+const { getCollection, setCollection } = require("./db");
+const { requireAdmin } = require("./middleware/auth");
 
 // GET /menu — all items (admin sees all, customers see available only)
 router.get("/", (req, res) => {
@@ -26,10 +26,20 @@ router.get("/:id", (req, res) => {
 
 // POST /menu — admin only
 router.post("/", requireAdmin, (req, res) => {
-  const { name, description = "", price, category, image = "", available = true, stock = 0 } = req.body;
+  const {
+    name,
+    description = "",
+    price,
+    category,
+    image = "",
+    available = true,
+    stock = 0,
+  } = req.body;
 
   if (!name || !price || !category)
-    return res.status(400).json({ message: "name, price, and category are required." });
+    return res
+      .status(400)
+      .json({ message: "name, price, and category are required." });
 
   const items = getCollection("menu");
   const newItem = {
@@ -52,9 +62,18 @@ router.post("/", requireAdmin, (req, res) => {
 router.patch("/:id", requireAdmin, (req, res) => {
   const items = getCollection("menu");
   const idx = items.findIndex((i) => i.id === req.params.id);
-  if (idx === -1) return res.status(404).json({ message: "Menu item not found." });
+  if (idx === -1)
+    return res.status(404).json({ message: "Menu item not found." });
 
-  const fields = ["name", "description", "price", "category", "image", "available", "stock"];
+  const fields = [
+    "name",
+    "description",
+    "price",
+    "category",
+    "image",
+    "available",
+    "stock",
+  ];
   fields.forEach((f) => {
     if (req.body[f] !== undefined) items[idx][f] = req.body[f];
   });

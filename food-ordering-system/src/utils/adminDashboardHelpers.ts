@@ -1,6 +1,6 @@
-import type { Order, OrderStat } from "../interfaces";
+import type { DashboardOrder, OrderStat } from "../interfaces";
 
-export function getOrderStats(orders: Order[]): OrderStat[] {
+export function getOrderStats(orders: DashboardOrder[]): OrderStat[] {
   return [
     {
       label: "TOTAL ORDERS",

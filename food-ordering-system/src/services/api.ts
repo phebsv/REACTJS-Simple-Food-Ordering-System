@@ -13,8 +13,7 @@ const API = axios.create({
 // Optional: attach token automatically
 API.interceptors.request.use((config) => {
   const token =
-    localStorage.getItem("adminToken") ||
-    localStorage.getItem("customerToken");
+    localStorage.getItem("adminToken") || localStorage.getItem("customerToken");
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -30,7 +29,8 @@ export type AuthUser = {
   id: string;
   name?: string;
   email?: string;
-  role?: "admin" | "customer";
+  role?: "admin" | "user";
+  isAdmin?: boolean;
 };
 
 export type AuthResponse = {
@@ -40,21 +40,46 @@ export type AuthResponse = {
   admin?: AuthUser;
 };
 
+type BackendAuthResponse = {
+  message: string;
+  data: {
+    token: string;
+    user: AuthUser;
+  };
+};
+
+export async function loginUser(payload: {
+  email: string;
+  password: string;
+}): Promise<BackendAuthResponse> {
+  const res = await API.post("/auth/login", payload);
+  return res.data as BackendAuthResponse;
+}
+
+export async function registerUser(payload: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  password: string;
+  agreeToTerms: boolean;
+}): Promise<BackendAuthResponse> {
+  const res = await API.post("/auth/register", {
+    name: `${payload.firstName} ${payload.lastName}`.trim(),
+    email: payload.email,
+    password: payload.password,
+    phone: payload.phoneNumber,
+    address: "",
+  });
+  return res.data as BackendAuthResponse;
+}
+
 // ─────────────────────────────────────────────
 // AUTH (CUSTOMER)
 // ─────────────────────────────────────────────
 export async function loginCustomer(email: string, password: string) {
-  const res = await API.post("/auth/login", {
-    email,
-    password,
-  });
-
-  return {
-    data: {
-      token: res.data.data.token,
-      customer: res.data.data.user,
-    },
-  };
+  const res = await loginUser({ email, password });
+  return { data: { token: res.data.token, customer: res.data.user } };
 }
 
 export async function registerCustomer(data: {
@@ -72,12 +97,7 @@ export async function registerCustomer(data: {
     address: data.address || "",
   });
 
-  return {
-    data: {
-      token: res.data.data.token,
-      customer: res.data.data.user,
-    },
-  };
+  return { data: { token: res.data.data.token, customer: res.data.data.user } };
 }
 
 // ─────────────────────────────────────────────

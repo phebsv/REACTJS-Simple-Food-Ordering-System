@@ -33,7 +33,12 @@ export interface Cart {
   total: number;
 }
 
-export type OrderStatus = "Pending" | "Preparing" | "Ready" | "Delivered";
+export type OrderStatus =
+  | "Pending"
+  | "Preparing"
+  | "Ready"
+  | "Delivered"
+  | "Cancelled";
 
 export interface Order {
   order_id: number;
@@ -66,6 +71,12 @@ export interface AdminProfile {
   name: string;
   role: string;
 }
+
+export type AdminHeaderProps = {
+  adminProfile: AdminProfile;
+  searchTerm: string;
+  onSearchChange: (value: string) => void;
+};
 
 // ── AdminContext data shapes ──────────────────────────────────────────────────
 

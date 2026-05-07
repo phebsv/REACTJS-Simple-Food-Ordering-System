@@ -11,13 +11,13 @@ app.use(cors());
 app.use(express.json());
 
 // ── Routes ────────────────────────────────────────────────────────────────────
-app.use("/auth",      require("./routes/auth"));
-app.use("/users",     require("./routes/users"));
-app.use("/admins",    require("./routes/admins"));
-app.use("/menu",      require("./routes/menu"));
-app.use("/orders",    require("./routes/orders"));
-app.use("/inventory", require("./routes/inventory"));
-app.use("/reviews",   require("./routes/reviews"));
+app.use("/auth", require("./auth"));
+app.use("/users", require("./users"));
+app.use("/admins", require("./admins"));
+app.use("/menu", require("./menu"));
+app.use("/orders", require("./orders"));
+app.use("/inventory", require("./inventory"));
+app.use("/reviews", require("./reviews"));
 
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get("/", (req, res) => {
@@ -26,7 +26,9 @@ app.get("/", (req, res) => {
 
 // ── 404 handler ───────────────────────────────────────────────────────────────
 app.use((req, res) => {
-  res.status(404).json({ message: `Route ${req.method} ${req.path} not found.` });
+  res
+    .status(404)
+    .json({ message: `Route ${req.method} ${req.path} not found.` });
 });
 
 app.listen(PORT, () => {

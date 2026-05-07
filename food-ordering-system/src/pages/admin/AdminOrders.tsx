@@ -4,16 +4,24 @@ import AdminModal from "../../components/admin/AdminModal";
 import ConfirmDialog from "../../components/admin/ConfirmDialog";
 import LoadingSpinner from "../../components/admin/LoadingSpinner";
 import { useAdmin } from "../../context/AdminContext";
-import type { Order, OrderStatus } from "../../types";
+import type { AdminOrder, OrderStatus } from "../../interfaces";
 import "./AdminOrders.css";
 
 type FilterStatus = OrderStatus | "All";
 
 export default function AdminOrders() {
-  const { orders, fetchOrders, updateOrderStatus, cancelOrder, loading, error, setError } = useAdmin();
+  const {
+    orders,
+    fetchOrders,
+    updateOrderStatus,
+    cancelOrder,
+    loading,
+    error,
+    setError,
+  } = useAdmin();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState<FilterStatus>("All");
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<AdminOrder | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;
@@ -34,14 +42,15 @@ export default function AdminOrders() {
         order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
         order.customerName.toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesStatus = filterStatus === "All" || order.status === filterStatus;
+      const matchesStatus =
+        filterStatus === "All" || order.status === filterStatus;
 
       return matchesSearch && matchesStatus;
     });
   }, [orders, searchQuery, filterStatus]);
 
   // ==================== HANDLERS ====================
-  const handleOpenDetails = (order: Order) => {
+  const handleOpenDetails = (order: AdminOrder) => {
     setSelectedOrder(order);
     setIsDetailsOpen(true);
   };
@@ -71,7 +80,7 @@ export default function AdminOrders() {
       if (confirmDialog.action === "status" && confirmDialog.newStatus) {
         await updateOrderStatus(confirmDialog.orderId, confirmDialog.newStatus);
         setSelectedOrder(
-          orders.find((o) => o.id === confirmDialog.orderId) || null
+          orders.find((o) => o.id === confirmDialog.orderId) || null,
         );
       } else if (confirmDialog.action === "cancel") {
         await cancelOrder(confirmDialog.orderId);
@@ -87,7 +96,14 @@ export default function AdminOrders() {
     }
   };
 
-  const statusTabs: FilterStatus[] = ["All", "Pending", "Preparing", "Ready", "Delivered", "Cancelled"];
+  const statusTabs: FilterStatus[] = [
+    "All",
+    "Pending",
+    "Preparing",
+    "Ready",
+    "Delivered",
+    "Cancelled",
+  ];
 
   return (
     <div className="admin-layout">
@@ -110,7 +126,7 @@ export default function AdminOrders() {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="search-input"
           />
-          <span className="search-icon">≡ƒöì</span>
+          <span className="search-icon">🔍</span>
         </div>
 
         {/* ==================== STATUS TABS ==================== */}
@@ -161,7 +177,9 @@ export default function AdminOrders() {
                     <td>
                       <div className="customer-info">
                         <div>{order.customerName}</div>
-                        <div className="customer-email">{order.customerEmail}</div>
+                        <div className="customer-email">
+                          {order.customerEmail}
+                        </div>
                       </div>
                     </td>
                     <td>{order.items.length} item(s)</td>
@@ -179,7 +197,7 @@ export default function AdminOrders() {
                         onClick={() => handleOpenDetails(order)}
                         title="View Details"
                       >
-                        ≡ƒæü∩╕Å View
+                        View
                       </button>
                     </td>
                   </tr>
@@ -230,7 +248,9 @@ export default function AdminOrders() {
                         <span className="item-qty">x{item.quantity}</span>
                       </div>
                       <div className="item-prices">
-                        <span className="item-price">${item.price.toFixed(2)} each</span>
+                        <span className="item-price">
+                          ${item.price.toFixed(2)} each
+                        </span>
                         <span className="item-subtotal">
                           ${(item.price * item.quantity).toFixed(2)}
                         </span>
@@ -296,7 +316,9 @@ export default function AdminOrders() {
                   <>
                     <button
                       className="action-btn primary-btn"
-                      onClick={() => handleUpdateStatus(selectedOrder.id, "Preparing")}
+                      onClick={() =>
+                        handleUpdateStatus(selectedOrder.id, "Preparing")
+                      }
                     >
                       ΓåÆ Start Preparing
                     </button>
@@ -307,7 +329,9 @@ export default function AdminOrders() {
                   <>
                     <button
                       className="action-btn primary-btn"
-                      onClick={() => handleUpdateStatus(selectedOrder.id, "Ready")}
+                      onClick={() =>
+                        handleUpdateStatus(selectedOrder.id, "Ready")
+                      }
                     >
                       ΓåÆ Ready for Pickup
                     </button>
@@ -318,14 +342,17 @@ export default function AdminOrders() {
                   <>
                     <button
                       className="action-btn primary-btn"
-                      onClick={() => handleUpdateStatus(selectedOrder.id, "Delivered")}
+                      onClick={() =>
+                        handleUpdateStatus(selectedOrder.id, "Delivered")
+                      }
                     >
                       ΓåÆ Mark Delivered
                     </button>
                   </>
                 )}
 
-                {(selectedOrder.status === "Pending" || selectedOrder.status === "Preparing") && (
+                {(selectedOrder.status === "Pending" ||
+                  selectedOrder.status === "Preparing") && (
                   <>
                     <button
                       className="action-btn danger-btn"
@@ -348,14 +375,18 @@ export default function AdminOrders() {
         <ConfirmDialog
           isOpen={confirmDialog.isOpen}
           title={
-            confirmDialog.action === "cancel" ? "Cancel Order?" : "Update Order Status?"
+            confirmDialog.action === "cancel"
+              ? "Cancel Order?"
+              : "Update Order Status?"
           }
           message={
             confirmDialog.action === "cancel"
               ? "Are you sure you want to cancel this order? This action cannot be undone."
               : `Change order status to ${confirmDialog.newStatus}?`
           }
-          confirmText={confirmDialog.action === "cancel" ? "Cancel Order" : "Update Status"}
+          confirmText={
+            confirmDialog.action === "cancel" ? "Cancel Order" : "Update Status"
+          }
           isDangerous={confirmDialog.action === "cancel"}
           onConfirm={handleConfirmAction}
           onCancel={() => setConfirmDialog({ isOpen: false })}
@@ -368,13 +399,14 @@ export default function AdminOrders() {
 
 // ==================== STATUS BADGE ====================
 function StatusBadge({ status }: { status: string }) {
-  const statusClass = {
-    Pending: "badge-pending",
-    Preparing: "badge-preparing",
-    Ready: "badge-ready",
-    Delivered: "badge-delivered",
-    Cancelled: "badge-cancelled",
-  }[status] || "badge-default";
+  const statusClass =
+    {
+      Pending: "badge-pending",
+      Preparing: "badge-preparing",
+      Ready: "badge-ready",
+      Delivered: "badge-delivered",
+      Cancelled: "badge-cancelled",
+    }[status] || "badge-default";
 
   return <span className={`status-badge ${statusClass}`}>{status}</span>;
 }
