@@ -10,6 +10,7 @@ import UInput from "../components/UInput";
 import RedBtn from "../components/RedBtn";
 import { MailIcon, LockIcon } from "../components/UInput";
 import { useAuth } from "../context/AuthContext";
+import { useAdmin } from "../context/AdminContext";
 import type { AuthUser } from "../services/api.ts";
 import "./Login.css";
 
@@ -20,6 +21,7 @@ export default function Login() {
   const [localError, setLocalError] = useState<string>("");
 
   const { login, loading, error } = useAuth();
+  const { login: loginAdmin } = useAdmin();
   const navigate = useNavigate();
 
   const handleLogin = async () => {
@@ -38,7 +40,10 @@ export default function Login() {
     const user = rawUser ? (JSON.parse(rawUser) as AuthUser) : null;
 
     if (user?.role === "admin" || user?.isAdmin) {
-      navigate("/admin/dashboard");
+      const adminSuccess = await loginAdmin(email, password);
+      if (adminSuccess) {
+        navigate("/admin/dashboard");
+      }
       return;
     }
 
@@ -68,9 +73,9 @@ export default function Login() {
 
             <div className="login-input-group">
               <UInput
-                label="Email"
-                type="email"
-                placeholder="Enter your email address"
+                label="Email or username"
+                type="text"
+                placeholder="Enter your email or username"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 Icon={MailIcon}

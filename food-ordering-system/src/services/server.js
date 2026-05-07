@@ -11,13 +11,14 @@ app.use(cors());
 app.use(express.json());
 
 // ── Routes ────────────────────────────────────────────────────────────────────
-app.use("/auth", require("./auth"));
-app.use("/users", require("./users"));
-app.use("/admins", require("./admins"));
+app.use("/auth", require("./routes/auth"));
+app.use("/users", require("./routes/users"));
+app.use("/admins", require("./routes/admins"));
 app.use("/menu", require("./routes/menu"));
 app.use("/orders", require("./routes/orders"));
 app.use("/inventory", require("./routes/inventory"));
-app.use("/reviews", require("./reviews"));
+app.use("/reviews", require("./routes/reviews"));
+app.use("/adminProfile", require("./routes/adminProfile"));
 app.use("/cart_items", require("./routes/cart_items"));
 
 // ── Health check ──────────────────────────────────────────────────────────────

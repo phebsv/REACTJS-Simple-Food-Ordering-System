@@ -66,13 +66,13 @@ const AdminContext = createContext<AdminContextType | null>(null);
 // ── Helper: map PHP MenuItem → FoodItem ──────────────────────────────────────
 function mapMenuItem(item: any): FoodItem {
   return {
-    id: String(item.menu_id),
-    name: item.food_name,
-    category: item.category,
+    id: String(item.id ?? item.menu_id),
+    name: item.name ?? item.food_name ?? "",
+    category: item.category ?? "",
     price: Number(item.price),
     description: item.description || "",
-    image: item.image_url || "",
-    available: Boolean(item.availability_status),
+    image: item.image ?? item.image_url ?? "",
+    available: item.available ?? Boolean(item.availability_status),
     stock: item.stock ?? undefined,
   };
 }
@@ -80,7 +80,7 @@ function mapMenuItem(item: any): FoodItem {
 // ── Helper: map PHP Order → AdminOrder ───────────────────────────────────────
 function mapOrder(order: any, customer?: any, items?: any[]): AdminOrder {
   return {
-    id: String(order.order_id),
+    id: String(order.id ?? order.order_id),
     customerName: order.customer_name || customer?.name || "Customer",
     customerEmail: customer?.email || "",
     customerPhone: customer?.phone || "",
@@ -93,11 +93,11 @@ function mapOrder(order: any, customer?: any, items?: any[]): AdminOrder {
         price: Number(i.price),
       }),
     ),
-    subtotal: Number(order.total_amount),
-    total: Number(order.total_amount),
-    status: order.order_status as OrderStatus,
-    createdAt: order.order_date,
-    updatedAt: order.order_date,
+    subtotal: Number(order.subtotal ?? order.total_amount ?? order.total ?? 0),
+    total: Number(order.total ?? order.total_amount ?? 0),
+    status: (order.status ?? order.order_status) as OrderStatus,
+    createdAt: order.createdAt ?? order.order_date,
+    updatedAt: order.updatedAt ?? order.order_date,
   };
 }
 
@@ -177,28 +177,32 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
   const addMenuItem = async (data: Omit<FoodItem, "id">) => {
     await adminAddMenuItem({
-      food_name: data.name,
+      name: data.name,
       description: data.description,
       price: data.price,
       category: data.category,
-      availability_status: data.available,
+      image: data.image,
+      available: data.available,
+      stock: data.stock ?? 0,
     });
     await fetchMenuItems();
   };
 
   const updateMenuItem = async (id: string, data: Partial<FoodItem>) => {
-    await adminUpdateMenuItem(Number(id), {
-      food_name: data.name,
+    await adminUpdateMenuItem(id, {
+      name: data.name,
       description: data.description,
       price: data.price,
       category: data.category,
-      availability_status: data.available,
+      image: data.image,
+      available: data.available,
+      stock: data.stock,
     });
     await fetchMenuItems();
   };
 
   const deleteMenuItem = async (id: string) => {
-    await adminDeleteMenuItem(Number(id));
+    await adminDeleteMenuItem(id);
     await fetchMenuItems();
   };
 
@@ -242,11 +246,13 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     try {
       const data = await adminGetMenuItems();
       const mapped: InventoryItem[] = data.map((item: any) => ({
-        id: String(item.menu_id),
-        name: item.food_name,
+        id: String(item.id ?? item.menu_id),
+        name: item.name ?? item.food_name ?? "",
         category: item.category,
         stock: item.stock ?? 100,
-        status: item.availability_status ? "Available" : "Unavailable",
+        status: (item.available ?? item.availability_status)
+          ? "Available"
+          : "Unavailable",
         lastUpdated: new Date().toISOString(),
       }));
       setInventoryItems(mapped);
@@ -290,8 +296,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       ),
     );
     // Sync availability_status back to PHP
-    await adminUpdateMenuItem(Number(id), {
-      availability_status: status === "Available",
+    await adminUpdateMenuItem(id, {
+      available: status === "Available",
     });
   };
 

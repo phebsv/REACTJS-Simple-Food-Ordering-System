@@ -5,8 +5,8 @@
 
 const express = require("express");
 const router = express.Router();
-const { getCollection, setCollection } = require("./db");
-const { requireAuth } = require("./middleware/auth");
+const { getCollection, setCollection } = require("../data/db");
+const { requireAuth } = require("../middleware/auth");
 
 // GET /users?email=&password= — original Login.tsx compatibility
 router.get("/", (req, res) => {

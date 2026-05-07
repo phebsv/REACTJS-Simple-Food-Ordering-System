@@ -130,12 +130,12 @@ export async function adminAddMenuItem(data: any) {
   return res.data;
 }
 
-export async function adminUpdateMenuItem(id: number, data: any) {
+export async function adminUpdateMenuItem(id: string, data: any) {
   const res = await API.patch(`/menu/${id}`, data);
   return res.data;
 }
 
-export async function adminDeleteMenuItem(id: number) {
+export async function adminDeleteMenuItem(id: string) {
   const res = await API.delete(`/menu/${id}`);
   return res.data;
 }

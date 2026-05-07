@@ -3,7 +3,7 @@
 
 const express = require("express");
 const router = express.Router();
-const { getCollection } = require("../db");
+const { getCollection } = require("../data/db");
 
 // GET /adminProfile
 router.get("/", (req, res) => {
