@@ -1,5 +1,6 @@
 ﻿import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { FoodItem } from "../types";
+import { useAuth } from "./AuthContext";
 import {
   addToCart,
   clearCart as clearBackendCart,
@@ -28,16 +29,22 @@ const CartContext = createContext<CartContextType | null>(null);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const { customer } = useAuth();
 
   useEffect(() => {
+    if (!customer?.id) {
+      setItems([]);
+      return;
+    }
+
     setLoading(true);
-    loadCartItems()
+    loadCartItems(customer.id)
       .then((loadedItems) => setItems(loadedItems))
       .catch((error) => {
         console.error("Failed to load cart items:", error);
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [customer?.id]);
 
   const total = useMemo(
     () => items.reduce((sum, item) => sum + item.price * item.quantity, 0),
@@ -57,7 +64,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       return [...prev, { ...item, quantity: 1 }];
     });
 
-    addToCart(item)
+    addToCart(item, customer?.id)
       .then((saved) => {
         setItems((prev) =>
           prev.map((cartItem) =>
@@ -79,7 +86,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         .filter((cartItem) => cartItem.quantity > 0)
     );
 
-    updateCartQuantity(id, quantity)
+    updateCartQuantity(id, quantity, customer?.id)
       .then((updated) => {
         if (!updated) return;
         setItems((prev) =>
@@ -95,21 +102,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const removeItem = (id: string) => {
     setItems((prev) => prev.filter((cartItem) => cartItem.id !== id));
-    removeFromCart(id).catch((error) => {
+    removeFromCart(id, customer?.id).catch((error) => {
       console.error("Failed to remove cart item from backend:", error);
     });
   };
 
   const clearCart = () => {
     setItems([]);
-    clearBackendCart().catch((error) => {
+    clearBackendCart(customer?.id).catch((error) => {
       console.error("Failed to clear backend cart:", error);
     });
   };
 
   const value = useMemo(
     () => ({ items, total, loading, addItem, removeItem, updateQuantity, clearCart }),
-    [items, total, loading]
+    [items, total, loading, customer?.id]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

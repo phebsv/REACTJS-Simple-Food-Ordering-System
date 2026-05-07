@@ -209,8 +209,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const toggleItemAvailability = async (id: string) => {
     const item = menuItems.find((i) => i.id === id);
     if (!item) return;
-    await adminUpdateMenuItem(Number(id), {
-      availability_status: !item.available,
+    await adminUpdateMenuItem(id, {
+      available: !item.available,
     });
     await fetchMenuItems();
   };

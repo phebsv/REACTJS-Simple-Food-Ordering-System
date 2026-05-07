@@ -9,7 +9,9 @@ interface NavbarProps {
 
 const handleLogout = () => {
   localStorage.removeItem("currentUser");
+  localStorage.removeItem("customerToken");
   localStorage.removeItem("adminUser");
+  localStorage.removeItem("adminToken");
   window.location.href = "/login";
 };
 

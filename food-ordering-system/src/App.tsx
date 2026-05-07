@@ -5,11 +5,17 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { AdminProvider } from "./context/AdminContext";
+import { CartProvider } from "./context/CartContext";
 
 // Customer pages
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/user/Dashboard";
+import Menu from "./pages/user/Menu";
+import Cart from "./pages/user/Cart";
+import Checkout from "./pages/user/Checkout";
+import MyOrders from "./pages/user/MyOrders";
+import Profile from "./pages/user/Profile";
 
 // Admin pages (keep your existing ones — they now use the connected AdminContext)
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -21,7 +27,7 @@ import AdminReviews from "./pages/admin/AdminReviews";
 // Protected route helpers
 import { useAuth } from "./context/AuthContext";
 import { useAdmin } from "./context/AdminContext";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 function CustomerRoute({ children }: { children: ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -47,6 +53,46 @@ function AppRoutes() {
         element={
           <CustomerRoute>
             <Dashboard />
+          </CustomerRoute>
+        }
+      />
+      <Route
+        path="/menu"
+        element={
+          <CustomerRoute>
+            <Menu />
+          </CustomerRoute>
+        }
+      />
+      <Route
+        path="/cart"
+        element={
+          <CustomerRoute>
+            <Cart />
+          </CustomerRoute>
+        }
+      />
+      <Route
+        path="/checkout"
+        element={
+          <CustomerRoute>
+            <Checkout />
+          </CustomerRoute>
+        }
+      />
+      <Route
+        path="/my-orders"
+        element={
+          <CustomerRoute>
+            <MyOrders />
+          </CustomerRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <CustomerRoute>
+            <Profile />
           </CustomerRoute>
         }
       />
@@ -101,7 +147,9 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <AdminProvider>
-          <AppRoutes />
+          <CartProvider>
+            <AppRoutes />
+          </CartProvider>
         </AdminProvider>
       </AuthProvider>
     </BrowserRouter>
