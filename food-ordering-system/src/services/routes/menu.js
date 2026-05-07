@@ -7,8 +7,8 @@
 
 const express = require("express");
 const router = express.Router();
-const { getCollection, setCollection } = require("./db");
-const { requireAdmin } = require("./middleware/auth");
+const { getCollection, setCollection } = require("../data/db");
+const { requireAdmin } = require("../middleware/auth");
 
 // GET /menu — all items (admin sees all, customers see available only)
 router.get("/", (req, res) => {

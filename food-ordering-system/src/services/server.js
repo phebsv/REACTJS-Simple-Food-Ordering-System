@@ -14,10 +14,11 @@ app.use(express.json());
 app.use("/auth", require("./auth"));
 app.use("/users", require("./users"));
 app.use("/admins", require("./admins"));
-app.use("/menu", require("./menu"));
-app.use("/orders", require("./orders"));
-app.use("/inventory", require("./inventory"));
+app.use("/menu", require("./routes/menu"));
+app.use("/orders", require("./routes/orders"));
+app.use("/inventory", require("./routes/inventory"));
 app.use("/reviews", require("./reviews"));
+app.use("/cart_items", require("./routes/cart_items"));
 
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get("/", (req, res) => {

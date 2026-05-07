@@ -6,7 +6,7 @@
 
 const express = require("express");
 const router = express.Router();
-const { getCollection, setCollection } = require("../db");
+const { getCollection, setCollection } = require("../data/db");
 
 // GET /cart_items?customerId=&menuId=
 router.get("/", (req, res) => {

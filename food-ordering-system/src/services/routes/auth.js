@@ -6,8 +6,8 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const router = express.Router();
-const { getCollection, setCollection } = require("./db");
-const { generateToken } = require("./middleware/auth");
+const { getCollection, setCollection } = require("../data/db");
+const { generateToken } = require("../middleware/auth");
 
 // ── REGISTER ──────────────────────────────────────────────────────────────────
 router.post("/register", (req, res) => {
