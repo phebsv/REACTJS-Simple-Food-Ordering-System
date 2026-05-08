@@ -13,6 +13,11 @@ const ORDER_STATUSES = [
   "Cancelled",
 ];
 
+const formatPrice = (value?: number) => `₱${(value ?? 0).toFixed(2)}`;
+const formatDate = (value?: string) =>
+  value ? new Date(value).toLocaleDateString() : "No date available";
+const displayValue = (value?: string) => value || "Not provided";
+
 export default function MyOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
@@ -138,7 +143,8 @@ export default function MyOrders() {
             </div>
           ) : filteredOrders.length === 0 ? (
             <div className="my-orders-empty">
-              <p>No orders found</p>
+              <h2>No orders found</h2>
+              <p>Your orders will appear here after checkout.</p>
               <button
                 onClick={() => navigate("/menu")}
                 className="my-orders-action-btn"
@@ -148,55 +154,75 @@ export default function MyOrders() {
             </div>
           ) : (
             <div className="my-orders-list">
-              {filteredOrders.map((order) => (
-                <div key={order.id} className="my-orders-card">
-                  <div className="order-card-header">
-                    <div className="order-card-id">
-                      <h3>{order.id}</h3>
-                      <span
-                        style={{
-                          color: statusBadgeColor(order.status),
-                          fontWeight: "600",
-                        }}
-                      >
-                        {order.status}
-                      </span>
+              {filteredOrders.map((order) => {
+                const orderItems = order.items ?? [];
+
+                return (
+                  <div key={order.id} className="my-orders-card">
+                    <div className="order-card-header">
+                      <div className="order-card-id">
+                        <h3>{displayValue(order.id)}</h3>
+                        <span
+                          style={{
+                            color: statusBadgeColor(order.status),
+                            fontWeight: "600",
+                          }}
+                        >
+                          {displayValue(order.status)}
+                        </span>
+                      </div>
+                      <div className="order-card-meta">
+                        <p className="order-date">
+                          {formatDate(order.createdAt)}
+                        </p>
+                        <p className="order-total">{formatPrice(order.total)}</p>
+                      </div>
                     </div>
-                    <div className="order-card-meta">
-                      <p className="order-date">
-                        {new Date(order.createdAt).toLocaleDateString()}
+
+                    <div className="order-card-details">
+                      <p>
+                        <span>Deliver to:</span> {displayValue(order.customerAddress)}
                       </p>
-                      <p className="order-total">${order.total.toFixed(2)}</p>
+                      <p>
+                        <span>Payment:</span>{" "}
+                        {displayValue(order.paymentMethod?.replace("-", " "))}
+                      </p>
                     </div>
-                  </div>
 
-                  <div className="order-card-items">
-                    <p className="order-items-count">
-                      {order.items.length} item
-                      {order.items.length !== 1 ? "s" : ""}
-                    </p>
-                    <div className="order-items-preview">
-                      {order.items.slice(0, 2).map((item, idx) => (
-                        <span key={idx} className="item-tag">
-                          {item.name} x{item.quantity}
-                        </span>
-                      ))}
-                      {order.items.length > 2 && (
-                        <span className="item-tag">
-                          +{order.items.length - 2} more
-                        </span>
-                      )}
+                    <div className="order-card-items">
+                      <p className="order-items-count">
+                        {orderItems.length} item
+                        {orderItems.length !== 1 ? "s" : ""}
+                      </p>
+                      <div className="order-items-preview">
+                        {orderItems.length === 0 ? (
+                          <span className="item-tag muted">No item details</span>
+                        ) : (
+                          <>
+                            {orderItems.slice(0, 2).map((item, idx) => (
+                              <span key={idx} className="item-tag">
+                                {displayValue(item.name)} x{item.quantity ?? 0}
+                              </span>
+                            ))}
+                            {orderItems.length > 2 && (
+                              <span className="item-tag">
+                                +{orderItems.length - 2} more
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </div>
                     </div>
-                  </div>
 
-                  <button
-                    onClick={() => setSelectedOrder(order)}
-                    className="order-view-btn"
-                  >
-                    View Details
-                  </button>
-                </div>
-              ))}
+                    <button
+                      onClick={() => setSelectedOrder(order)}
+                      className="order-view-btn"
+                    >
+                      View Details
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
@@ -223,6 +249,7 @@ function OrderDetailsModal({
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
   const navigate = useNavigate();
+  const orderItems = order.items ?? [];
 
   const handleCancelOrder = async () => {
     if (!["Pending", "Preparing"].includes(order.status)) return;
@@ -265,16 +292,16 @@ function OrderDetailsModal({
             <h3>Order Information</h3>
             <div className="detail-row">
               <span>Order ID:</span>
-              <span className="detail-value">{order.id}</span>
+              <span className="detail-value">{displayValue(order.id)}</span>
             </div>
             <div className="detail-row">
               <span>Status:</span>
-              <span className="detail-value">{order.status}</span>
+              <span className="detail-value">{displayValue(order.status)}</span>
             </div>
             <div className="detail-row">
               <span>Date:</span>
               <span className="detail-value">
-                {new Date(order.createdAt).toLocaleDateString()}
+                {formatDate(order.createdAt)}
               </span>
             </div>
           </div>
@@ -283,58 +310,60 @@ function OrderDetailsModal({
             <h3>Delivery Information</h3>
             <div className="detail-row">
               <span>Name:</span>
-              <span>{order.customerName}</span>
+              <span>{displayValue(order.customerName)}</span>
             </div>
             <div className="detail-row">
               <span>Phone:</span>
-              <span>{order.customerPhone}</span>
+              <span>{displayValue(order.customerPhone)}</span>
             </div>
             <div className="detail-row">
               <span>Address:</span>
-              <span>{order.customerAddress}</span>
+              <span>{displayValue(order.customerAddress)}</span>
             </div>
           </div>
 
           <div className="detail-section">
             <h3>Items Ordered</h3>
-            {order.items.map((item, idx) => (
-              <div key={idx} className="order-item">
-                <div className="item-info">
-                  <h4>{item.name}</h4>
-                  <p>
-                    Qty: {item.quantity} x ${item.price.toFixed(2)}
-                  </p>
+            {orderItems.length === 0 ? (
+              <p className="detail-placeholder">No item details available.</p>
+            ) : (
+              orderItems.map((item, idx) => (
+                <div key={idx} className="order-item">
+                  <div className="item-info">
+                    <h4>{displayValue(item.name)}</h4>
+                    <p>
+                      Qty: {item.quantity ?? 0} x {formatPrice(item.price)}
+                    </p>
+                  </div>
+                  <span className="item-subtotal">
+                    {formatPrice((item.price ?? 0) * (item.quantity ?? 0))}
+                  </span>
                 </div>
-                <span className="item-subtotal">
-                  ${(item.price * item.quantity).toFixed(2)}
-                </span>
-              </div>
-            ))}
+              ))
+            )}
           </div>
 
           <div className="detail-section">
             <h3>Summary</h3>
             <div className="detail-row">
               <span>Subtotal:</span>
-              <span>${order.subtotal.toFixed(2)}</span>
+              <span>{formatPrice(order.subtotal)}</span>
             </div>
             <div className="detail-row total-row">
               <span>Total:</span>
-              <span>${order.total.toFixed(2)}</span>
+              <span>{formatPrice(order.total)}</span>
             </div>
           </div>
 
-          {order.paymentMethod && (
-            <div className="detail-section">
-              <h3>Payment</h3>
-              <div className="detail-row">
-                <span>Method:</span>
-                <span className="capitalize">
-                  {order.paymentMethod.replace("-", " ")}
-                </span>
-              </div>
+          <div className="detail-section">
+            <h3>Payment</h3>
+            <div className="detail-row">
+              <span>Method:</span>
+              <span className="capitalize">
+                {displayValue(order.paymentMethod?.replace("-", " "))}
+              </span>
             </div>
-          )}
+          </div>
 
           {order.deliveryNotes && (
             <div className="detail-section">
