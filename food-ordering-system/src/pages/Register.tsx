@@ -61,7 +61,7 @@ export default function Register() {
               onClick={() => navigate("/login")}
               className="register-back-btn"
             >
-              ←
+              Back
             </button>
 
             <h1 className="register-title">Create Account</h1>

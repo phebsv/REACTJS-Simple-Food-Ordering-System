@@ -1,5 +1,5 @@
 // src/context/AuthContext.tsx
-// Manages customer auth state — token + user stored in localStorage
+// Manages customer auth state - token + user stored in localStorage
 
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";

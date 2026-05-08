@@ -49,7 +49,7 @@ interface AdminContextType {
   updateStock: (id: string, quantity: number) => Promise<void>;
   updateInventoryStatus: (id: string, status: string) => Promise<void>;
 
-  // Reviews (mock — not in PHP backend)
+  // Reviews (mock - not in PHP backend)
   reviews: Review[];
   fetchReviews: () => Promise<void>;
   hideReview: (id: string) => Promise<void>;
@@ -63,7 +63,7 @@ interface AdminContextType {
 
 const AdminContext = createContext<AdminContextType | null>(null);
 
-// ── Helper: map PHP MenuItem → FoodItem ──────────────────────────────────────
+// Helper: map PHP MenuItem to FoodItem
 function mapMenuItem(item: any): FoodItem {
   return {
     id: String(item.id ?? item.menu_id),
@@ -77,7 +77,7 @@ function mapMenuItem(item: any): FoodItem {
   };
 }
 
-// ── Helper: map PHP Order → AdminOrder ───────────────────────────────────────
+// Helper: map PHP Order to AdminOrder
 function mapOrder(order: any, customer?: any, items?: any[]): AdminOrder {
   return {
     id: String(order.id ?? order.order_id),
@@ -101,7 +101,7 @@ function mapOrder(order: any, customer?: any, items?: any[]): AdminOrder {
   };
 }
 
-// ── Mock reviews (no reviews table in PHP backend) ────────────────────────────
+// Mock reviews (no reviews table in PHP backend)
 const MOCK_REVIEWS: Review[] = [
   {
     id: "1",
@@ -137,7 +137,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // ── AUTH ────────────────────────────────────────────────────────────────────
+  // AUTH
   const login = async (email: string, password: string): Promise<boolean> => {
     setLoading(true);
     setError(null);
@@ -162,7 +162,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("adminUser");
   };
 
-  // ── MENU ────────────────────────────────────────────────────────────────────
+  // MENU
   const fetchMenuItems = async () => {
     setLoading(true);
     try {
@@ -215,7 +215,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     await fetchMenuItems();
   };
 
-  // ── ORDERS ──────────────────────────────────────────────────────────────────
+  // ORDERS
   const fetchOrders = async () => {
     setLoading(true);
     try {
@@ -234,13 +234,13 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   };
 
   const cancelOrder = async (id: string) => {
-    // PHP backend doesn't have cancel endpoint — update locally
+    // PHP backend doesn't have cancel endpoint - update locally
     setOrders((prev) =>
       prev.map((o) => (o.id === id ? { ...o, status: "Cancelled" as any } : o)),
     );
   };
 
-  // ── INVENTORY (derived from menu items) ─────────────────────────────────────
+  // INVENTORY (derived from menu items)
   const fetchInventory = async () => {
     setLoading(true);
     try {
@@ -301,9 +301,9 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  // ── REVIEWS (mock only) ─────────────────────────────────────────────────────
+  // REVIEWS (mock only)
   const fetchReviews = async () => {
-    // No reviews endpoint in PHP — use mock data
+    // No reviews endpoint in PHP - use mock data
     setReviews(MOCK_REVIEWS);
   };
 

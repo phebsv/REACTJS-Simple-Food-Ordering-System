@@ -14,5 +14,5 @@ export function formatRating(rating: number, reviewCount: number): string {
   if (reviewCount === 0) {
     return "No reviews yet";
   }
-  return `⭐ ${rating.toFixed(1)} (${reviewCount} review${reviewCount !== 1 ? "s" : ""})`;
+  return `Rating ${rating.toFixed(1)} (${reviewCount} review${reviewCount !== 1 ? "s" : ""})`;
 }

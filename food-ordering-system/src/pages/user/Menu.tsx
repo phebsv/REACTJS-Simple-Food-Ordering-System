@@ -185,7 +185,7 @@ export default function Menu() {
         {/* Toast Notification */}
         {toastMessage && (
           <div className="menu-toast">
-            ✓ {toastMessage}
+            Success: {toastMessage}
           </div>
         )}
 

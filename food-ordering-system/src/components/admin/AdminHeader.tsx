@@ -59,7 +59,7 @@ function AdminHeader({
             boxSizing: "border-box",
           }}
         >
-          <span style={{ marginRight: "8px", fontSize: "17px" }}>⌕</span>
+          <span style={{ marginRight: "8px", fontSize: "12px" }}>Search</span>
 
           <input
             type="text"

@@ -197,7 +197,7 @@ export default function AdminMenu() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="search-input"
             />
-            <span className="search-icon">≡ƒöì</span>
+            <span className="search-icon">Search</span>
           </div>
 
           <div className="category-tabs">
@@ -252,16 +252,16 @@ export default function AdminMenu() {
 
                   <div className="menu-card-actions">
                     <button className="action-btn edit-btn" onClick={() => handleEditItem(item)}>
-                      Γ£Å∩╕Å Edit
+                      Edit
                     </button>
                     <button className="action-btn delete-btn" onClick={() => handleDeleteClick(item.id)}>
-                      ≡ƒùæ∩╕Å Delete
+                      Delete
                     </button>
                     <button
                       className={`action-btn toggle-btn ${item.available ? "available-btn" : "unavailable-btn"}`}
                       onClick={() => handleToggleAvailability(item.id)}
                     >
-                      {item.available ? "Γ₧û Unavailable" : "Γ£ô Available"}
+                      {item.available ? "Unavailable" : "Available"}
                     </button>
                   </div>
                 </div>

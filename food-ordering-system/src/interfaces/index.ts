@@ -1,5 +1,5 @@
 // src/interfaces/index.ts
-// Shared TypeScript interfaces — matches your PHP JSON schema exactly
+// Shared TypeScript interfaces - matches your PHP JSON schema exactly
 
 export interface Customer {
   customer_id: number;
@@ -78,7 +78,7 @@ export type AdminHeaderProps = {
   onSearchChange: (value: string) => void;
 };
 
-// ── AdminContext data shapes ──────────────────────────────────────────────────
+// AdminContext data shapes
 
 // Mapped from PHP MenuItem to match AdminMenu.tsx's FoodItem interface
 export interface FoodItem {
@@ -126,7 +126,7 @@ export interface InventoryItem {
   lastUpdated: string;
 }
 
-// For AdminReviews.tsx (not in PHP backend yet — uses mock data)
+// For AdminReviews.tsx (not in PHP backend yet - uses mock data)
 export interface Review {
   id: string;
   customerName: string;

@@ -1,4 +1,4 @@
-﻿export type FoodItem = {
+export type FoodItem = {
   id: string;
   name: string;
   description: string;

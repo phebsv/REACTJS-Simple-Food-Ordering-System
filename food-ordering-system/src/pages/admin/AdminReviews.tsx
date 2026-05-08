@@ -114,7 +114,7 @@ export default function AdminReviews() {
 
         {totalHiddenReviews > 0 && (
           <div className="info-banner">
-            <span className="info-icon">ℹ️</span>
+            <span className="info-icon">Info</span>
             {totalHiddenReviews} review(s) are hidden
           </div>
         )}
@@ -128,7 +128,7 @@ export default function AdminReviews() {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="search-input"
           />
-          <span className="search-icon">🔍</span>
+          <span className="search-icon">Search</span>
         </div>
 
         {/* ==================== RATING FILTER ==================== */}
@@ -141,7 +141,7 @@ export default function AdminReviews() {
                 className={`rating-tab ${ratingFilter === rating ? "active" : ""}`}
                 onClick={() => setRatingFilter(rating)}
               >
-                {rating === "All" ? "All" : `${rating}Γ¡É`}
+                {rating === "All" ? "All" : `${rating} stars`}
                 <span className="tab-count">
                   {rating === "All"
                     ? reviews.filter((r) => !r.hidden).length
@@ -272,13 +272,13 @@ export default function AdminReviews() {
                   className="action-btn hide-btn"
                   onClick={() => handleHideClick(selectedReview.id)}
                 >
-                  ≡ƒÖê Hide Review
+                  Hide Review
                 </button>
                 <button
                   className="action-btn delete-btn"
                   onClick={() => handleDeleteClick(selectedReview.id)}
                 >
-                  ≡ƒùæ∩╕Å Delete Review
+                  Delete Review
                 </button>
               </div>
             </div>
@@ -313,8 +313,7 @@ export default function AdminReviews() {
 function RatingStars({ rating }: { rating: number }) {
   return (
     <span className="rating-stars">
-      {"Γ¡É".repeat(rating)}
-      {"Γÿå".repeat(5 - rating)}
+      {`${rating} of 5 stars`}
     </span>
   );
 }

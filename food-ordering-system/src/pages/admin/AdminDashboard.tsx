@@ -152,49 +152,49 @@ function AdminDashboard() {
           <StatCard
             title="Orders Today"
             value={stats.totalOrders}
-            icon="📦"
+            icon="Orders"
             color="blue"
           />
 
           <StatCard
             title="Revenue Today"
             value={`₱${stats.totalRevenue.toFixed(2)}`}
-            icon="💰"
+            icon="Revenue"
             color="green"
           />
 
           <StatCard
             title="Pending Orders"
             value={stats.pending}
-            icon="⏳"
+            icon="Pending"
             color="yellow"
           />
 
           <StatCard
             title="Preparing"
             value={stats.preparing}
-            icon="👨‍🍳"
+            icon="Preparing"
             color="orange"
           />
 
           <StatCard
             title="Ready"
             value={stats.ready}
-            icon="✅"
+            icon="Ready"
             color="green"
           />
 
           <StatCard
             title="Delivered"
             value={stats.delivered}
-            icon="🚚"
+            icon="Delivered"
             color="blue"
           />
 
           <StatCard
             title="Cancelled"
             value={stats.cancelled}
-            icon="❌"
+            icon="Cancelled"
             color="red"
           />
         </div>
@@ -209,7 +209,7 @@ function AdminDashboard() {
                 className="section-action-btn"
                 onClick={() => navigate("/admin/menu")}
               >
-                Manage Menu →
+                Manage Menu
               </button>
             </div>
 
@@ -242,7 +242,7 @@ function AdminDashboard() {
                 className="section-action-btn"
                 onClick={() => navigate("/admin/inventory")}
               >
-                Manage Inventory →
+                Manage Inventory
               </button>
             </div>
 
@@ -280,7 +280,7 @@ function AdminDashboard() {
               className="section-action-btn"
               onClick={() => navigate("/admin/orders")}
             >
-              View All Orders →
+              View All Orders
             </button>
           </div>
 

@@ -1,5 +1,4 @@
-﻿import "./AdminModal.css";
-
+import "./AdminModal.css";
 interface AdminModalProps {
   isOpen: boolean;
   title: string;
@@ -26,7 +25,7 @@ export default function AdminModal({
         <div className="admin-modal-header">
           <h2>{title}</h2>
           <button className="admin-modal-close" onClick={onClose}>
-            Γ£ò
+            X
           </button>
         </div>
         <div className="admin-modal-content">{children}</div>

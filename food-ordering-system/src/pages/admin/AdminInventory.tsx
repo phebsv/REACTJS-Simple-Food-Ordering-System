@@ -98,7 +98,7 @@ export default function AdminInventory() {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="search-input"
           />
-          <span className="search-icon">≡ƒöì</span>
+          <span className="search-icon">Search</span>
         </div>
 
         {/* ==================== STATUS FILTER TABS ==================== */}
@@ -167,7 +167,7 @@ export default function AdminInventory() {
                         onClick={() => handleOpenRestock(item)}
                         disabled={actionLoading}
                       >
-                        ≡ƒôª Restock
+                        Restock
                       </button>
                     </td>
                   </tr>

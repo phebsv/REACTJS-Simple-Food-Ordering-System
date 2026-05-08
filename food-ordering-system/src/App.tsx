@@ -1,5 +1,5 @@
 // src/App.tsx
-// Root app — wraps everything in AuthProvider + AdminProvider
+// Root app  wraps everything in AuthProvider + AdminProvider
 // Drop-in replacement for your existing App.tsx
 
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -17,7 +17,7 @@ import Checkout from "./pages/user/Checkout";
 import MyOrders from "./pages/user/MyOrders";
 import Profile from "./pages/user/Profile";
 
-// Admin pages (keep your existing ones — they now use the connected AdminContext)
+// Admin pages (keep your existing ones  they now use the connected AdminContext)
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminMenu from "./pages/admin/AdminMenu";
 import AdminOrders from "./pages/admin/AdminOrders";

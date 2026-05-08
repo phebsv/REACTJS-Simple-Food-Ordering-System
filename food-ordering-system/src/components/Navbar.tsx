@@ -37,7 +37,7 @@ export default function Navbar({ title, showNavLinks = false }: NavbarProps) {
         <nav style={{ display: "flex", alignItems: "center", gap: "2rem" }}>
           <Link to="/dashboard" style={{ textDecoration: "none", color: C.text, fontWeight: 600, fontSize: 14 }}>Home</Link>
           <Link to="/menu" style={{ textDecoration: "none", color: C.text, fontWeight: 600, fontSize: 14 }}>Menu</Link>
-          <Link to="/cart" style={{ textDecoration: "none", color: C.text, fontWeight: 600, fontSize: 20 }}>≡ƒ¢Æ</Link>
+          <Link to="/cart" style={{ textDecoration: "none", color: C.text, fontWeight: 600, fontSize: 14 }}>Cart</Link>
           <Link to="/my-orders" style={{ textDecoration: "none", color: C.text, fontWeight: 600, fontSize: 14 }}>Orders</Link>
           <Link to="/profile" style={{ textDecoration: "none", color: C.text, fontWeight: 600, fontSize: 14 }}>Profile</Link>
           <button 

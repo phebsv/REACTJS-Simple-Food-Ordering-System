@@ -126,7 +126,7 @@ export default function AdminOrders() {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="search-input"
           />
-          <span className="search-icon">🔍</span>
+          <span className="search-icon">Search</span>
         </div>
 
         {/* ==================== STATUS TABS ==================== */}
@@ -320,7 +320,7 @@ export default function AdminOrders() {
                         handleUpdateStatus(selectedOrder.id, "Preparing")
                       }
                     >
-                      ΓåÆ Start Preparing
+                      Start Preparing
                     </button>
                   </>
                 )}
@@ -333,7 +333,7 @@ export default function AdminOrders() {
                         handleUpdateStatus(selectedOrder.id, "Ready")
                       }
                     >
-                      ΓåÆ Ready for Pickup
+                      Ready for Pickup
                     </button>
                   </>
                 )}
@@ -346,7 +346,7 @@ export default function AdminOrders() {
                         handleUpdateStatus(selectedOrder.id, "Delivered")
                       }
                     >
-                      ΓåÆ Mark Delivered
+                      Mark Delivered
                     </button>
                   </>
                 )}
@@ -358,7 +358,7 @@ export default function AdminOrders() {
                       className="action-btn danger-btn"
                       onClick={() => handleCancelOrder(selectedOrder.id)}
                     >
-                      Γ£ò Cancel Order
+                      Cancel Order
                     </button>
                   </>
                 )}
