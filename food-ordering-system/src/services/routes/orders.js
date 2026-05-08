@@ -1,14 +1,7 @@
-// routes/orders.js
-// GET    /orders              — Get all orders (admin) or by customerId query
-// GET    /orders/:id          — Get single order
-// POST   /orders              — Place new order
-// PATCH  /orders/:id          — Update order status
-
 const express = require("express");
 const router = express.Router();
 const { getCollection, setCollection } = require("../data/db");
 
-// GET /orders — supports ?customerId= for customer filtering
 router.get("/", (req, res) => {
   let orders = getCollection("orders");
   if (req.query.customerId) {
@@ -17,7 +10,6 @@ router.get("/", (req, res) => {
   return res.json(orders);
 });
 
-// GET /orders/:id
 router.get("/:id", (req, res) => {
   const orders = getCollection("orders");
   const order = orders.find((o) => o.id === req.params.id);
@@ -25,7 +17,6 @@ router.get("/:id", (req, res) => {
   return res.json(order);
 });
 
-// POST /orders — place new order
 router.post("/", (req, res) => {
   const {
     customerId,
@@ -69,7 +60,6 @@ router.post("/", (req, res) => {
   return res.status(201).json(newOrder);
 });
 
-// PATCH /orders/:id — update status or any field
 router.patch("/:id", (req, res) => {
   const orders = getCollection("orders");
   const idx = orders.findIndex((o) => o.id === req.params.id);
