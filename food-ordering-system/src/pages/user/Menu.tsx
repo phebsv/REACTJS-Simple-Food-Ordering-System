@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import { useCart } from "../../context/CartContext";
+import { decodeHtmlEntities, formatPricePHP, formatRating } from "../../utils/textHelpers";
 import "./Dashboard.css";
 import "./Menu.css";
 
 import type { FoodItem } from "../../types";
+
+// Fallback image
+const FALLBACK_FOOD_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23F5EFE0' width='200' height='200'/%3E%3Ctext x='50%25' y='50%25' font-size='20' fill='%23888080' text-anchor='middle' dominant-baseline='middle'%3ENo Image%3C/text%3E%3C/svg%3E";
 
 type MenuItemProps = {
   items: FoodItem[];
@@ -13,6 +17,7 @@ type MenuItemProps = {
   onCategoryToggle: (category: string) => void;
   onAddToCart: (item: FoodItem) => void;
   selectedItemId: string | null;
+  onToastShow?: (message: string) => void;
 };
 
 function MenuList({
@@ -22,14 +27,18 @@ function MenuList({
   onCategoryToggle,
   onAddToCart,
   selectedItemId,
+  onToastShow,
 }: MenuItemProps) {
+  const handleAddClick = (item: FoodItem) => {
+    onAddToCart(item);
+    onToastShow?.(`${decodeHtmlEntities(item.name)} added to cart!`);
+  };
+
   return (
     <section className="menu-section">
       <div className="menu-header">
         <div>
           <span className="menu-highlight">Highlighted Menu</span>
-          <h2>Choose your favorite food</h2>
-          <p>Select a category and add items to your cart.</p>
         </div>
       </div>
 
@@ -55,21 +64,36 @@ function MenuList({
             key={item.id}
             className={`menu-card ${selectedItemId === item.id ? "menu-card-active" : ""}`}
           >
-            <div className="menu-card-title">
-              <h4>{item.name}</h4>
-              <span>${item.price.toFixed(2)}</span>
+            <div className="menu-card-image-container">
+              <img
+                src={item.image || FALLBACK_FOOD_IMAGE}
+                alt={decodeHtmlEntities(item.name)}
+                className="menu-card-image"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = FALLBACK_FOOD_IMAGE;
+                }}
+              />
             </div>
-            <p>{item.description}</p>
-            <div className="menu-card-footer">
-              <span>{item.category}</span>
-              <button
-                className="menu-add-btn"
-                onClick={() => onAddToCart(item)}
-                disabled={item.available === false}
-                title={item.available === false ? "Item unavailable" : ""}
-              >
-                {item.available === false ? "Unavailable" : "Add to Cart"}
-              </button>
+            <div className="menu-card-content">
+              <div className="menu-card-title">
+                <h4>{decodeHtmlEntities(item.name)}</h4>
+                <span className="menu-card-price">{formatPricePHP(item.price)}</span>
+              </div>
+              <p className="menu-card-description">{item.description}</p>
+              <div className="menu-card-rating">
+                {formatRating(0, 0)}
+              </div>
+              <div className="menu-card-footer">
+                <span className="menu-card-category">{item.category}</span>
+                <button
+                  className="menu-add-btn"
+                  onClick={() => handleAddClick(item)}
+                  disabled={item.available === false}
+                  title={item.available === false ? "Item unavailable" : ""}
+                >
+                  {item.available === false ? "Unavailable" : "Add to Cart"}
+                </button>
+              </div>
             </div>
           </div>
         ))}
@@ -84,7 +108,16 @@ export default function Menu() {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const { addItem } = useCart();
+
+  // Auto-hide toast after 3 seconds
+  useEffect(() => {
+    if (toastMessage) {
+      const timer = setTimeout(() => setToastMessage(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toastMessage]);
 
   // Fetch menu items from API
   useEffect(() => {
@@ -142,26 +175,50 @@ export default function Menu() {
     ...new Set(allMenuItems.map((item) => item.category)),
   ];
 
+  // Get a featured item for hero banner
+  const featuredItem = allMenuItems.length > 0 ? allMenuItems[0] : null;
+
   return (
     <>
       <Navbar title="MENU" showNavLinks={true} />
       <div className="menu-page-container">
-        <div className="menu-page-intro">
-          <div className="menu-page-top">
-            <div className="menu-page-hot">fresh flavors</div>
-            <div className="menu-page-meal">choose your meal</div>
-            <div className="menu-page-tagline">
-              add to cart and check your order
+        {/* Toast Notification */}
+        {toastMessage && (
+          <div className="menu-toast">
+            ✓ {toastMessage}
+          </div>
+        )}
+
+        {/* Hero Banner */}
+        {featuredItem && (
+          <div className="menu-hero-banner">
+            <div className="menu-hero-content">
+              <div className="menu-hero-text">
+                <div className="menu-hero-label">Try our best</div>
+                <h2 className="menu-hero-title">{decodeHtmlEntities(featuredItem.name)}</h2>
+                <div className="menu-hero-price">{formatPricePHP(featuredItem.price)}</div>
+                <button
+                  className="menu-hero-btn"
+                  onClick={() => {
+                    handleAddToCart(featuredItem);
+                    setToastMessage(`${decodeHtmlEntities(featuredItem.name)} added to cart!`);
+                  }}
+                >
+                  Order Now
+                </button>
+              </div>
+              <div className="menu-hero-image">
+                <img
+                  src={featuredItem.image || FALLBACK_FOOD_IMAGE}
+                  alt={decodeHtmlEntities(featuredItem.name)}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = FALLBACK_FOOD_IMAGE;
+                  }}
+                />
+              </div>
             </div>
           </div>
-          <div className="menu-page-welcome-panel">
-            <h1 className="menu-page-welcome">Food Menu</h1>
-            <p className="menu-page-summary">
-              Browse the food categories and tap Add to Cart on each item to
-              build your order.
-            </p>
-          </div>
-        </div>
+        )}
 
         <div className="menu-page-grid">
           <div className="menu-main">
@@ -195,6 +252,7 @@ export default function Menu() {
                 onCategoryToggle={handleCategoryToggle}
                 onAddToCart={handleAddToCart}
                 selectedItemId={selectedItemId}
+                onToastShow={setToastMessage}
               />
             )}
           </div>
