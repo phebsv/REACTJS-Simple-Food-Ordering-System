@@ -23,7 +23,7 @@ app.use("/cart_items", require("./routes/cart_items"));
 
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get("/", (req, res) => {
-  res.json({ message: "🍔 NomNom API is running.", port: PORT });
+  res.json({ message: "[BURGER] NomNom API is running.", port: PORT });
 });
 
 // ── 404 handler ───────────────────────────────────────────────────────────────
@@ -34,5 +34,5 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`✅ NomNom backend running at http://localhost:${PORT}`);
+  console.log(`[OK] NomNom backend running at http://localhost:${PORT}`);
 });

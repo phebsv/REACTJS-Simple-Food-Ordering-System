@@ -16,14 +16,25 @@
       "passwordHash": "$2a$10$rDBMWsbBp50B7Wih12fOH.0Q.L380aR9afQeje/CslVbjAFR.wRm.",
       "address": "",
       "role": "user"
+    },
+    {
+      "id": "mox6imuq7zn4m00vmag",
+      "name": "Christian  Demetillo",
+      "email": "dmtchrs@gmail.com",
+      "phone": "09617095667",
+      "password": "ninja123",
+      "passwordHash": "$2a$10$lKeUl1yQKY47lFsbaPhsau3TBhS1voFpKUJhAXqngQiYwByPfh/q2",
+      "address": "",
+      "role": "user"
     }
   ],
+  "admins": [],
   "menu": [
     {
       "id": "1",
       "name": "Classic Burger",
       "description": "Fresh beef patty with lettuce, tomato, and special sauce",
-      "price": 8.99,
+      "price": 150,
       "category": "Meals",
       "image": "https://via.placeholder.com/300x200?text=Classic+Burger",
       "available": true,
@@ -33,7 +44,7 @@
       "id": "2",
       "name": "Pepperoni Pizza",
       "description": "Crispy crust topped with mozzarella and pepperoni",
-      "price": 12.99,
+      "price": 130,
       "category": "Meals",
       "image": "https://via.placeholder.com/300x200?text=Pepperoni+Pizza",
       "available": true,
@@ -43,7 +54,7 @@
       "id": "3",
       "name": "Iced Coffee",
       "description": "Refreshing iced coffee with a smooth finish",
-      "price": 3.99,
+      "price": 100,
       "category": "Drinks",
       "image": "https://via.placeholder.com/300x200?text=Iced+Coffee",
       "available": true,
@@ -53,7 +64,7 @@
       "id": "4",
       "name": "French Fries",
       "description": "Crispy golden fries served hot",
-      "price": 2.99,
+      "price": 50,
       "category": "Snacks",
       "image": "https://via.placeholder.com/300x200?text=French+Fries",
       "available": true,
@@ -63,20 +74,11 @@
       "id": "5",
       "name": "Chocolate Cake",
       "description": "Rich and moist chocolate cake with frosting",
-      "price": 5.99,
+      "price": 70,
       "category": "Desserts",
       "image": "https://via.placeholder.com/300x200?text=Chocolate+Cake",
-      "available": false,
-      "stock": 8
-    },
-    {
-      "name": "Cheese Cake ",
-      "category": "Desserts",
-      "price": 150,
-      "description": "per slice cheesecake",
-      "image": "",
       "available": true,
-      "id": "5Rw5lgWBMbk"
+      "stock": 8
     }
   ],
   "orders": [
@@ -170,6 +172,31 @@
       "deliveryNotes": "Ring doorbell twice",
       "createdAt": "2024-04-30T08:00:00Z",
       "updatedAt": "2026-04-30T01:28:59.755Z"
+    },
+    {
+      "id": "ordermox6kl6n",
+      "customerId": "mox6imuq7zn4m00vmag",
+      "customerName": "Christian  Demetillo",
+      "customerEmail": "dmtchrs@gmail.com",
+      "customerPhone": "09617095667",
+      "customerAddress": "Pakigne, Minglanilla, Cebu",
+      "items": [
+        {
+          "id": "1",
+          "name": "Classic Burger",
+          "description": "Fresh beef patty with lettuce, tomato, and special sauce",
+          "price": 8.99,
+          "category": "Meals",
+          "quantity": 1
+        }
+      ],
+      "subtotal": 8.99,
+      "total": 8.99,
+      "status": "Pending",
+      "paymentMethod": "cash",
+      "deliveryNotes": "asdas",
+      "createdAt": "2026-05-08T17:20:08.255Z",
+      "updatedAt": "2026-05-08T17:20:08.255Z"
     }
   ],
   "inventory": [

@@ -189,7 +189,7 @@ export default function AdminOrders() {
                       </div>
                     </td>
                     <td>{order.items.length} item(s)</td>
-                    <td className="order-total">${order.total.toFixed(2)}</td>
+                    <td className="order-total">₱{order.total.toFixed(2)}</td>
                     <td>
                       <StatusBadge status={order.status} />
                     </td>
@@ -255,10 +255,10 @@ export default function AdminOrders() {
                       </div>
                       <div className="item-prices">
                         <span className="item-price">
-                          ${item.price.toFixed(2)} each
+                          ₱{item.price.toFixed(2)} each
                         </span>
                         <span className="item-subtotal">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          ₱{(item.price * item.quantity).toFixed(2)}
                         </span>
                       </div>
                     </div>
@@ -271,11 +271,11 @@ export default function AdminOrders() {
                 <div className="summary-items">
                   <div className="summary-row">
                     <span>Subtotal</span>
-                    <span>${selectedOrder.subtotal.toFixed(2)}</span>
+                    <span>₱{selectedOrder.subtotal.toFixed(2)}</span>
                   </div>
                   <div className="summary-row total">
                     <span>Total</span>
-                    <span>${selectedOrder.total.toFixed(2)}</span>
+                    <span>₱{selectedOrder.total.toFixed(2)}</span>
                   </div>
                 </div>
               </div>

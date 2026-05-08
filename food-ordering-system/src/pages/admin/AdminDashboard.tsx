@@ -161,7 +161,7 @@ function AdminDashboard() {
 
           <StatCard
             title="Revenue Today"
-            value={`PHP ${stats.totalRevenue.toFixed(2)}`}
+            value={`₱${stats.totalRevenue.toFixed(2)}`}
             icon="Revenue"
             color="green"
           />

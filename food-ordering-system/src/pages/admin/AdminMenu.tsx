@@ -246,7 +246,7 @@ export default function AdminMenu() {
 
                   <p className="item-description">{item.description}</p>
 
-                  <div className="item-price">${item.price.toFixed(2)}</div>
+                  <div className="item-price">₱{item.price.toFixed(2)}</div>
 
                   {item.stock !== undefined && (
                     <div className={`stock-info ${item.stock === 0 ? "out-of-stock" : ""}`}>
