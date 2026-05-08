@@ -249,3 +249,13 @@
     width: 100%;
   }
 }
+
+.profile-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-content {
+  position: relative;
+  z-index: 1;
+}

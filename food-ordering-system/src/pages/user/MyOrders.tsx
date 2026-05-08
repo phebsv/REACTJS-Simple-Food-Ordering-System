@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
+import BgFood from "../../components/BgFood";
 import "./MyOrders.css";
 import type { Order } from "../../types";
 
@@ -101,6 +102,7 @@ export default function MyOrders() {
     <>
       <Navbar title="MY ORDERS" showNavLinks={true} />
       <div className="my-orders-container">
+        <BgFood />
         <div className="my-orders-content">
           <h1 className="my-orders-title">My Orders</h1>
 

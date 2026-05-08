@@ -500,3 +500,13 @@
     width: 95%;
   }
 }
+
+.my-orders-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.my-orders-content {
+  position: relative;
+  z-index: 1;
+}

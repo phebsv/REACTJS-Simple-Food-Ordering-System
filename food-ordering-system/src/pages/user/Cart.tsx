@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
+import BgFood from "../../components/BgFood";
 import { useCart } from "../../context/CartContext";
 import "./Cart.css";
 
@@ -23,6 +24,7 @@ export default function Cart() {
     <>
       <Navbar title="CART" showNavLinks={true} />
       <div className="cart-page-container">
+        <BgFood />
         <div className="cart-page-content">
           <h1 className="cart-page-title">Shopping Cart</h1>
 

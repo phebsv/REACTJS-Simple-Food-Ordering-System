@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
+import BgFood from "../../components/BgFood";
 import { useCart } from "../../context/CartContext";
 import { decodeHtmlEntities, formatPricePHP, formatRating } from "../../utils/textHelpers";
 import "./Dashboard.css";
@@ -182,6 +183,7 @@ export default function Menu() {
     <>
       <Navbar title="MENU" showNavLinks={true} />
       <div className="menu-page-container">
+        <BgFood />
         {/* Toast Notification */}
         {toastMessage && (
           <div className="menu-toast">

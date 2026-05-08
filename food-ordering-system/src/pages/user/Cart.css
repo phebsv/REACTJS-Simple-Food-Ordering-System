@@ -379,3 +379,13 @@
     max-height: none;
   }
 }
+
+.cart-page-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.cart-page-content {
+  position: relative;
+  z-index: 1;
+}

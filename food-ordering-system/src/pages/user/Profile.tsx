@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
+import BgFood from "../../components/BgFood";
 import "./Profile.css";
 
 export default function Profile() {
@@ -87,6 +88,7 @@ export default function Profile() {
     <>
       <Navbar title="PROFILE" showNavLinks={true} />
       <div className="profile-container">
+        <BgFood />
         <div className="profile-content">
           <h1 className="profile-title">My Profile</h1>
 

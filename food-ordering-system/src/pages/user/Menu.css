@@ -503,3 +503,14 @@
   }
 }
 
+.menu-page-container {
+  background: linear-gradient(180deg, var(--red) 0 320px, var(--cream) 320px);
+  overflow: hidden;
+}
+
+.menu-hero-banner,
+.menu-page-grid {
+  position: relative;
+  z-index: 1;
+}
+
