@@ -1,0 +1,269 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "email": "admin",
+      "password": "1234",
+      "name": "Admin",
+      "role": "admin"
+    },
+    {
+      "id": "mowsjsivwstapw3zb2r",
+      "name": "jiyong denpai",
+      "email": "jiyong@gmail.com",
+      "phone": "09291052281",
+      "password": "vitamilk22",
+      "passwordHash": "$2a$10$rDBMWsbBp50B7Wih12fOH.0Q.L380aR9afQeje/CslVbjAFR.wRm.",
+      "address": "",
+      "role": "user"
+    }
+  ],
+  "menu": [
+    {
+      "id": "1",
+      "name": "Classic Burger",
+      "description": "Fresh beef patty with lettuce, tomato, and special sauce",
+      "price": 8.99,
+      "category": "Meals",
+      "image": "https://via.placeholder.com/300x200?text=Classic+Burger",
+      "available": true,
+      "stock": 50
+    },
+    {
+      "id": "2",
+      "name": "Pepperoni Pizza",
+      "description": "Crispy crust topped with mozzarella and pepperoni",
+      "price": 12.99,
+      "category": "Meals",
+      "image": "https://via.placeholder.com/300x200?text=Pepperoni+Pizza",
+      "available": true,
+      "stock": 30
+    },
+    {
+      "id": "3",
+      "name": "Iced Coffee",
+      "description": "Refreshing iced coffee with a smooth finish",
+      "price": 3.99,
+      "category": "Drinks",
+      "image": "https://via.placeholder.com/300x200?text=Iced+Coffee",
+      "available": true,
+      "stock": 5
+    },
+    {
+      "id": "4",
+      "name": "French Fries",
+      "description": "Crispy golden fries served hot",
+      "price": 2.99,
+      "category": "Snacks",
+      "image": "https://via.placeholder.com/300x200?text=French+Fries",
+      "available": true,
+      "stock": 0
+    },
+    {
+      "id": "5",
+      "name": "Chocolate Cake",
+      "description": "Rich and moist chocolate cake with frosting",
+      "price": 5.99,
+      "category": "Desserts",
+      "image": "https://via.placeholder.com/300x200?text=Chocolate+Cake",
+      "available": false,
+      "stock": 8
+    },
+    {
+      "name": "Cheese Cake ",
+      "category": "Desserts",
+      "price": 150,
+      "description": "per slice cheesecake",
+      "image": "",
+      "available": true,
+      "id": "5Rw5lgWBMbk"
+    }
+  ],
+  "orders": [
+    {
+      "id": "order1",
+      "customerId": "OcZ4bjEAvBs",
+      "customerName": "christian Demetillo",
+      "customerEmail": "dmtchrs@gmail.com",
+      "customerPhone": "09617095667",
+      "customerAddress": "123 Main Street, City",
+      "items": [
+        {
+          "id": "1",
+          "name": "Classic Burger",
+          "description": "Fresh beef patty with lettuce, tomato, and special sauce",
+          "price": 8.99,
+          "category": "Meals",
+          "quantity": 2
+        },
+        {
+          "id": "3",
+          "name": "Iced Coffee",
+          "description": "Refreshing iced coffee with a smooth finish",
+          "price": 3.99,
+          "category": "Drinks",
+          "quantity": 1
+        }
+      ],
+      "subtotal": 21.97,
+      "total": 21.97,
+      "status": "Delivered",
+      "paymentMethod": "Credit Card",
+      "deliveryNotes": "Leave at door",
+      "createdAt": "2024-04-28T10:00:00Z",
+      "updatedAt": "2024-04-28T15:30:00Z"
+    },
+    {
+      "id": "order2",
+      "customerId": "tIrSAMc1Dts",
+      "customerName": "Hello World",
+      "customerEmail": "villerboy123@gmail.com",
+      "customerPhone": "09617095668",
+      "customerAddress": "456 Oak Avenue, Town",
+      "items": [
+        {
+          "id": "2",
+          "name": "Pepperoni Pizza",
+          "description": "Crispy crust topped with mozzarella and pepperoni",
+          "price": 12.99,
+          "category": "Meals",
+          "quantity": 1
+        }
+      ],
+      "subtotal": 12.99,
+      "total": 12.99,
+      "status": "Ready",
+      "paymentMethod": "Debit Card",
+      "deliveryNotes": "",
+      "createdAt": "2024-04-29T14:00:00Z",
+      "updatedAt": "2024-04-29T16:00:00Z"
+    },
+    {
+      "id": "order3",
+      "customerId": "7isIEDpkKl0",
+      "customerName": "Samantha Pasague",
+      "customerEmail": "samanthaleonor.pasague.23@usjr.edu.ph",
+      "customerPhone": "09089659262",
+      "customerAddress": "789 Pine Road, Village",
+      "items": [
+        {
+          "id": "1",
+          "name": "Classic Burger",
+          "description": "Fresh beef patty with lettuce, tomato, and special sauce",
+          "price": 8.99,
+          "category": "Meals",
+          "quantity": 1
+        },
+        {
+          "id": "4",
+          "name": "French Fries",
+          "description": "Crispy golden fries served hot",
+          "price": 2.99,
+          "category": "Snacks",
+          "quantity": 1
+        }
+      ],
+      "subtotal": 11.98,
+      "total": 11.98,
+      "status": "Cancelled",
+      "paymentMethod": "Cash",
+      "deliveryNotes": "Ring doorbell twice",
+      "createdAt": "2024-04-30T08:00:00Z",
+      "updatedAt": "2026-04-30T01:28:59.755Z"
+    }
+  ],
+  "inventory": [
+    {
+      "id": "1",
+      "name": "Classic Burger",
+      "category": "Meals",
+      "stock": 50,
+      "status": "Available",
+      "lastUpdated": "2024-04-30T10:00:00Z"
+    },
+    {
+      "id": "2",
+      "name": "Pepperoni Pizza",
+      "category": "Meals",
+      "stock": 30,
+      "status": "Available",
+      "lastUpdated": "2024-04-30T10:00:00Z"
+    },
+    {
+      "id": "3",
+      "name": "Iced Coffee",
+      "category": "Drinks",
+      "stock": 5,
+      "status": "Low Stock",
+      "lastUpdated": "2024-04-30T10:00:00Z"
+    },
+    {
+      "id": "4",
+      "name": "French Fries",
+      "category": "Snacks",
+      "stock": 0,
+      "status": "Out of Stock",
+      "lastUpdated": "2024-04-30T10:00:00Z"
+    },
+    {
+      "id": "5",
+      "name": "Chocolate Cake",
+      "category": "Desserts",
+      "stock": 8,
+      "status": "Available",
+      "lastUpdated": "2024-04-30T10:00:00Z"
+    }
+  ],
+  "reviews": [
+    {
+      "id": "review1",
+      "orderId": "order1",
+      "customerId": "OcZ4bjEAvBs",
+      "customerName": "christian Demetillo",
+      "foodItemId": "1",
+      "foodItemName": "Classic Burger",
+      "rating": 5,
+      "comment": "Absolutely delicious! Fresh ingredients and great taste. Will order again.",
+      "createdAt": "2024-04-28T20:00:00Z",
+      "hidden": false
+    },
+    {
+      "id": "review2",
+      "orderId": "order1",
+      "customerId": "OcZ4bjEAvBs",
+      "customerName": "christian Demetillo",
+      "foodItemId": "3",
+      "foodItemName": "Iced Coffee",
+      "rating": 4,
+      "comment": "Good coffee, cold and refreshing. Could use a bit more flavor.",
+      "createdAt": "2024-04-28T20:05:00Z",
+      "hidden": false
+    },
+    {
+      "id": "review3",
+      "orderId": "order2",
+      "customerId": "tIrSAMc1Dts",
+      "customerName": "Hello World",
+      "foodItemId": "2",
+      "foodItemName": "Pepperoni Pizza",
+      "rating": 3,
+      "comment": "Average pizza. Toppings were okay but crust could be crispier.",
+      "createdAt": "2024-04-29T18:00:00Z",
+      "hidden": false
+    }
+  ],
+  "cart_items": [
+    {
+      "id": "mowskwczgc1t6s0s0lc",
+      "customerId": "mowsjsivwstapw3zb2r",
+      "menuId": "1",
+      "name": "Classic Burger",
+      "description": "Fresh beef patty with lettuce, tomato, and special sauce",
+      "price": 8.99,
+      "category": "Meals",
+      "image": "https://via.placeholder.com/300x200?text=Classic+Burger",
+      "quantity": 1
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

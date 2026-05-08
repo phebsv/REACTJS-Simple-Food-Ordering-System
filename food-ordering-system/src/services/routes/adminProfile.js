@@ -7,7 +7,9 @@ const { getCollection } = require("../data/db");
 
 // GET /adminProfile
 router.get("/", (req, res) => {
-  const admins = getCollection("admins");
+  const admins = getCollection("users").filter(
+    (u) => String(u.role).toLowerCase() === "admin",
+  );
 
   if (!admins || admins.length === 0) {
     return res.status(404).json({

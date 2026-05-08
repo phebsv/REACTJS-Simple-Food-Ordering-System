@@ -40,12 +40,10 @@ router.post("/register", (req, res) => {
   const { password: _, ...safeUser } = newUser;
   const token = generateToken(newUser.id, "customer");
 
-  return res
-    .status(201)
-    .json({
-      message: "Account created successfully.",
-      data: { token, user: safeUser },
-    });
+  return res.status(201).json({
+    message: "Account created successfully.",
+    data: { token, user: safeUser },
+  });
 });
 
 // ── CUSTOMER LOGIN ────────────────────────────────────────────────────────────
@@ -59,12 +57,13 @@ router.post("/login", (req, res) => {
 
   const normalized = String(email).trim().toLowerCase();
 
-  const admins = getCollection("admins");
-  const admin = admins.find(
-    (a) =>
-      (String(a.username).toLowerCase() === normalized ||
-        String(a.email || "").toLowerCase() === normalized) &&
-      String(a.password) === String(password),
+  const users = getCollection("users");
+  const admin = users.find(
+    (u) =>
+      String(u.role).toLowerCase() === "admin" &&
+      (String(u.username || "").toLowerCase() === normalized ||
+        String(u.email || "").toLowerCase() === normalized) &&
+      String(u.password) === String(password),
   );
 
   if (admin) {
@@ -76,7 +75,6 @@ router.post("/login", (req, res) => {
     });
   }
 
-  const users = getCollection("users");
   const user = users.find((u) => String(u.email).toLowerCase() === normalized);
 
   if (!user)
@@ -107,11 +105,14 @@ router.post("/admin-login", (req, res) => {
       .status(400)
       .json({ message: "Username and password are required." });
 
-  const admins = getCollection("admins");
-  const admin = admins.find(
-    (a) =>
-      String(a.username).toLowerCase() === String(username).toLowerCase() &&
-      String(a.password) === String(password),
+  const users = getCollection("users");
+  const normalized = String(username).toLowerCase();
+  const admin = users.find(
+    (u) =>
+      String(u.role).toLowerCase() === "admin" &&
+      (String(u.username || "").toLowerCase() === normalized ||
+        String(u.email || "").toLowerCase() === normalized) &&
+      String(u.password) === String(password),
   );
 
   if (!admin)

@@ -5,9 +5,36 @@ const path = require("path");
 
 const DB_PATH = path.join(__dirname, "..", "db.json");
 
+const DEFAULT_DB = {
+  users: [],
+  admins: [],
+  menu: [],
+  orders: [],
+  inventory: [],
+  reviews: [],
+  cart_items: [],
+};
+
 function readDB() {
+  if (!fs.existsSync(DB_PATH)) {
+    writeDB(DEFAULT_DB);
+    return { ...DEFAULT_DB };
+  }
+
   const raw = fs.readFileSync(DB_PATH, "utf-8");
-  return JSON.parse(raw);
+  if (!raw.trim()) {
+    writeDB(DEFAULT_DB);
+    return { ...DEFAULT_DB };
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    return { ...DEFAULT_DB, ...parsed };
+  } catch (err) {
+    // Recover from invalid JSON to keep the API running.
+    writeDB(DEFAULT_DB);
+    return { ...DEFAULT_DB };
+  }
 }
 
 function writeDB(data) {
