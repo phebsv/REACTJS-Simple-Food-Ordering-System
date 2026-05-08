@@ -1,5 +1,5 @@
 // src/pages/Login.tsx
-// Connected to PHP backend via AuthContext
+// Connected to Express backend via AuthContext
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";

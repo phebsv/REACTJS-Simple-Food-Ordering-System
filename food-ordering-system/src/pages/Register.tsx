@@ -1,5 +1,5 @@
 // src/pages/Register.tsx
-// Connected to PHP /auth/register.php via AuthContext
+// Connected to Express /auth/register route via AuthContext
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
