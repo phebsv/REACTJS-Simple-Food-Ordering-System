@@ -1,15 +1,9 @@
-// routes/auth.js
-// POST /auth/register   — Register new customer
-// POST /auth/login      — Customer login
-// POST /auth/admin-login — Admin login
-
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const router = express.Router();
 const { getCollection, setCollection } = require("../data/db");
 const { generateToken } = require("../middleware/auth");
 
-// ── REGISTER ──────────────────────────────────────────────────────────────────
 router.post("/register", (req, res) => {
   const { name, email, phone = "", password, address = "" } = req.body;
 
@@ -28,7 +22,7 @@ router.post("/register", (req, res) => {
     name,
     email,
     phone,
-    password, // keep plain for compatibility
+    password,
     passwordHash,
     address,
     role: "user",
@@ -46,7 +40,6 @@ router.post("/register", (req, res) => {
   });
 });
 
-// ── CUSTOMER LOGIN ────────────────────────────────────────────────────────────
 router.post("/login", (req, res) => {
   const { email, password } = req.body;
 
@@ -96,7 +89,6 @@ router.post("/login", (req, res) => {
   });
 });
 
-// ── ADMIN LOGIN ───────────────────────────────────────────────────────────────
 router.post("/admin-login", (req, res) => {
   const { username, password } = req.body;
 

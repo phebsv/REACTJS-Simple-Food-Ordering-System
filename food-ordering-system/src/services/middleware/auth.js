@@ -1,5 +1,3 @@
-// middleware/auth.js — JWT token generation and route protection
-
 const jwt = require("jsonwebtoken");
 
 const SECRET = process.env.JWT_SECRET || "nomnom_secret_2024";

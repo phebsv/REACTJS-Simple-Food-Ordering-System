@@ -1,22 +1,13 @@
-// routes/menu.js
-// GET    /menu          — Get all available items (public)
-// GET    /menu/:id      — Get single item (public)
-// POST   /menu          — Add item (admin)
-// PATCH  /menu/:id      — Update item (admin)
-// DELETE /menu/:id      — Delete item (admin)
-
 const express = require("express");
 const router = express.Router();
 const { getCollection, setCollection } = require("../data/db");
 const { requireAdmin } = require("../middleware/auth");
 
-// GET /menu — all items (admin sees all, customers see available only)
 router.get("/", (req, res) => {
   const items = getCollection("menu");
   return res.json(items);
 });
 
-// GET /menu/:id
 router.get("/:id", (req, res) => {
   const items = getCollection("menu");
   const item = items.find((i) => i.id === req.params.id);
@@ -24,7 +15,6 @@ router.get("/:id", (req, res) => {
   return res.json(item);
 });
 
-// POST /menu — admin only
 router.post("/", requireAdmin, (req, res) => {
   const {
     name,
@@ -58,7 +48,6 @@ router.post("/", requireAdmin, (req, res) => {
   return res.status(201).json(newItem);
 });
 
-// PATCH /menu/:id — admin only
 router.patch("/:id", requireAdmin, (req, res) => {
   const items = getCollection("menu");
   const idx = items.findIndex((i) => i.id === req.params.id);
@@ -82,7 +71,6 @@ router.patch("/:id", requireAdmin, (req, res) => {
   return res.json(items[idx]);
 });
 
-// DELETE /menu/:id — admin only
 router.delete("/:id", requireAdmin, (req, res) => {
   const items = getCollection("menu");
   const filtered = items.filter((i) => i.id !== req.params.id);

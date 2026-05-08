@@ -1,8 +1,5 @@
 import axios from "axios";
 
-// ---------------------------------------------
-// BASE CONFIG
-// ---------------------------------------------
 const API = axios.create({
   baseURL: "http://localhost:3001",
   headers: {
@@ -10,7 +7,6 @@ const API = axios.create({
   },
 });
 
-// Optional: attach token automatically
 API.interceptors.request.use((config) => {
   const token =
     localStorage.getItem("adminToken") || localStorage.getItem("customerToken");
@@ -22,9 +18,6 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-// ---------------------------------------------
-// TYPES
-// ---------------------------------------------
 export type AuthUser = {
   id: string;
   name?: string;
@@ -74,9 +67,6 @@ export async function registerUser(payload: {
   return res.data as BackendAuthResponse;
 }
 
-// ---------------------------------------------
-// AUTH (CUSTOMER)
-// ---------------------------------------------
 export async function loginCustomer(email: string, password: string) {
   const res = await loginUser({ email, password });
   return { data: { token: res.data.token, customer: res.data.user } };
@@ -100,9 +90,6 @@ export async function registerCustomer(data: {
   return { data: { token: res.data.data.token, customer: res.data.data.user } };
 }
 
-// ---------------------------------------------
-// AUTH (ADMIN) FIXED
-// ---------------------------------------------
 export async function loginAdmin(email: string, password: string) {
   const res = await API.post("/auth/admin-login", {
     username: email, // IMPORTANT FIX
@@ -117,9 +104,6 @@ export async function loginAdmin(email: string, password: string) {
   };
 }
 
-// ---------------------------------------------
-// MENU (ADMIN)
-// ---------------------------------------------
 export async function adminGetMenuItems() {
   const res = await API.get("/menu");
   return res.data;
@@ -140,9 +124,7 @@ export async function adminDeleteMenuItem(id: string) {
   return res.data;
 }
 
-// ---------------------------------------------
-// ORDERS (ADMIN)
-// ---------------------------------------------
+
 export async function adminGetOrders() {
   const res = await API.get("/orders");
   return res.data;
@@ -155,9 +137,6 @@ export async function adminUpdateOrderStatus(id: number, status: string) {
   return res.data;
 }
 
-// ---------------------------------------------
-// INVENTORY
-// ---------------------------------------------
 export async function getInventory() {
   const res = await API.get("/inventory");
   return res.data;
@@ -168,9 +147,6 @@ export async function updateInventory(id: string, data: any) {
   return res.data;
 }
 
-// ---------------------------------------------
-// REVIEWS
-// ---------------------------------------------
 export async function getReviews() {
   const res = await API.get("/reviews");
   return res.data;

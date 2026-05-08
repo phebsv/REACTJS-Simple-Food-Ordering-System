@@ -1,5 +1,3 @@
-// db.js — read/write helpers for JSON flat-file database
-
 const fs = require("fs");
 const path = require("path");
 
@@ -31,7 +29,6 @@ function readDB() {
     const parsed = JSON.parse(raw);
     return { ...DEFAULT_DB, ...parsed };
   } catch (err) {
-    // Recover from invalid JSON to keep the API running.
     writeDB(DEFAULT_DB);
     return { ...DEFAULT_DB };
   }

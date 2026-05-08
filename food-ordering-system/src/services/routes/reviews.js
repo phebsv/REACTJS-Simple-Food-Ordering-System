@@ -1,19 +1,11 @@
-// routes/reviews.js
-// GET    /reviews       — Get all reviews
-// POST   /reviews       — Add a review
-// PATCH  /reviews/:id   — Hide a review
-// DELETE /reviews/:id   — Delete a review
-
 const express = require("express");
 const router = express.Router();
 const { getCollection, setCollection } = require("../data/db");
 
-// GET /reviews
 router.get("/", (req, res) => {
   return res.json(getCollection("reviews"));
 });
 
-// POST /reviews
 router.post("/", (req, res) => {
   const {
     orderId,
@@ -49,7 +41,6 @@ router.post("/", (req, res) => {
   return res.status(201).json(newReview);
 });
 
-// PATCH /reviews/:id — hide review
 router.patch("/:id", (req, res) => {
   const reviews = getCollection("reviews");
   const idx = reviews.findIndex((r) => r.id === req.params.id);
@@ -61,7 +52,6 @@ router.patch("/:id", (req, res) => {
   return res.json(reviews[idx]);
 });
 
-// DELETE /reviews/:id
 router.delete("/:id", (req, res) => {
   const reviews = getCollection("reviews");
   const filtered = reviews.filter((r) => r.id !== req.params.id);

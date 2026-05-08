@@ -1,14 +1,7 @@
-// routes/cart_items.js
-// GET    /cart_items?customerId=  — Get cart items for a customer
-// POST   /cart_items              — Add item to cart
-// PATCH  /cart_items/:id          — Update quantity
-// DELETE /cart_items/:id          — Remove item
-
 const express = require("express");
 const router = express.Router();
 const { getCollection, setCollection } = require("../data/db");
 
-// GET /cart_items?customerId=&menuId=
 router.get("/", (req, res) => {
   let items = getCollection("cart_items");
 
@@ -22,7 +15,6 @@ router.get("/", (req, res) => {
   return res.json(items);
 });
 
-// POST /cart_items — add new cart item
 router.post("/", (req, res) => {
   const { customerId, menuId, name, description, price, category, image, quantity } =
     req.body;
@@ -48,7 +40,6 @@ router.post("/", (req, res) => {
   return res.status(201).json(newItem);
 });
 
-// PATCH /cart_items/:id — update quantity
 router.patch("/:id", (req, res) => {
   const items = getCollection("cart_items");
   const idx = items.findIndex((i) => i.id === req.params.id);
@@ -62,7 +53,6 @@ router.patch("/:id", (req, res) => {
   return res.json(items[idx]);
 });
 
-// DELETE /cart_items/:id
 router.delete("/:id", (req, res) => {
   const items = getCollection("cart_items");
   const filtered = items.filter((i) => i.id !== req.params.id);

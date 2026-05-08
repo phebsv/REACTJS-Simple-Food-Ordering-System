@@ -1,11 +1,7 @@
-// routes/adminProfile.js
-// GET /adminProfile — returns first admin profile
-
 const express = require("express");
 const router = express.Router();
 const { getCollection } = require("../data/db");
 
-// GET /adminProfile
 router.get("/", (req, res) => {
   const admins = getCollection("users").filter(
     (u) => String(u.role).toLowerCase() === "admin",
@@ -17,7 +13,6 @@ router.get("/", (req, res) => {
     });
   }
 
-  // Remove password before sending
   const { password, ...safeAdmin } = admins[0];
 
   return res.json(safeAdmin);
