@@ -1,5 +1,6 @@
 ﻿import { useEffect, useState, useMemo } from "react";
 import AdminSidebar from "../../components/admin/AdminSidebar";
+import AdminHeader from "../../components/admin/AdminHeader";
 import AdminModal from "../../components/admin/AdminModal";
 import ConfirmDialog from "../../components/admin/ConfirmDialog";
 import LoadingSpinner from "../../components/admin/LoadingSpinner";
@@ -109,24 +110,29 @@ export default function AdminOrders() {
     <div className="admin-layout">
       <AdminSidebar />
       <div className="admin-content">
-        {/* ==================== HEADER ==================== */}
-        <div className="admin-header">
-          <h1>Orders Management</h1>
-          <p className="admin-subtitle">Manage and track all customer orders</p>
-        </div>
+        <AdminHeader
+          title="Orders Management"
+          subtitle="Manage and track all customer orders"
+        />
 
         {error && <div className="admin-error-banner">{error}</div>}
 
         {/* ==================== SEARCH BAR ==================== */}
         <div className="orders-search-bar">
-          <input
-            type="text"
-            placeholder="Search by Order ID or Customer Name..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="search-input"
-          />
-          <span className="search-icon">Search</span>
+          <div className="admin-search-control">
+            <input
+              type="text"
+              placeholder="Search by Order ID or Customer Name..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="admin-search-input"
+            />
+            <button
+              type="button"
+              className="admin-search-button"
+              aria-label="Search orders"
+            />
+          </div>
         </div>
 
         {/* ==================== STATUS TABS ==================== */}

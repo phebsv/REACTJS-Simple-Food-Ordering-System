@@ -19,15 +19,6 @@
   box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
 }
 
-.search-icon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 16px;
-  color: #999;
-}
-
 /* ==================== STATUS FILTER TABS ==================== */
 .status-filter-tabs {
   display: flex;

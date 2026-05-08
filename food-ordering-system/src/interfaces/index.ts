@@ -1,5 +1,6 @@
 // src/interfaces/index.ts
 // Shared TypeScript interfaces - matches your PHP JSON schema exactly
+import type { ReactNode } from "react";
 
 export interface Customer {
   customer_id: number;
@@ -73,9 +74,13 @@ export interface AdminProfile {
 }
 
 export type AdminHeaderProps = {
-  adminProfile: AdminProfile;
-  searchTerm: string;
-  onSearchChange: (value: string) => void;
+  title: string;
+  subtitle: string;
+  adminProfile?: AdminProfile;
+  searchTerm?: string;
+  searchPlaceholder?: string;
+  onSearchChange?: (value: string) => void;
+  actions?: ReactNode;
 };
 
 // AdminContext data shapes

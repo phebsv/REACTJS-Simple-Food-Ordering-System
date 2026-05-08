@@ -140,8 +140,11 @@ function AdminDashboard() {
 
       <main className="admin-content">
         <AdminHeader
+          title="Dashboard"
+          subtitle="Overview and recent order activity"
           adminProfile={adminProfile}
           searchTerm={searchTerm}
+          searchPlaceholder="Search recent orders..."
           onSearchChange={setSearchTerm}
         />
 
@@ -158,7 +161,7 @@ function AdminDashboard() {
 
           <StatCard
             title="Revenue Today"
-            value={`₱${stats.totalRevenue.toFixed(2)}`}
+            value={`PHP ${stats.totalRevenue.toFixed(2)}`}
             icon="Revenue"
             color="green"
           />
@@ -312,7 +315,7 @@ function AdminDashboard() {
                       <td>{order.items ? order.items.length : 0} item(s)</td>
 
                       <td className="order-total">
-                        ₱{Number(order.total || 0).toFixed(2)}
+                        PHP {Number(order.total || 0).toFixed(2)}
                       </td>
 
                       <td>

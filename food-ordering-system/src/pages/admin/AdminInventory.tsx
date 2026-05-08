@@ -1,5 +1,6 @@
 ﻿import { useEffect, useState, useMemo } from "react";
 import AdminSidebar from "../../components/admin/AdminSidebar";
+import AdminHeader from "../../components/admin/AdminHeader";
 import LoadingSpinner from "../../components/admin/LoadingSpinner";
 import AdminModal from "../../components/admin/AdminModal";
 import { useAdmin } from "../../context/AdminContext";
@@ -81,24 +82,29 @@ export default function AdminInventory() {
     <div className="admin-layout">
       <AdminSidebar />
       <div className="admin-content">
-        {/* ==================== HEADER ==================== */}
-        <div className="admin-header">
-          <h1>Inventory Management</h1>
-          <p className="admin-subtitle">Track and manage stock levels for all items</p>
-        </div>
+        <AdminHeader
+          title="Inventory Management"
+          subtitle="Track and manage stock levels for all items"
+        />
 
         {error && <div className="admin-error-banner">{error}</div>}
 
         {/* ==================== SEARCH BAR ==================== */}
         <div className="inventory-search-bar">
-          <input
-            type="text"
-            placeholder="Search by item name..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="search-input"
-          />
-          <span className="search-icon">Search</span>
+          <div className="admin-search-control">
+            <input
+              type="text"
+              placeholder="Search by item name..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="admin-search-input"
+            />
+            <button
+              type="button"
+              className="admin-search-button"
+              aria-label="Search inventory"
+            />
+          </div>
         </div>
 
         {/* ==================== STATUS FILTER TABS ==================== */}

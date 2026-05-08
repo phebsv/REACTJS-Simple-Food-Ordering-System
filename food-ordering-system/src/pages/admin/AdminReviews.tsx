@@ -1,5 +1,6 @@
 ﻿import { useEffect, useState, useMemo } from "react";
 import AdminSidebar from "../../components/admin/AdminSidebar";
+import AdminHeader from "../../components/admin/AdminHeader";
 import AdminModal from "../../components/admin/AdminModal";
 import ConfirmDialog from "../../components/admin/ConfirmDialog";
 import LoadingSpinner from "../../components/admin/LoadingSpinner";
@@ -104,31 +105,35 @@ export default function AdminReviews() {
     <div className="admin-layout">
       <AdminSidebar />
       <div className="admin-content">
-        {/* ==================== HEADER ==================== */}
-        <div className="admin-header">
-          <h1>Reviews Management</h1>
-          <p className="admin-subtitle">Monitor and manage customer reviews</p>
-        </div>
+        <AdminHeader
+          title="Reviews Management"
+          subtitle="Monitor and manage customer reviews"
+        />
 
         {error && <div className="admin-error-banner">{error}</div>}
 
         {totalHiddenReviews > 0 && (
           <div className="info-banner">
-            <span className="info-icon">Info</span>
             {totalHiddenReviews} review(s) are hidden
           </div>
         )}
 
         {/* ==================== SEARCH BAR ==================== */}
         <div className="reviews-search-bar">
-          <input
-            type="text"
-            placeholder="Search by customer name, food item, or order ID..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="search-input"
-          />
-          <span className="search-icon">Search</span>
+          <div className="admin-search-control">
+            <input
+              type="text"
+              placeholder="Search by customer name, food item, or order ID..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="admin-search-input"
+            />
+            <button
+              type="button"
+              className="admin-search-button"
+              aria-label="Search reviews"
+            />
+          </div>
         </div>
 
         {/* ==================== RATING FILTER ==================== */}

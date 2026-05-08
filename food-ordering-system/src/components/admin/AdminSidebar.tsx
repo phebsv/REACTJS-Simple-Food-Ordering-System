@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import C from "../../constants/colors";
 import { useAdmin } from "../../context/AdminContext";
+import logo from "../../assets/logo1.png";
 
 function AdminSidebar() {
   const location = useLocation();
@@ -40,24 +41,28 @@ function AdminSidebar() {
     >
       <div
         style={{
-          width: "86px",
-          height: "42px",
+          width: "116px",
+          height: "68px",
           backgroundColor: C.white,
-          borderRadius: "6px",
-          color: C.red,
-          fontSize: "11px",
-          fontWeight: "900",
+          borderRadius: "8px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          textAlign: "center",
-          lineHeight: "12px",
           marginBottom: "8px",
+          boxSizing: "border-box",
+          overflow: "hidden",
         }}
       >
-        NomNom
-        <br />
-        NOW
+        <img
+          src={logo}
+          alt="Nomnom Now"
+          style={{
+            width: "180px",
+            height: "180px",
+            objectFit: "contain",
+            flexShrink: 0,
+          }}
+        />
       </div>
 
       {admin?.name && (

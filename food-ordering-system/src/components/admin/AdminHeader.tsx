@@ -1,13 +1,25 @@
 import C from "../../constants/colors";
 import type { AdminHeaderProps } from "../../interfaces";
+import "./AdminHeader.css";
 
 function AdminHeader({
+  title,
+  subtitle,
   adminProfile,
   searchTerm,
+  searchPlaceholder = "Search...",
   onSearchChange,
+  actions,
 }: AdminHeaderProps) {
+  const shouldShowSearch = typeof searchTerm === "string" && onSearchChange;
+  const profile = adminProfile ?? {
+    name: "Admin",
+    role: "Administrator",
+  };
+
   return (
     <header
+      className="admin-page-header"
       style={{
         display: "flex",
         justifyContent: "space-between",
@@ -25,7 +37,7 @@ function AdminHeader({
             color: C.text,
           }}
         >
-          ORDERS
+          {title}
         </h1>
 
         <p
@@ -35,8 +47,7 @@ function AdminHeader({
             color: C.text,
           }}
         >
-          <span style={{ color: C.red, fontWeight: "700" }}>Dashboard</span> /
-          Orders
+          {subtitle}
         </p>
       </div>
 
@@ -47,34 +58,24 @@ function AdminHeader({
           gap: "16px",
         }}
       >
-        <div
-          style={{
-            width: "300px",
-            height: "38px",
-            backgroundColor: C.white,
-            borderRadius: "10px",
-            display: "flex",
-            alignItems: "center",
-            padding: "0 12px",
-            boxSizing: "border-box",
-          }}
-        >
-          <span style={{ marginRight: "8px", fontSize: "12px" }}>Search</span>
+        {actions}
 
-          <input
-            type="text"
-            placeholder="Search orders..."
-            value={searchTerm}
-            onChange={(event) => onSearchChange(event.target.value)}
-            style={{
-              width: "100%",
-              border: "none",
-              outline: "none",
-              backgroundColor: "transparent",
-              fontSize: "12px",
-            }}
-          />
-        </div>
+        {shouldShowSearch && (
+          <div className="admin-header-search">
+            <input
+              type="text"
+              placeholder={searchPlaceholder}
+              value={searchTerm}
+              onChange={(event) => onSearchChange?.(event.target.value)}
+              className="admin-search-input"
+            />
+            <button
+              type="button"
+              className="admin-search-button"
+              aria-label="Search"
+            />
+          </div>
+        )}
 
         <div>
           <h3
@@ -85,7 +86,7 @@ function AdminHeader({
               color: C.text,
             }}
           >
-            {adminProfile.name}
+            {profile.name}
           </h3>
 
           <p
@@ -96,7 +97,7 @@ function AdminHeader({
               color: C.text,
             }}
           >
-            {adminProfile.role}
+            {profile.role}
           </p>
         </div>
 

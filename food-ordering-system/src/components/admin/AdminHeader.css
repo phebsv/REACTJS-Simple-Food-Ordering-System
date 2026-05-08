@@ -1,0 +1,106 @@
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--cream);
+}
+
+.admin-content {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
+}
+
+.admin-page-header {
+  flex-wrap: wrap;
+}
+
+.admin-header-search,
+.admin-search-control {
+  position: relative;
+  width: min(100%, 320px);
+  height: 40px;
+  background: var(--white);
+  border: 1px solid #e4dddd;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.admin-search-input {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  padding: 0 44px 0 14px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.admin-search-input:focus {
+  box-shadow: inset 0 0 0 2px rgba(200, 0, 10, 0.16);
+  border-radius: 10px;
+}
+
+.admin-search-button {
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--red);
+  cursor: pointer;
+}
+
+.admin-search-button::before {
+  content: "";
+  position: absolute;
+  left: 9px;
+  top: 8px;
+  width: 9px;
+  height: 9px;
+  border: 2px solid var(--white);
+  border-radius: 50%;
+}
+
+.admin-search-button::after {
+  content: "";
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  width: 8px;
+  height: 2px;
+  background: var(--white);
+  border-radius: 2px;
+  transform: rotate(45deg);
+  transform-origin: left center;
+}
+
+.admin-search-button:hover {
+  background: var(--red-dark);
+}
+
+.orders-search-bar .admin-search-control,
+.inventory-search-bar .admin-search-control,
+.reviews-search-bar .admin-search-control,
+.search-input-wrapper .admin-search-control {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .admin-content {
+    padding: 20px;
+  }
+
+  .admin-page-header {
+    align-items: flex-start;
+  }
+
+  .admin-header-search,
+  .admin-search-control {
+    width: 100%;
+  }
+}

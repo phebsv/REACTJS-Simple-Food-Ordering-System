@@ -1,5 +1,6 @@
 ﻿import { useEffect, useState, useMemo } from "react";
 import AdminSidebar from "../../components/admin/AdminSidebar";
+import AdminHeader from "../../components/admin/AdminHeader";
 import AdminModal from "../../components/admin/AdminModal";
 import ConfirmDialog from "../../components/admin/ConfirmDialog";
 import LoadingSpinner from "../../components/admin/LoadingSpinner";
@@ -172,32 +173,35 @@ export default function AdminMenu() {
     <div className="admin-layout">
       <AdminSidebar />
       <div className="admin-content">
-        {/* ==================== HEADER ==================== */}
-        <div className="admin-header">
-          <div className="header-top">
-            <div>
-              <h1>Menu Management</h1>
-              <p className="admin-subtitle">Add, edit, and manage food items</p>
-            </div>
+        <AdminHeader
+          title="Menu Management"
+          subtitle="Add, edit, and manage food items"
+          actions={
             <button className="add-new-btn" onClick={handleAddNew}>
-              + Add New Item
+              Add New Item
             </button>
-          </div>
-        </div>
+          }
+        />
 
         {error && <div className="admin-error-banner">{error}</div>}
 
         {/* ==================== SEARCH AND FILTERS ==================== */}
         <div className="menu-controls">
           <div className="search-input-wrapper">
-            <input
-              type="text"
-              placeholder="Search food items..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="search-input"
-            />
-            <span className="search-icon">Search</span>
+            <div className="admin-search-control">
+              <input
+                type="text"
+                placeholder="Search food items..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="admin-search-input"
+              />
+              <button
+                type="button"
+                className="admin-search-button"
+                aria-label="Search menu items"
+              />
+            </div>
           </div>
 
           <div className="category-tabs">
