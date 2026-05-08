@@ -176,6 +176,192 @@
   font-size: 1rem;
 }
 
+.dashboard-container {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--red) 0 360px, var(--cream) 360px);
+  padding: 92px 20px 56px;
+}
+
+.dashboard-intro {
+  position: relative;
+  z-index: 1;
+  gap: 0;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.dashboard-offer {
+  justify-content: space-between;
+  gap: 32px;
+  min-height: 440px;
+  margin-bottom: 54px;
+  padding: 56px 72px;
+  background: #e90d0d;
+  overflow: hidden;
+}
+
+.dashboard-text {
+  color: var(--white);
+  max-width: 440px;
+}
+
+.dashboard-hot {
+  margin-bottom: 10px;
+  color: #ffc629;
+  font-size: 1rem;
+}
+
+.dashboard-spicy {
+  max-width: 390px;
+  font-size: clamp(2.6rem, 7vw, 5.2rem);
+  line-height: 0.95;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.dashboard-limited {
+  margin-top: 22px;
+  color: var(--white);
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.dashboard-order-btn {
+  margin-top: 18px;
+  padding: 12px 28px;
+  background: #ffc629;
+  color: var(--red-dark);
+  border: none;
+  border-radius: 999px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.16);
+}
+
+.dashboard-burger-img {
+  width: min(44vw, 520px);
+  height: auto;
+  max-height: 360px;
+  object-fit: contain;
+  filter: drop-shadow(0 20px 26px rgba(0, 0, 0, 0.22));
+}
+
+.dashboard-popular {
+  margin: 0 0 58px;
+  text-align: center;
+}
+
+.dashboard-popular-kicker {
+  margin: 0 0 4px;
+  color: var(--red);
+  font-size: 0.8rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.dashboard-popular h2 {
+  margin: 0 0 24px;
+  color: var(--red);
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.dashboard-popular-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.dashboard-food-card {
+  min-height: 180px;
+  padding: 22px 18px 18px;
+  background: var(--white);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+}
+
+.dashboard-food-card img {
+  width: 120px;
+  height: 90px;
+  object-fit: contain;
+}
+
+.dashboard-food-card button {
+  padding: 8px 18px;
+  background: #ffc629;
+  color: var(--red-dark);
+  border: none;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 900;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.dashboard-service {
+  text-align: center;
+}
+
+.dashboard-service-kicker {
+  margin: 0 0 6px;
+  color: var(--red);
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.dashboard-welcome {
+  margin: 0 0 30px;
+  color: #ffc629;
+  font-size: clamp(2rem, 5vw, 3rem);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.dashboard-service-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+.dashboard-service-item {
+  padding: 28px 22px;
+  border: 1px dashed transparent;
+  border-radius: 8px;
+}
+
+.dashboard-service-item.featured {
+  background: var(--white);
+  border-color: #d8d8d8;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06);
+}
+
+.dashboard-service-item h3 {
+  margin: 0 0 10px;
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.dashboard-service-item p {
+  margin: 0 auto;
+  max-width: 230px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
 @media (max-width: 1024px) {
   .dashboard-grid {
     grid-template-columns: 1fr;
@@ -193,5 +379,22 @@
   .dashboard-offer {
     flex-direction: column;
     align-items: flex-start;
+    min-height: auto;
+    padding: 36px 24px;
+    margin-bottom: 42px;
+  }
+
+  .dashboard-burger-img {
+    width: 100%;
+    align-self: center;
+  }
+
+  .dashboard-service-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .dashboard-popular-grid {
+    grid-template-columns: 1fr;
   }
 }
