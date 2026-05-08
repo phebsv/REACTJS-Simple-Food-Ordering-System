@@ -198,8 +198,10 @@
   min-height: 440px;
   margin-bottom: 54px;
   padding: 56px 72px;
-  background: #e90d0d;
+  background: radial-gradient(circle at 18% 28%, #ff3a2f 0%, #d60008 48%, #a40006 100%);
   overflow: hidden;
+  position: relative;
+  border-radius: 14px;
 }
 
 .dashboard-text {
@@ -219,6 +221,10 @@
   line-height: 0.95;
   font-weight: 900;
   text-transform: uppercase;
+}
+
+.dashboard-spicy span {
+  display: block;
 }
 
 .dashboard-limited {
@@ -246,6 +252,31 @@
   max-height: 360px;
   object-fit: contain;
   filter: drop-shadow(0 20px 26px rgba(0, 0, 0, 0.22));
+}
+
+.dashboard-dots {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.dashboard-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  background: transparent;
+}
+
+.dashboard-dot-active {
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border-color: #fff;
 }
 
 .dashboard-popular {
@@ -386,6 +417,13 @@
 
   .dashboard-burger-img {
     width: 100%;
+    align-self: center;
+  }
+
+  .dashboard-dots {
+    position: static;
+    transform: none;
+    margin-top: 18px;
     align-self: center;
   }
 

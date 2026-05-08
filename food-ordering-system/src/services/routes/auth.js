@@ -56,7 +56,9 @@ router.post("/login", (req, res) => {
       String(u.role).toLowerCase() === "admin" &&
       (String(u.username || "").toLowerCase() === normalized ||
         String(u.email || "").toLowerCase() === normalized) &&
-      String(u.password) === String(password),
+      (u.passwordHash
+        ? bcrypt.compareSync(String(password), String(u.passwordHash))
+        : String(u.password) === String(password)),
   );
 
   if (admin) {
@@ -104,7 +106,9 @@ router.post("/admin-login", (req, res) => {
       String(u.role).toLowerCase() === "admin" &&
       (String(u.username || "").toLowerCase() === normalized ||
         String(u.email || "").toLowerCase() === normalized) &&
-      String(u.password) === String(password),
+      (u.passwordHash
+        ? bcrypt.compareSync(String(password), String(u.passwordHash))
+        : String(u.password) === String(password)),
   );
 
   if (!admin)

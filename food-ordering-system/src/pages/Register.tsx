@@ -87,6 +87,7 @@ export default function Register() {
             <p className="register-subtitle">
               Already have an account?{" "}
               <button
+                type="button"
                 onClick={() => navigate("/login")}
                 className="register-signin-btn"
               >
@@ -94,78 +95,86 @@ export default function Register() {
               </button>
             </p>
 
-            <div className="register-names">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!loading) handleRegister();
+              }}
+            >
+              <div className="register-names">
+                <UInput
+                  label="First Name"
+                  placeholder="First name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  Icon={UserIcon}
+                />
+                <UInput
+                  label="Last Name"
+                  placeholder="Last name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  Icon={UserIcon}
+                />
+              </div>
+              <div className="register-input-group">
+                <UInput
+                  label="Email"
+                  type="email"
+                  placeholder="Enter your email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  Icon={MailIcon}
+                />
+              </div>
+              <div className="register-input-group">
+                <UInput
+                  label="Phone Number"
+                  type="tel"
+                  placeholder="Enter your phone number"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  Icon={PhoneIcon}
+                />
+              </div>
               <UInput
-                label="First Name"
-                placeholder="First name"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                Icon={UserIcon}
+                label="Password"
+                type="password"
+                placeholder="Create a password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                Icon={LockIcon}
               />
               <UInput
-                label="Last Name"
-                placeholder="Last name"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                Icon={UserIcon}
+                label="Confirm Password"
+                type="password"
+                placeholder="Re-enter your password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                Icon={LockIcon}
               />
-            </div>
-            <div className="register-input-group">
-              <UInput
-                label="Email"
-                type="email"
-                placeholder="Enter your email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                Icon={MailIcon}
-              />
-            </div>
-            <div className="register-input-group">
-              <UInput
-                label="Phone Number"
-                type="tel"
-                placeholder="Enter your phone number"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                Icon={PhoneIcon}
-              />
-            </div>
-            <UInput
-              label="Password"
-              type="password"
-              placeholder="Create a password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              Icon={LockIcon}
-            />
-            <UInput
-              label="Confirm Password"
-              type="password"
-              placeholder="Re-enter your password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              Icon={LockIcon}
-            />
 
-            <label className="register-agree">
-              <input
-                type="checkbox"
-                checked={agree}
-                onChange={(e) => setAgree(e.target.checked)}
-              />
-              <span>
-                I agree to the <button type="button">Terms of Service</button>{" "}
-                and <button type="button">Privacy Policy</button>
-              </span>
-            </label>
+              <label className="register-agree">
+                <input
+                  type="checkbox"
+                  checked={agree}
+                  onChange={(e) => setAgree(e.target.checked)}
+                />
+                <span>
+                  I agree to the{" "}
+                  <button type="button">Terms of Service</button> and{" "}
+                  <button type="button">Privacy Policy</button>
+                </span>
+              </label>
 
-            {displayError && <p className="register-error">{displayError}</p>}
+              {displayError && <p className="register-error">{displayError}</p>}
 
-            <div className="register-btn-container">
-              <RedBtn onClick={handleRegister} disabled={loading}>
-                {loading ? "Creating..." : "Create Account"}
-              </RedBtn>
-            </div>
+              <div className="register-btn-container">
+                <RedBtn type="submit" disabled={loading}>
+                  {loading ? "Creating..." : "Create Account"}
+                </RedBtn>
+              </div>
+            </form>
           </div>
         </div>
       </div>

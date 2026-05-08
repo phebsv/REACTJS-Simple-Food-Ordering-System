@@ -19,13 +19,26 @@ export default function Dashboard() {
           <div className="dashboard-offer">
             <div className="dashboard-text">
               <div className="dashboard-hot">Crispy, Every Bite Taste</div>
-              <div className="dashboard-spicy">Hot Spicy Chicken Burger</div>
+              <div className="dashboard-spicy">
+                <span>HOT SPICY</span>
+                <span>CHICKEN</span>
+                <span>BURGER</span>
+              </div>
               <div className="dashboard-limited">Limited Offer / ₱5</div>
-              <button onClick={() => navigate("/menu")} className="dashboard-order-btn">
+              <button
+                onClick={() => navigate("/menu")}
+                className="dashboard-order-btn"
+              >
                 Order Now
               </button>
             </div>
             <img src={burger1} alt="Burger" className="dashboard-burger-img" />
+
+            <div className="dashboard-dots" aria-hidden="true">
+              <span className="dashboard-dot" />
+              <span className="dashboard-dot dashboard-dot-active" />
+              <span className="dashboard-dot" />
+            </div>
           </div>
 
           <div className="dashboard-popular">

@@ -79,44 +79,53 @@ export default function Login() {
               Register here !
             </button>
 
-            <div className="login-input-group">
-              <UInput
-                label="Email or username"
-                type="text"
-                placeholder="Enter your email or username"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                Icon={MailIcon}
-              />
-            </div>
-            <UInput
-              label="Password"
-              type="password"
-              placeholder="Enter your Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              Icon={LockIcon}
-            />
-
-            <div className="login-options">
-              <label className="login-remember">
-                <input
-                  type="checkbox"
-                  checked={remember}
-                  onChange={(e) => setRemember(e.target.checked)}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!loading) handleLogin();
+              }}
+            >
+              <div className="login-input-group">
+                <UInput
+                  label="Email or username"
+                  type="text"
+                  placeholder="Enter your email or username"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  Icon={MailIcon}
                 />
-                Remember me
-              </label>
-              <button className="login-forgot">Forgot Password ?</button>
-            </div>
+              </div>
+              <UInput
+                label="Password"
+                type="password"
+                placeholder="Enter your Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                Icon={LockIcon}
+              />
 
-            {displayError && <p className="login-error">{displayError}</p>}
+              <div className="login-options">
+                <label className="login-remember">
+                  <input
+                    type="checkbox"
+                    checked={remember}
+                    onChange={(e) => setRemember(e.target.checked)}
+                  />
+                  Remember me
+                </label>
+                <button type="button" className="login-forgot">
+                  Forgot Password ?
+                </button>
+              </div>
 
-            <div className="login-btn-container">
-              <RedBtn onClick={handleLogin} disabled={loading}>
-                {loading ? "Logging in..." : "Login"}
-              </RedBtn>
-            </div>
+              {displayError && <p className="login-error">{displayError}</p>}
+
+              <div className="login-btn-container">
+                <RedBtn type="submit" disabled={loading}>
+                  {loading ? "Logging in..." : "Login"}
+                </RedBtn>
+              </div>
+            </form>
           </div>
         </div>
       </div>

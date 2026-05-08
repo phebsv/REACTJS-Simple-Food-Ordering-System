@@ -6,15 +6,22 @@ interface RedBtnProps {
   children: ReactNode;
   onClick?: () => void;
   disabled?: boolean;
+  type?: "button" | "submit" | "reset";
 }
 
-export default function RedBtn({ children, onClick, disabled }: RedBtnProps) {
+export default function RedBtn({
+  children,
+  onClick,
+  disabled,
+  type = "button",
+}: RedBtnProps) {
   const [hover, setHover] = useState(false);
   const [active, setActive] = useState(false);
   return (
     <button
       onClick={onClick}
       disabled={disabled}
+      type={type}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => {
         setHover(false);
