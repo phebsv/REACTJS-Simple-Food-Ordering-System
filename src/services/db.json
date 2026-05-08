@@ -40,6 +40,22 @@
       "phone": "09617095667",
       "password": "ninja123",
       "id": "Moa1cWoD05Q"
+    },
+    {
+      "name": "Phoebe Villaflor",
+      "username": "phebs",
+      "email": "phebsvillaflor@gmail.com",
+      "phone": "0995569181545",
+      "password": "1234",
+      "id": "CgGnxKm2jKk"
+    },
+    {
+      "name": "Nini Princess",
+      "username": "nini",
+      "email": "reeesesv18@gmail.com",
+      "phone": "09959175516",
+      "password": "1234",
+      "id": "47_Pw2XBDMw"
     }
   ],
   "admins": [

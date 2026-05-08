@@ -26,15 +26,16 @@ export default function Register() {
     if (!agree) return setError("Please agree to the terms");
     if (!firstName || !lastName || !username || !email || !phone || !password) return setError("All fields are required");
 
-    // Check if username already taken
-    const existingUsername = await findUserByEmail(username); // Reusing function, will need API call
-    if (existingUsername) return setError("Username already taken");
-
-    const existing = await findUserByEmail(email);
-    if (existing) return setError("Email already taken");
-
     setLoading(true);
     try {
+      // Check if username already taken
+      const existingUsername = await fetch(`http://localhost:4001/users?username=${encodeURIComponent(username)}`);
+      const usernameData = await existingUsername.json();
+      if (usernameData.length > 0) return setError("Username already taken");
+
+      const existing = await findUserByEmail(email);
+      if (existing) return setError("Email already taken");
+
       await createUser({
         name: `${firstName} ${lastName}`.trim(),
         username,

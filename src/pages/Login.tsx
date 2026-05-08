@@ -36,15 +36,19 @@ export default function Login() {
       }
 
       // Check if customer (credential as username in users table)
-      const userRes = await fetch(`http://localhost:4001/users?username=${encodeURIComponent(credential)}&password=${encodeURIComponent(password)}`);
+      // Fetch by username first, then verify password manually
+      const userRes = await fetch(`http://localhost:4001/users?username=${encodeURIComponent(credential)}`);
       if (!userRes.ok) throw new Error("Login failed");
       const users = await userRes.json();
-      if (!users.length) throw new Error("Invalid credentials");
+      
+      // Find user with matching username AND password
+      const user = users.find((u: any) => u.username === credential && u.password === password);
+      if (!user) throw new Error("Invalid credentials");
 
       localStorage.removeItem("adminUser");
 
       // Always store currentUser (for session persistence across pages)
-      localStorage.setItem("currentUser", JSON.stringify(users[0]));
+      localStorage.setItem("currentUser", JSON.stringify(user));
 
       navigate("/dashboard");
     } catch (err) {

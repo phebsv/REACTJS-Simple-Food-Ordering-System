@@ -93,7 +93,7 @@ export default function Checkout() {
   return (
     <>
       <Navbar title="CHECKOUT" showNavLinks={true} />
-      <div className="checkout-container">
+      <div className="checkout-container" style={{ display: items.length === 0 ? 'block' : 'block', backgroundColor: '#F5EFE0' }}>
         <div className="checkout-content">
           <h1 className="checkout-title">Checkout</h1>
 

@@ -1,8 +1,7 @@
-const BASE = "http://localhost:4001";
+﻿const BASE = "http://localhost:3001";
 
 interface User {
   name: string;
-  username: string;
   email: string;
   phone: string;
   password: string;
@@ -26,13 +25,6 @@ export async function createUser(user: User): Promise<User> {
 
 export async function findUserByEmail(email: string): Promise<User | null> {
   const r = await fetch(`${BASE}/users?email=${encodeURIComponent(email)}`);
-  if (!r.ok) throw new Error("Unable to search user");
-  const users: User[] = await r.json();
-  return users[0] || null;
-}
-
-export async function findUserByUsername(username: string): Promise<User | null> {
-  const r = await fetch(`${BASE}/users?username=${encodeURIComponent(username)}`);
   if (!r.ok) throw new Error("Unable to search user");
   const users: User[] = await r.json();
   return users[0] || null;
