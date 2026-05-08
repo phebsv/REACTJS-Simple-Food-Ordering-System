@@ -31,7 +31,7 @@ export default function Cart() {
             <div className="cart-items-section">
               {items.length === 0 ? (
                 <div className="cart-empty-state">
-                  <div className="cart-empty-icon">≡ƒ¢Æ</div>
+                  <div className="cart-empty-icon">EMPTY CART</div>
                   <h2>Your cart is empty</h2>
                   <p>Add some delicious food items to get started!</p>
                   <button
@@ -57,7 +57,7 @@ export default function Cart() {
                           {item.description}
                         </p>
                         <p className="cart-item-price">
-                          ${item.price.toFixed(2)} each
+                          ₱{item.price.toFixed(2)} each
                         </p>
                       </div>
 
@@ -69,7 +69,7 @@ export default function Cart() {
                             }
                             className="qty-btn"
                           >
-                            −
+                            LESS
                           </button>
                           <span className="qty-display">{item.quantity}</span>
                           <button
@@ -78,12 +78,12 @@ export default function Cart() {
                             }
                             className="qty-btn"
                           >
-                            +
+                            MORE
                           </button>
                         </div>
 
                         <div className="cart-item-subtotal">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          ₱{(item.price * item.quantity).toFixed(2)}
                         </div>
 
                         <button
@@ -111,7 +111,7 @@ export default function Cart() {
                         <span>
                           {item.name} x {item.quantity}
                         </span>
-                        <span>${(item.price * item.quantity).toFixed(2)}</span>
+                        <span>₱{(item.price * item.quantity).toFixed(2)}</span>
                       </div>
                     ))}
                   </div>
@@ -120,7 +120,7 @@ export default function Cart() {
 
                   <div className="summary-total">
                     <span>Total:</span>
-                    <span className="total-amount">${total.toFixed(2)}</span>
+                    <span className="total-amount">₱{total.toFixed(2)}</span>
                   </div>
 
                   <button
