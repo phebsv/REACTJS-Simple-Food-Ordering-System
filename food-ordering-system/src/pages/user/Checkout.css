@@ -46,8 +46,34 @@
   margin-bottom: 25px;
 }
 
+.form-section-group {
+  background: #fffafa;
+  border: 1px solid var(--pink);
+  border-radius: 8px;
+  padding: 18px;
+  margin-bottom: 18px;
+}
+
+.form-section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 6px;
+}
+
+.form-section-helper {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
 .checkout-form-group {
   margin-bottom: 20px;
+}
+
+.checkout-form-group:last-child {
+  margin-bottom: 0;
 }
 
 .checkout-form-group label {
@@ -78,6 +104,11 @@
   box-shadow: 0 0 0 3px rgba(200, 0, 10, 0.1);
 }
 
+.checkout-form-group input[aria-invalid="true"],
+.checkout-form-group textarea[aria-invalid="true"] {
+  border-color: var(--red);
+}
+
 .checkout-form-group input:disabled,
 .checkout-form-group textarea:disabled,
 .checkout-form-group select:disabled {
@@ -87,6 +118,13 @@
 
 .checkout-form-group textarea {
   resize: vertical;
+}
+
+.field-error {
+  margin: 6px 0 0;
+  color: var(--red);
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .checkout-error {

@@ -11,6 +11,7 @@ export default function Checkout() {
   const [notes, setNotes] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("credit-card");
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const navigate = useNavigate();
@@ -29,17 +30,24 @@ export default function Checkout() {
 
   const handleCheckout = async () => {
     setError("");
+    setFieldErrors({});
 
-    if (!name.trim()) {
-      setError("Name is required");
-      return;
+    const nextFieldErrors: Record<string, string> = {};
+    const phoneDigits = phone.replace(/\D/g, "");
+
+    if (name.trim().length < 2) {
+      nextFieldErrors.name = "Enter your full name.";
     }
-    if (!phone.trim()) {
-      setError("Phone number is required");
-      return;
+    if (phoneDigits.length < 10 || phoneDigits.length > 11) {
+      nextFieldErrors.phone = "Enter a valid 10 or 11 digit phone number.";
     }
-    if (!address.trim()) {
-      setError("Delivery address is required");
+    if (address.trim().length < 10) {
+      nextFieldErrors.address = "Enter a complete delivery address.";
+    }
+
+    if (Object.keys(nextFieldErrors).length > 0) {
+      setFieldErrors(nextFieldErrors);
+      setError("Please check the highlighted delivery details.");
       return;
     }
     if (items.length === 0) {
@@ -102,57 +110,82 @@ export default function Checkout() {
             <div className="checkout-form-section">
               <h2>Delivery Information</h2>
 
-              <div className="checkout-form-group">
-                <label>Full Name *</label>
-                <input
-                  type="text"
-                  placeholder="Enter your full name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  disabled={loading}
-                />
+              <div className="form-section-group">
+                <h3 className="form-section-title">Customer Details</h3>
+                <p className="form-section-helper">Use the name and mobile number the rider can confirm on delivery.</p>
+                <div className="checkout-form-group">
+                  <label htmlFor="checkout-name">Full Name *</label>
+                  <input
+                    id="checkout-name"
+                    type="text"
+                    placeholder="Juan Dela Cruz"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    disabled={loading}
+                    autoComplete="name"
+                    aria-invalid={!!fieldErrors.name}
+                  />
+                  {fieldErrors.name && <p className="field-error">{fieldErrors.name}</p>}
+                </div>
+
+                <div className="checkout-form-group">
+                  <label htmlFor="checkout-phone">Mobile Number *</label>
+                  <input
+                    id="checkout-phone"
+                    type="tel"
+                    placeholder="0917 123 4567"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    disabled={loading}
+                    autoComplete="tel"
+                    inputMode="tel"
+                    aria-invalid={!!fieldErrors.phone}
+                  />
+                  {fieldErrors.phone && <p className="field-error">{fieldErrors.phone}</p>}
+                </div>
               </div>
 
-              <div className="checkout-form-group">
-                <label>Phone Number *</label>
-                <input
-                  type="tel"
-                  placeholder="Enter your phone number"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  disabled={loading}
-                />
+              <div className="form-section-group">
+                <h3 className="form-section-title">Delivery Address</h3>
+                <p className="form-section-helper">Include house number, street, barangay, city, and any nearby landmark.</p>
+                <div className="checkout-form-group">
+                  <label htmlFor="checkout-address">Complete Address *</label>
+                  <textarea
+                    id="checkout-address"
+                    placeholder="House / unit no., street, barangay, city"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    disabled={loading}
+                    rows={3}
+                    autoComplete="street-address"
+                    aria-invalid={!!fieldErrors.address}
+                  />
+                  {fieldErrors.address && <p className="field-error">{fieldErrors.address}</p>}
+                </div>
+
+                <div className="checkout-form-group">
+                  <label htmlFor="checkout-notes">Delivery Notes (Optional)</label>
+                  <textarea
+                    id="checkout-notes"
+                    placeholder="Gate code, landmark, or food preparation request"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    disabled={loading}
+                    rows={2}
+                  />
+                </div>
               </div>
 
-              <div className="checkout-form-group">
-                <label>Delivery Address *</label>
-                <textarea
-                  placeholder="Enter your delivery address"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  disabled={loading}
-                  rows={3}
-                />
-              </div>
-
-              <div className="checkout-form-group">
-                <label>Special Instructions (Optional)</label>
-                <textarea
-                  placeholder="Any special requests or delivery notes"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  disabled={loading}
-                  rows={2}
-                />
-              </div>
-
-              <div className="checkout-form-group">
-                <label>Payment Method *</label>
-                <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} disabled={loading}>
-                  <option value="credit-card">Credit Card</option>
-                  <option value="debit-card">Debit Card</option>
-                  <option value="cash">Cash on Delivery</option>
-                </select>
+              <div className="form-section-group">
+                <h3 className="form-section-title">Payment</h3>
+                <div className="checkout-form-group">
+                  <label htmlFor="checkout-payment">Payment Method *</label>
+                  <select id="checkout-payment" value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} disabled={loading}>
+                    <option value="credit-card">Credit Card</option>
+                    <option value="debit-card">Debit Card</option>
+                    <option value="cash">Cash on Delivery</option>
+                  </select>
+                </div>
               </div>
 
               {error && <div className="checkout-error">{error}</div>}
@@ -182,7 +215,7 @@ export default function Checkout() {
                           <p>Qty: {item.quantity}</p>
                         </div>
                         <div className="summary-item-price">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          ₱{(item.price * item.quantity).toFixed(2)}
                         </div>
                       </div>
                     ))}
@@ -195,7 +228,7 @@ export default function Checkout() {
               <div className="summary-total">
                 <div className="summary-row">
                   <span>Subtotal:</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>₱{total.toFixed(2)}</span>
                 </div>
                 <div className="summary-row">
                   <span>Delivery:</span>
@@ -203,7 +236,7 @@ export default function Checkout() {
                 </div>
                 <div className="summary-row summary-row-total">
                   <span>Total:</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>₱{total.toFixed(2)}</span>
                 </div>
               </div>
             </div>
