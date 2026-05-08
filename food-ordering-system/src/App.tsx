@@ -30,7 +30,8 @@ import { useAdmin } from "./context/AdminContext";
 import type { ReactNode } from "react";
 
 function CustomerRoute({ children }: { children: ReactNode }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, hydrating } = useAuth();
+  if (hydrating) return null;
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
 }
 

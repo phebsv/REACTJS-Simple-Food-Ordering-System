@@ -10,6 +10,7 @@ interface AuthContextType {
   customer: AuthUser | null;
   token: string | null;
   isAuthenticated: boolean;
+  hydrating: boolean;
   loading: boolean;
   error: string;
   login: (email: string, password: string) => Promise<boolean>;
@@ -30,6 +31,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [customer, setCustomer] = useState<AuthUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [hydrating, setHydrating] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -41,6 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setToken(savedToken);
       setCustomer(JSON.parse(savedUser));
     }
+    setHydrating(false);
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
@@ -111,6 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         customer,
         token,
         isAuthenticated: !!token,
+        hydrating,
         loading,
         error,
         login,
