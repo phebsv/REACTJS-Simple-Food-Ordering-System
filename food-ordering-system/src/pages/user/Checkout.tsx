@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import { useCart } from "../../context/CartContext";
 import "./Checkout.css";
+import { apiUrl } from "../../config/api";
+import { getStoredItem } from "../../utils/storage";
 
 export default function Checkout() {
   const [name, setName] = useState("");
@@ -18,7 +20,7 @@ export default function Checkout() {
   const { items, total, clearCart } = useCart();
 
   useEffect(() => {
-    const user = localStorage.getItem("currentUser");
+    const user = getStoredItem("currentUser");
     if (user) {
       const userData = JSON.parse(user);
       setCurrentUser(userData);
@@ -81,7 +83,7 @@ export default function Checkout() {
         updatedAt: new Date().toISOString()
       };
 
-      const res = await fetch("http://localhost:3001/orders", {
+      const res = await fetch(apiUrl("/orders"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newOrder)

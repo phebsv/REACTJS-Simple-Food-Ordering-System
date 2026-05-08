@@ -27,20 +27,28 @@ export default function Login() {
   const handleLogin = async () => {
     setLocalError("");
 
-    if (!email || !password) {
+    const loginId = email.trim();
+
+    if (!loginId || !password) {
       return setLocalError("Email and password are required.");
     }
+    if (loginId.length < 3) {
+      return setLocalError("Please enter a valid email or username.");
+    }
+    if (password.length < 8) {
+      return setLocalError("Password must be at least 8 characters.");
+    }
 
-    const customerSuccess = await login(email, password);
+    const customerSuccess = await login(loginId, password, { remember });
     if (!customerSuccess) {
       return;
     }
 
-    const rawUser = localStorage.getItem("currentUser");
+    const rawUser = sessionStorage.getItem("currentUser") || localStorage.getItem("currentUser");
     const user = rawUser ? (JSON.parse(rawUser) as AuthUser) : null;
 
     if (user?.role === "admin" || user?.isAdmin) {
-      const adminSuccess = await loginAdmin(email, password);
+      const adminSuccess = await loginAdmin(loginId, password);
       if (adminSuccess) {
         navigate("/admin/dashboard");
       }

@@ -5,6 +5,7 @@ import { useCart } from "../../context/CartContext";
 import { decodeHtmlEntities, formatPricePHP, formatRating } from "../../utils/textHelpers";
 import "./Dashboard.css";
 import "./Menu.css";
+import { apiUrl } from "../../config/api";
 
 import type { FoodItem } from "../../types";
 
@@ -125,7 +126,7 @@ export default function Menu() {
     const fetchMenu = async () => {
       try {
         setLoading(true);
-        const res = await fetch("http://localhost:3001/menu");
+        const res = await fetch(apiUrl("/menu"));
         if (!res.ok) throw new Error("Failed to fetch menu");
         const data = await res.json();
 

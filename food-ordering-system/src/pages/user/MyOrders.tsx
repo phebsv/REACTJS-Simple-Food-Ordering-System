@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import BgFood from "../../components/BgFood";
 import "./MyOrders.css";
 import type { Order } from "../../types";
+import { apiUrl } from "../../config/api";
+import { getStoredItem } from "../../utils/storage";
 
 const ORDER_STATUSES = [
   "All",
@@ -25,14 +27,24 @@ export default function MyOrders() {
   const [searchId, setSearchId] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>("");
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const navigate = useNavigate();
+  const previousStatusRef = useRef<Record<string, string>>({});
+
+  useEffect(() => {
+    if (!toastMessage) return;
+    const t = window.setTimeout(() => setToastMessage(null), 3500);
+    return () => window.clearTimeout(t);
+  }, [toastMessage]);
 
   const fetchOrders = async (userId: string) => {
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:3001/orders");
+      setError("");
+      const res = await fetch(apiUrl("/orders"));
       if (!res.ok) throw new Error("Failed to fetch orders");
       const data = await res.json();
 
@@ -40,16 +52,33 @@ export default function MyOrders() {
       const customerOrders = data.filter(
         (order: Order) => order.customerId === userId,
       );
+
+      // Notify on status changes (poll-friendly)
+      const prev = previousStatusRef.current;
+      for (const o of customerOrders) {
+        const prevStatus = prev[o.id];
+        if (prevStatus && prevStatus !== o.status) {
+          setToastMessage(`Order ${o.id.slice(0, 8)} is now ${o.status}.`);
+          break;
+        }
+      }
+      previousStatusRef.current = Object.fromEntries(
+        customerOrders.map((o: Order) => [o.id, o.status]),
+      );
+
       setOrders(customerOrders);
     } catch (err) {
-      console.error("Failed to load orders:", err);
+      setOrders([]);
+      setError(
+        err instanceof Error ? err.message : "Failed to load your orders.",
+      );
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    const user = localStorage.getItem("currentUser");
+    const user = getStoredItem("currentUser");
     if (!user) {
       navigate("/login");
       return;
@@ -109,6 +138,20 @@ export default function MyOrders() {
       <div className="my-orders-container">
         <BgFood />
         <div className="my-orders-content">
+          {toastMessage && (
+            <div
+              style={{
+                marginBottom: 12,
+                padding: "10px 14px",
+                borderRadius: 10,
+                background: "#e8f5e9",
+                color: "#2e7d32",
+                fontWeight: 600,
+              }}
+            >
+              {toastMessage}
+            </div>
+          )}
           <h1 className="my-orders-title">My Orders</h1>
 
           {/* Search and Filter */}
@@ -147,6 +190,17 @@ export default function MyOrders() {
               style={{ textAlign: "center", padding: "40px", color: "#666" }}
             >
               <p>Loading your orders...</p>
+            </div>
+          ) : error ? (
+            <div className="my-orders-empty">
+              <h2>Couldn’t load orders</h2>
+              <p>{error}</p>
+              <button
+                onClick={() => currentUser?.id && fetchOrders(currentUser.id)}
+                className="my-orders-action-btn"
+              >
+                Try Again
+              </button>
             </div>
           ) : filteredOrders.length === 0 ? (
             <div className="my-orders-empty">
@@ -255,6 +309,7 @@ function OrderDetailsModal({
 }) {
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
+  const [cancelError, setCancelError] = useState("");
   const navigate = useNavigate();
   const orderItems = order.items ?? [];
 
@@ -262,8 +317,9 @@ function OrderDetailsModal({
     if (!["Pending", "Preparing"].includes(order.status)) return;
 
     setCancelLoading(true);
+    setCancelError("");
     try {
-      const res = await fetch(`http://localhost:3001/orders/${order.id}`, {
+      const res = await fetch(apiUrl(`/orders/${order.id}`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -277,7 +333,9 @@ function OrderDetailsModal({
       onClose();
       navigate("/my-orders");
     } catch (err) {
-      console.error("Failed to cancel order:", err);
+      setCancelError(
+        err instanceof Error ? err.message : "Failed to cancel order.",
+      );
     } finally {
       setCancelLoading(false);
     }
@@ -391,6 +449,11 @@ function OrderDetailsModal({
               ) : (
                 <div className="cancel-confirm">
                   <p>Are you sure you want to cancel this order?</p>
+                  {cancelError && (
+                    <p style={{ color: "#d32f2f", marginTop: 8 }}>
+                      {cancelError}
+                    </p>
+                  )}
                   <div className="confirm-buttons">
                     <button
                       onClick={() => setShowCancelConfirm(false)}

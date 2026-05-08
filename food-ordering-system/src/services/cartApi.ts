@@ -1,16 +1,16 @@
 import type { FoodItem } from "../types";
+import { apiUrl } from "../config/api";
+import { getStoredItem } from "../utils/storage";
 
 type CartItem = FoodItem & {
   quantity: number;
   cartItemId?: string;
 };
 
-const API_URL = "http://localhost:3001";
-
 function getCurrentCustomerId(customerId?: string) {
   if (customerId) return customerId;
 
-  const rawUser = localStorage.getItem("currentUser");
+  const rawUser = getStoredItem("currentUser");
   if (!rawUser) return "";
 
   try {
@@ -34,7 +34,7 @@ function mapCartItem(item: any): CartItem {
 }
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(`${API_URL}${path}`, {
+  const res = await fetch(apiUrl(path), {
     headers: { "Content-Type": "application/json", ...options?.headers },
     ...options,
   });

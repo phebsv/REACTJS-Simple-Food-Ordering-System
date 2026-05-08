@@ -40,9 +40,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     loadCartItems(customer.id)
       .then((loadedItems) => setItems(loadedItems))
-      .catch((error) => {
-        console.error("Failed to load cart items:", error);
-      })
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, [customer?.id]);
 
@@ -72,9 +70,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           )
         );
       })
-      .catch((error) => {
-        console.error("Failed to sync cart add with backend:", error);
-      });
+      .catch(() => {});
   };
 
   const updateQuantity = (id: string, quantity: number) => {
@@ -95,23 +91,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
           )
         );
       })
-      .catch((error) => {
-        console.error("Failed to sync cart quantity with backend:", error);
-      });
+      .catch(() => {});
   };
 
   const removeItem = (id: string) => {
     setItems((prev) => prev.filter((cartItem) => cartItem.id !== id));
-    removeFromCart(id, customer?.id).catch((error) => {
-      console.error("Failed to remove cart item from backend:", error);
-    });
+    removeFromCart(id, customer?.id).catch(() => {});
   };
 
   const clearCart = () => {
     setItems([]);
-    clearBackendCart(customer?.id).catch((error) => {
-      console.error("Failed to clear backend cart:", error);
-    });
+    clearBackendCart(customer?.id).catch(() => {});
   };
 
   const value = useMemo(

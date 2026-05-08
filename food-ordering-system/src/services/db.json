@@ -36,7 +36,7 @@
       "description": "Fresh beef patty with lettuce, tomato, and special sauce",
       "price": 150,
       "category": "Meals",
-      "image": "https://via.placeholder.com/300x200?text=Classic+Burger",
+      "image": "https://thelocalpalate.com/wp-content/uploads/2025/04/TLP-featured-image-34-1.jpg",
       "available": true,
       "stock": 50
     },
@@ -46,7 +46,7 @@
       "description": "Crispy crust topped with mozzarella and pepperoni",
       "price": 130,
       "category": "Meals",
-      "image": "https://via.placeholder.com/300x200?text=Pepperoni+Pizza",
+      "image": "https://www.simplyrecipes.com/thmb/KE6iMblr3R2Db6oE8HdyVsFSj2A=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/__opt__aboutcom__coeus__resources__content_migration__simply_recipes__uploads__2019__09__easy-pepperoni-pizza-lead-3-1024x682-583b275444104ef189d693a64df625da.jpg",
       "available": true,
       "stock": 30
     },
@@ -56,7 +56,7 @@
       "description": "Refreshing iced coffee with a smooth finish",
       "price": 100,
       "category": "Drinks",
-      "image": "https://via.placeholder.com/300x200?text=Iced+Coffee",
+      "image": "https://cdn.loveandlemons.com/wp-content/uploads/2025/05/iced-coffee.jpg",
       "available": true,
       "stock": 5
     },
@@ -66,7 +66,7 @@
       "description": "Crispy golden fries served hot",
       "price": 50,
       "category": "Snacks",
-      "image": "https://via.placeholder.com/300x200?text=French+Fries",
+      "image": "https://www.allrecipes.com/thmb/8_B6OD1w6h1V0zPi8KAGzD41Kzs=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/50223-homemade-crispy-seasoned-french-fries-VAT-Beauty-4x3-789ecb2eaed34d6e879b9a93dd56a50a.jpg",
       "available": false,
       "stock": 0
     },
@@ -76,7 +76,7 @@
       "description": "Rich and moist chocolate cake with frosting",
       "price": 70,
       "category": "Desserts",
-      "image": "https://via.placeholder.com/300x200?text=Chocolate+Cake",
+      "image": "https://sallysbakingaddiction.com/wp-content/uploads/2013/04/triple-chocolate-cake-4.jpg",
       "available": true,
       "stock": 8
     }

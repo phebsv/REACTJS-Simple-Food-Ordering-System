@@ -5,6 +5,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import { loginCustomer, registerCustomer } from "../services/api.ts";
 import type { AuthUser } from "../services/api.ts";
+import { getStoredItem, removeStoredItem, setStoredItem } from "../utils/storage";
 
 interface AuthContextType {
   customer: AuthUser | null;
@@ -13,7 +14,11 @@ interface AuthContextType {
   hydrating: boolean;
   loading: boolean;
   error: string;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (
+    email: string,
+    password: string,
+    options?: { remember?: boolean },
+  ) => Promise<boolean>;
   register: (data: {
     firstName: string;
     lastName: string;
@@ -37,8 +42,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Restore session on mount
   useEffect(() => {
-    const savedToken = localStorage.getItem("customerToken");
-    const savedUser = localStorage.getItem("currentUser");
+    const savedToken = getStoredItem("customerToken");
+    const savedUser = getStoredItem("currentUser");
     if (savedToken && savedUser) {
       setToken(savedToken);
       setCustomer(JSON.parse(savedUser));
@@ -46,23 +51,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setHydrating(false);
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (
+    email: string,
+    password: string,
+    options?: { remember?: boolean },
+  ): Promise<boolean> => {
     setLoading(true);
     setError("");
     try {
       const res = await loginCustomer(email, password);
       const { token: t, customer: user } = res.data;
+      const area = options?.remember ? "local" : "session";
 
       setToken(t);
       setCustomer(user);
-      localStorage.setItem("customerToken", t);
-      localStorage.setItem("currentUser", JSON.stringify(user));
+      setStoredItem("customerToken", t, area);
+      setStoredItem("currentUser", JSON.stringify(user), area);
       if (user.role === "admin" || user.isAdmin) {
-        localStorage.setItem("adminToken", t);
-        localStorage.setItem("adminUser", JSON.stringify(user));
+        setStoredItem("adminToken", t, area);
+        setStoredItem("adminUser", JSON.stringify(user), area);
       } else {
-        localStorage.removeItem("adminToken");
-        localStorage.removeItem("adminUser");
+        removeStoredItem("adminToken");
+        removeStoredItem("adminUser");
       }
       return true;
     } catch (err: any) {
@@ -104,8 +114,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     setCustomer(null);
     setToken(null);
-    localStorage.removeItem("customerToken");
-    localStorage.removeItem("currentUser");
+    removeStoredItem("customerToken");
+    removeStoredItem("currentUser");
   };
 
   return (

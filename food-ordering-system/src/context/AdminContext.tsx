@@ -12,6 +12,7 @@ import {
   adminGetOrders,
   adminUpdateOrderStatus,
 } from "../services/api.ts";
+import { getStoredItem, removeStoredItem, setStoredItem } from "../utils/storage";
 import type {
   Admin,
   FoodItem,
@@ -127,7 +128,7 @@ const MOCK_REVIEWS: Review[] = [
 
 export function AdminProvider({ children }: { children: ReactNode }) {
   const [admin, setAdmin] = useState<Admin | null>(() => {
-    const saved = localStorage.getItem("adminUser");
+    const saved = getStoredItem("adminUser");
     return saved ? JSON.parse(saved) : null;
   });
   const [menuItems, setMenuItems] = useState<FoodItem[]>([]);
@@ -145,8 +146,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       const res = await loginAdmin(email, password);
       const { token, admin: a } = res.data;
       setAdmin(a);
-      localStorage.setItem("adminToken", token);
-      localStorage.setItem("adminUser", JSON.stringify(a));
+      setStoredItem("adminToken", token, "session");
+      setStoredItem("adminUser", JSON.stringify(a), "session");
       return true;
     } catch (err: any) {
       setError(err.response?.data?.message || "Invalid admin credentials.");
@@ -158,8 +159,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     setAdmin(null);
-    localStorage.removeItem("adminToken");
-    localStorage.removeItem("adminUser");
+    removeStoredItem("adminToken");
+    removeStoredItem("adminUser");
   };
 
   // MENU

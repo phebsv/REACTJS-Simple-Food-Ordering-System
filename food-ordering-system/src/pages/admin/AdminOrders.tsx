@@ -10,6 +10,8 @@ import "./AdminOrders.css";
 
 type FilterStatus = OrderStatus | "All";
 
+const PAGE_SIZE = 10;
+
 export default function AdminOrders() {
   const {
     orders,
@@ -21,7 +23,9 @@ export default function AdminOrders() {
     setError,
   } = useAdmin();
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState<FilterStatus>("All");
+  const [page, setPage] = useState(1);
   const [selectedOrder, setSelectedOrder] = useState<AdminOrder | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState<{
@@ -36,19 +40,41 @@ export default function AdminOrders() {
     fetchOrders();
   }, []);
 
+  // Debounce search input to avoid heavy filtering on every keystroke
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery.trim());
+    }, 250);
+    return () => window.clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearchQuery, filterStatus]);
+
   // ==================== FILTERING ====================
   const filteredOrders = useMemo(() => {
     return orders.filter((order) => {
+      const query = debouncedSearchQuery.toLowerCase();
       const matchesSearch =
-        order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        order.customerName.toLowerCase().includes(searchQuery.toLowerCase());
+        !query ||
+        order.id.toLowerCase().includes(query) ||
+        order.customerName.toLowerCase().includes(query);
 
       const matchesStatus =
         filterStatus === "All" || order.status === filterStatus;
 
       return matchesSearch && matchesStatus;
     });
-  }, [orders, searchQuery, filterStatus]);
+  }, [orders, debouncedSearchQuery, filterStatus]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const paginatedOrders = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return filteredOrders.slice(start, start + PAGE_SIZE);
+  }, [filteredOrders, currentPage]);
 
   // ==================== HANDLERS ====================
   const handleOpenDetails = (order: AdminOrder) => {
@@ -177,7 +203,7 @@ export default function AdminOrders() {
                 </tr>
               </thead>
               <tbody>
-                {filteredOrders.map((order) => (
+                {paginatedOrders.map((order) => (
                   <tr key={order.id}>
                     <td className="order-id">#{order.id.slice(0, 8)}</td>
                     <td>
@@ -210,6 +236,42 @@ export default function AdminOrders() {
                 ))}
               </tbody>
             </table>
+
+            {totalPages > 1 && (
+              <div className="orders-pagination">
+                <button
+                  className="pagination-btn"
+                  onClick={() => setPage(1)}
+                  disabled={currentPage === 1}
+                >
+                  First
+                </button>
+                <button
+                  className="pagination-btn"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                >
+                  Prev
+                </button>
+                <span className="pagination-info">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  className="pagination-btn"
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </button>
+                <button
+                  className="pagination-btn"
+                  onClick={() => setPage(totalPages)}
+                  disabled={currentPage === totalPages}
+                >
+                  Last
+                </button>
+              </div>
+            )}
           </div>
         )}
 

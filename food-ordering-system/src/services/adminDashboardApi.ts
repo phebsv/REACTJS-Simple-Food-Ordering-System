@@ -4,12 +4,12 @@ import type {
   DashboardOrder,
 } from "../interfaces";
 
-const API_BASE_URL = "http://localhost:3001";
+import { apiUrl } from "../config/api";
 
 export async function getAdminDashboardData(): Promise<DashboardData> {
   const [profileResponse, ordersResponse] = await Promise.all([
-    fetch(`${API_BASE_URL}/adminProfile`),
-    fetch(`${API_BASE_URL}/orders`),
+    fetch(apiUrl("/adminProfile")),
+    fetch(apiUrl("/orders")),
   ]);
 
   if (!profileResponse.ok || !ordersResponse.ok) {

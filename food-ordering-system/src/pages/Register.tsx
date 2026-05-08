@@ -18,6 +18,7 @@ export default function Register() {
   const [email, setEmail] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [agree, setAgree] = useState<boolean>(false);
   const [localError, setLocalError] = useState<string>("");
 
@@ -27,18 +28,36 @@ export default function Register() {
   const handleRegister = async () => {
     setLocalError("");
 
+    const phoneDigits = phone.replace(/\D/g, "");
+    const emailTrimmed = email.trim();
+    const first = firstName.trim();
+    const last = lastName.trim();
+
+    const isLikelyEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTrimmed);
+    const hasMinPasswordLen = password.length >= 8;
+    const hasLetter = /[A-Za-z]/.test(password);
+    const hasNumber = /\d/.test(password);
+
     if (!agree) return setLocalError("Please agree to the terms.");
-    if (!firstName || !lastName || !email || !phone || !password)
+    if (!first || !last || !emailTrimmed || !phoneDigits || !password || !confirmPassword)
       return setLocalError("All fields are required.");
-    if (password.length < 6)
-      return setLocalError("Password must be at least 6 characters.");
+    if (first.length < 2 || last.length < 2)
+      return setLocalError("Please enter your full name.");
+    if (!isLikelyEmail)
+      return setLocalError("Please enter a valid email address.");
+    if (phoneDigits.length < 10 || phoneDigits.length > 11)
+      return setLocalError("Please enter a valid phone number.");
+    if (!hasMinPasswordLen || !hasLetter || !hasNumber)
+      return setLocalError("Password must be at least 8 characters and include a letter and a number.");
+    if (password !== confirmPassword)
+      return setLocalError("Passwords do not match.");
 
     const success = await register({
-      firstName,
-      lastName,
-      email,
+      firstName: first,
+      lastName: last,
+      email: emailTrimmed,
       password,
-      phoneNumber: phone,
+      phoneNumber: phoneDigits,
       agreeToTerms: agree,
     });
 
@@ -117,6 +136,14 @@ export default function Register() {
               placeholder="Create a password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              Icon={LockIcon}
+            />
+            <UInput
+              label="Confirm Password"
+              type="password"
+              placeholder="Re-enter your password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               Icon={LockIcon}
             />
 

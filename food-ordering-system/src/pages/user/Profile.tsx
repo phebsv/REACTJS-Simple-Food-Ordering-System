@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import BgFood from "../../components/BgFood";
+import { apiUrl } from "../../config/api";
 import "./Profile.css";
+import { getStoredItem, removeStoredItem, setStoredItem } from "../../utils/storage";
 
 export default function Profile() {
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -17,7 +19,7 @@ export default function Profile() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const user = localStorage.getItem("currentUser");
+    const user = getStoredItem("currentUser");
     if (!user) {
       navigate("/login");
       return;
@@ -29,7 +31,7 @@ export default function Profile() {
     // Fetch fresh user data from server
     const fetchUserData = async () => {
       try {
-        const res = await fetch(`http://localhost:3001/users/${userData.id}`);
+        const res = await fetch(apiUrl(`/users/${userData.id}`));
         if (res.ok) {
           const serverData = await res.json();
           setCurrentUser(serverData);
@@ -81,7 +83,7 @@ export default function Profile() {
         address
       };
 
-      const res = await fetch(`http://localhost:3001/users/${currentUser.id}`, {
+      const res = await fetch(apiUrl(`/users/${currentUser.id}`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedUser)
@@ -89,7 +91,7 @@ export default function Profile() {
 
       if (!res.ok) throw new Error("Failed to update profile");
 
-      localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+      setStoredItem("currentUser", JSON.stringify(updatedUser), "session");
       setCurrentUser(updatedUser);
       setIsEditing(false);
     } catch (err) {
@@ -100,8 +102,8 @@ export default function Profile() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("currentUser");
-    localStorage.removeItem("adminUser");
+    removeStoredItem("currentUser");
+    removeStoredItem("adminUser");
     navigate("/login");
   };
 

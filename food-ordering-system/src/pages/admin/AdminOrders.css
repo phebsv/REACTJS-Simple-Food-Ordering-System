@@ -72,6 +72,45 @@
   overflow-x: auto;
 }
 
+/* ==================== PAGINATION ==================== */
+.orders-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 12px 16px;
+  border-top: 1px solid #e0e0e0;
+  background: #fff;
+}
+
+.pagination-info {
+  color: #666;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.pagination-btn {
+  padding: 8px 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  transition: all 0.2s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .orders-table {
   width: 100%;
   border-collapse: collapse;
