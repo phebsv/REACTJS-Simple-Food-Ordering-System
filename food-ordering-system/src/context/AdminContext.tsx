@@ -229,7 +229,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   };
 
   const updateOrderStatus = async (id: string, status: OrderStatus) => {
-    await adminUpdateOrderStatus(Number(id), status);
+    await adminUpdateOrderStatus(id, status);
     setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status } : o)));
   };
 

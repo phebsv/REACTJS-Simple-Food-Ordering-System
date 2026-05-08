@@ -25,10 +25,35 @@ export default function Profile() {
     
     const userData = JSON.parse(user);
     setCurrentUser(userData);
-    setName(userData.name || "");
-    setEmail(userData.email || "");
-    setPhone(userData.phone || "");
-    setAddress(userData.address || "");
+    
+    // Fetch fresh user data from server
+    const fetchUserData = async () => {
+      try {
+        const res = await fetch(`http://localhost:3001/users/${userData.id}`);
+        if (res.ok) {
+          const serverData = await res.json();
+          setCurrentUser(serverData);
+          setName(serverData.name || "");
+          setEmail(serverData.email || "");
+          setPhone(serverData.phone || "");
+          setAddress(serverData.address || "");
+        } else {
+          // Fall back to localStorage if server fetch fails
+          setName(userData.name || "");
+          setEmail(userData.email || "");
+          setPhone(userData.phone || "");
+          setAddress(userData.address || "");
+        }
+      } catch (err) {
+        // Fall back to localStorage if server fetch fails
+        setName(userData.name || "");
+        setEmail(userData.email || "");
+        setPhone(userData.phone || "");
+        setAddress(userData.address || "");
+      }
+    };
+    
+    fetchUserData();
   }, [navigate]);
 
   const handleSaveChanges = async () => {

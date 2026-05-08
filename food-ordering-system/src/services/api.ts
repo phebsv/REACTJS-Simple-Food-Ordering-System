@@ -130,7 +130,7 @@ export async function adminGetOrders() {
   return res.data;
 }
 
-export async function adminUpdateOrderStatus(id: number, status: string) {
+export async function adminUpdateOrderStatus(id: string, status: string) {
   const res = await API.patch(`/orders/${id}`, {
     status,
   });

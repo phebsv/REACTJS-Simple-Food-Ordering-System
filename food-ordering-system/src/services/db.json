@@ -67,7 +67,7 @@
       "price": 50,
       "category": "Snacks",
       "image": "https://via.placeholder.com/300x200?text=French+Fries",
-      "available": true,
+      "available": false,
       "stock": 0
     },
     {
@@ -192,11 +192,36 @@
       ],
       "subtotal": 8.99,
       "total": 8.99,
-      "status": "Pending",
+      "status": "Ready",
       "paymentMethod": "cash",
       "deliveryNotes": "asdas",
       "createdAt": "2026-05-08T17:20:08.255Z",
-      "updatedAt": "2026-05-08T17:20:08.255Z"
+      "updatedAt": "2026-05-08T17:34:15.249Z"
+    },
+    {
+      "id": "ordermox7a76u",
+      "customerId": "1",
+      "customerName": "Admin",
+      "customerEmail": "admin",
+      "customerPhone": "09617095667",
+      "customerAddress": "Pakigne, Minglanilla, Cebu",
+      "items": [
+        {
+          "id": "1",
+          "name": "Classic Burger",
+          "description": "Fresh beef patty with lettuce, tomato, and special sauce",
+          "price": 150,
+          "category": "Meals",
+          "quantity": 1
+        }
+      ],
+      "subtotal": 150,
+      "total": 150,
+      "status": "Delivered",
+      "paymentMethod": "cash",
+      "deliveryNotes": "",
+      "createdAt": "2026-05-08T17:40:03.174Z",
+      "updatedAt": "2026-05-08T17:43:19.530Z"
     }
   ],
   "inventory": [

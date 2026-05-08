@@ -29,6 +29,25 @@ export default function MyOrders() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const navigate = useNavigate();
 
+  const fetchOrders = async (userId: string) => {
+    try {
+      setLoading(true);
+      const res = await fetch("http://localhost:3001/orders");
+      if (!res.ok) throw new Error("Failed to fetch orders");
+      const data = await res.json();
+
+      // Filter orders for current customer
+      const customerOrders = data.filter(
+        (order: Order) => order.customerId === userId,
+      );
+      setOrders(customerOrders);
+    } catch (err) {
+      console.error("Failed to load orders:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const user = localStorage.getItem("currentUser");
     if (!user) {
@@ -39,27 +58,13 @@ export default function MyOrders() {
   }, [navigate]);
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch("http://localhost:3001/orders");
-        if (!res.ok) throw new Error("Failed to fetch orders");
-        const data = await res.json();
-
-        // Filter orders for current customer
-        const customerOrders = data.filter(
-          (order: Order) => order.customerId === currentUser?.id,
-        );
-        setOrders(customerOrders);
-      } catch (err) {
-        console.error("Failed to load orders:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     if (currentUser?.id) {
-      fetchOrders();
+      fetchOrders(currentUser.id);
+      // Refresh orders every 5 seconds to show updated status
+      const interval = setInterval(() => {
+        fetchOrders(currentUser.id);
+      }, 5000);
+      return () => clearInterval(interval);
     }
   }, [currentUser]);
 
