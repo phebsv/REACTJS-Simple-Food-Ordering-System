@@ -266,6 +266,31 @@
       "deliveryNotes": "",
       "createdAt": "2026-05-08T19:44:01.289Z",
       "updatedAt": "2026-05-08T19:46:54.039Z"
+    },
+    {
+      "id": "ordermoxndyh1",
+      "customerId": "mowsjsivwstapw3zb2r",
+      "customerName": "jiyong denpai",
+      "customerEmail": "jiyong@gmail.com",
+      "customerPhone": "09291052281",
+      "customerAddress": "USJR Quad Campus",
+      "items": [
+        {
+          "id": "1",
+          "name": "Classic Burger",
+          "description": "Fresh beef patty with lettuce, tomato, and special sauce",
+          "price": 150,
+          "category": "Meals",
+          "quantity": 2
+        }
+      ],
+      "subtotal": 300,
+      "total": 300,
+      "status": "Delivered",
+      "paymentMethod": "cash",
+      "deliveryNotes": "nideliver ko guys ",
+      "createdAt": "2026-05-09T01:10:52.357Z",
+      "updatedAt": "2026-05-09T01:28:47.770Z"
     }
   ],
   "inventory": [
@@ -348,18 +373,6 @@
       "hidden": false
     }
   ],
-  "cart_items": [
-    {
-      "id": "mowskwczgc1t6s0s0lc",
-      "customerId": "mowsjsivwstapw3zb2r",
-      "menuId": "1",
-      "name": "Classic Burger",
-      "description": "Fresh beef patty with lettuce, tomato, and special sauce",
-      "price": 8.99,
-      "category": "Meals",
-      "image": "https://via.placeholder.com/300x200?text=Classic+Burger",
-      "quantity": 1
-    }
-  ],
+  "cart_items": [],
   "$schema": "./node_modules/json-server/schema.json"
 }

@@ -12,7 +12,11 @@ import {
   adminGetOrders,
   adminUpdateOrderStatus,
 } from "../services/api.ts";
-import { getStoredItem, removeStoredItem, setStoredItem } from "../utils/storage";
+import {
+  getStoredItem,
+  removeStoredItem,
+  setStoredItem,
+} from "../utils/storage";
 import type {
   Admin,
   FoodItem,
@@ -80,25 +84,30 @@ function mapMenuItem(item: any): FoodItem {
 
 // Helper: map PHP Order to AdminOrder
 function mapOrder(order: any, customer?: any, items?: any[]): AdminOrder {
+  const itemList = items ?? order.items ?? [];
+
   return {
     id: String(order.id ?? order.order_id),
-    customerName: order.customer_name || customer?.name || "Customer",
-    customerEmail: customer?.email || "",
-    customerPhone: customer?.phone || "",
-    customerAddress: customer?.address || "",
-    items: (items || []).map(
+    customerName:
+      order.customerName || order.customer_name || customer?.name || "Customer",
+    customerEmail: order.customerEmail || customer?.email || "",
+    customerPhone: order.customerPhone || customer?.phone || "",
+    customerAddress: order.customerAddress || customer?.address || "",
+    items: itemList.map(
       (i: any): AdminOrderItem => ({
-        id: String(i.order_item_id),
-        name: i.food_name,
-        quantity: Number(i.quantity),
-        price: Number(i.price),
+        id: String(i.id ?? i.order_item_id),
+        name: i.name ?? i.food_name ?? "",
+        quantity: Number(i.quantity ?? 0),
+        price: Number(i.price ?? 0),
       }),
     ),
     subtotal: Number(order.subtotal ?? order.total_amount ?? order.total ?? 0),
     total: Number(order.total ?? order.total_amount ?? 0),
     status: (order.status ?? order.order_status) as OrderStatus,
-    createdAt: order.createdAt ?? order.order_date,
-    updatedAt: order.updatedAt ?? order.order_date,
+    createdAt: order.createdAt ?? order.order_date ?? new Date().toISOString(),
+    updatedAt: order.updatedAt ?? order.order_date ?? new Date().toISOString(),
+    paymentMethod: order.paymentMethod ?? order.payment_method,
+    deliveryNotes: order.deliveryNotes ?? order.delivery_notes,
   };
 }
 
@@ -251,9 +260,10 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         name: item.name ?? item.food_name ?? "",
         category: item.category,
         stock: item.stock ?? 100,
-        status: (item.available ?? item.availability_status)
-          ? "Available"
-          : "Unavailable",
+        status:
+          (item.available ?? item.availability_status)
+            ? "Available"
+            : "Unavailable",
         lastUpdated: new Date().toISOString(),
       }));
       setInventoryItems(mapped);
