@@ -19,6 +19,19 @@ type ReviewSummary = {
   count: number;
 };
 
+type ReviewLike = Partial<Review> & {
+  food_item_id?: string;
+  itemId?: string;
+  item_id?: string;
+  productId?: string;
+  product_id?: string;
+  food_item_name?: string;
+  itemName?: string;
+  item_name?: string;
+  productName?: string;
+  product_name?: string;
+};
+
 type MenuItemProps = {
   items: FoodItem[];
   categories: string[];
@@ -129,19 +142,32 @@ function MenuList({
 
 function buildReviewSummaries(
   items: FoodItem[],
-  reviews: Review[],
+  reviews: ReviewLike[],
 ): Record<string, ReviewSummary> {
   const visibleReviews = reviews.filter((review) => !review.hidden);
 
   return items.reduce<Record<string, ReviewSummary>>((summaries, item) => {
     const normalizedItemName = decodeHtmlEntities(item.name).toLowerCase();
     const itemReviews = visibleReviews.filter((review) => {
+      const reviewItemId =
+        review.foodItemId ??
+        review.food_item_id ??
+        review.itemId ??
+        review.item_id ??
+        review.productId ??
+        review.product_id;
       const normalizedReviewName = decodeHtmlEntities(
-        review.foodItemName || "",
+        review.foodItemName ||
+          review.food_item_name ||
+          review.itemName ||
+          review.item_name ||
+          review.productName ||
+          review.product_name ||
+          "",
       ).toLowerCase();
 
       return (
-        String(review.foodItemId) === String(item.id) ||
+        String(reviewItemId) === String(item.id) ||
         normalizedReviewName === normalizedItemName
       );
     });
@@ -162,6 +188,20 @@ function buildReviewSummaries(
 
     return summaries;
   }, {});
+}
+
+function getReviewList(response: unknown): ReviewLike[] {
+  if (Array.isArray(response)) return response as ReviewLike[];
+
+  if (response && typeof response === "object") {
+    const data = (response as { data?: unknown }).data;
+    const reviews = (response as { reviews?: unknown }).reviews;
+
+    if (Array.isArray(data)) return data as ReviewLike[];
+    if (Array.isArray(reviews)) return reviews as ReviewLike[];
+  }
+
+  return [];
 }
 
 export default function Menu() {
@@ -193,7 +233,7 @@ export default function Menu() {
         setAllMenuItems(availableItems);
 
         try {
-          const reviews = (await getReviews()) as Review[];
+          const reviews = getReviewList(await getReviews());
           setReviewSummaries(buildReviewSummaries(availableItems, reviews));
         } catch {
           setReviewSummaries({});

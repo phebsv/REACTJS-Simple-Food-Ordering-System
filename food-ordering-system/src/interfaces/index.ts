@@ -131,10 +131,12 @@ export interface InventoryItem {
   lastUpdated: string;
 }
 
-// For AdminReviews.tsx (not in PHP backend yet - uses mock data)
+// For AdminReviews.tsx
 export interface Review {
   id: string;
+  customerId?: string;
   customerName: string;
+  foodItemId?: string;
   foodItemName: string;
   orderId: string;
   rating: number;

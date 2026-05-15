@@ -11,6 +11,7 @@ import {
   adminDeleteMenuItem,
   adminGetOrders,
   adminUpdateOrderStatus,
+  getReviews as apiGetReviews,
 } from "../services/api.ts";
 import {
   getStoredItem,
@@ -54,7 +55,7 @@ interface AdminContextType {
   updateStock: (id: string, quantity: number) => Promise<void>;
   updateInventoryStatus: (id: string, status: string) => Promise<void>;
 
-  // Reviews (mock - not in PHP backend)
+  // Reviews
   reviews: Review[];
   fetchReviews: () => Promise<void>;
   hideReview: (id: string) => Promise<void>;
@@ -116,6 +117,41 @@ function getOrderList(response: any) {
   if (Array.isArray(response?.data)) return response.data;
   if (Array.isArray(response?.orders)) return response.orders;
   return [];
+}
+
+function getReviewList(response: any) {
+  if (Array.isArray(response)) return response;
+  if (Array.isArray(response?.data)) return response.data;
+  if (Array.isArray(response?.reviews)) return response.reviews;
+  return [];
+}
+
+function mapReview(review: any): Review {
+  return {
+    id: String(firstValue(review.id, review.review_id, crypto.randomUUID())),
+    customerId:
+      firstValue(review.customerId, review.customer_id) !== undefined
+        ? String(firstValue(review.customerId, review.customer_id))
+        : undefined,
+    customerName:
+      firstValue(review.customerName, review.customer_name) ||
+      "Anonymous customer",
+    foodItemId:
+      firstValue(review.foodItemId, review.food_item_id, review.itemId) !==
+      undefined
+        ? String(firstValue(review.foodItemId, review.food_item_id, review.itemId))
+        : undefined,
+    foodItemName:
+      firstValue(review.foodItemName, review.food_item_name, review.itemName) ||
+      "Unknown item",
+    orderId: String(firstValue(review.orderId, review.order_id, "")),
+    rating: Number(firstValue(review.rating, 0)),
+    comment: firstValue(review.comment, review.review, "") || "",
+    createdAt:
+      firstValue(review.createdAt, review.created_at, review.date) ||
+      new Date().toISOString(),
+    hidden: Boolean(firstValue(review.hidden, false)),
+  };
 }
 
 // Helper: map PHP Order to AdminOrder
@@ -204,30 +240,6 @@ function mapOrder(order: any, customer?: any, items?: any[]): AdminOrder {
   };
 }
 
-// Mock reviews (no reviews table in PHP backend)
-const MOCK_REVIEWS: Review[] = [
-  {
-    id: "1",
-    customerName: "Maria Santos",
-    foodItemName: "Chicken Adobo",
-    orderId: "1",
-    rating: 5,
-    comment: "Absolutely delicious! Just like home cooking.",
-    createdAt: new Date().toISOString(),
-    hidden: false,
-  },
-  {
-    id: "2",
-    customerName: "Jose Reyes",
-    foodItemName: "Pork Sinigang",
-    orderId: "2",
-    rating: 4,
-    comment: "Great flavor, the sourness was perfect.",
-    createdAt: new Date().toISOString(),
-    hidden: false,
-  },
-];
-
 export function AdminProvider({ children }: { children: ReactNode }) {
   const [admin, setAdmin] = useState<Admin | null>(() => {
     const saved = getStoredItem("adminUser");
@@ -236,7 +248,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const [menuItems, setMenuItems] = useState<FoodItem[]>([]);
   const [orders, setOrders] = useState<AdminOrder[]>([]);
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
-  const [reviews, setReviews] = useState<Review[]>(MOCK_REVIEWS);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -405,10 +417,18 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  // REVIEWS (mock only)
+  // REVIEWS
   const fetchReviews = async () => {
-    // No reviews endpoint in PHP - use mock data
-    setReviews(MOCK_REVIEWS);
+    setLoading(true);
+    try {
+      const data = await apiGetReviews();
+      setReviews(getReviewList(data).map(mapReview));
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Failed to fetch reviews.");
+      setReviews([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const hideReview = async (id: string) => {

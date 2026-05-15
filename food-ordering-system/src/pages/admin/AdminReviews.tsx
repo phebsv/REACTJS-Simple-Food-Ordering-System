@@ -10,6 +10,25 @@ import "./AdminReviews.css";
 
 type RatingFilter = "All" | 5 | 4 | 3 | 2 | 1;
 
+const displayValue = (value: string | undefined, fallback: string) =>
+  value?.trim() || fallback;
+
+const formatReviewDate = (value: string | undefined) => {
+  if (!value) return "Date unavailable";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime())
+    ? "Date unavailable"
+    : date.toLocaleDateString();
+};
+
+const formatReviewDateTime = (value: string | undefined) => {
+  if (!value) return "Date unavailable";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime())
+    ? "Date unavailable"
+    : date.toLocaleString();
+};
+
 export default function AdminReviews() {
   const {
     reviews,
@@ -39,10 +58,19 @@ export default function AdminReviews() {
   // ==================== FILTERING ====================
   const filteredReviews = useMemo(() => {
     return reviews.filter((review) => {
+      const customerName = displayValue(
+        review.customerName,
+        "Anonymous customer",
+      ).toLowerCase();
+      const foodItemName = displayValue(
+        review.foodItemName,
+        "Unknown item",
+      ).toLowerCase();
+      const orderId = displayValue(review.orderId, "").toLowerCase();
       const matchesSearch =
-        review.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        review.foodItemName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        review.orderId.toLowerCase().includes(searchQuery.toLowerCase());
+        customerName.includes(searchQuery.toLowerCase()) ||
+        foodItemName.includes(searchQuery.toLowerCase()) ||
+        orderId.includes(searchQuery.toLowerCase());
 
       const matchesRating =
         ratingFilter === "All" || review.rating === ratingFilter;
@@ -173,9 +201,11 @@ export default function AdminReviews() {
               <div key={review.id} className="review-card">
                 <div className="review-header">
                   <div className="review-customer">
-                    <h3>{review.customerName}</h3>
+                    <h3>
+                      {displayValue(review.customerName, "Anonymous customer")}
+                    </h3>
                     <p className="review-meta">
-                      Order #{review.orderId.slice(0, 8)}
+                      Order #{displayValue(review.orderId, "Unknown order").slice(0, 8)}
                     </p>
                   </div>
                   <div className="review-rating">
@@ -185,14 +215,17 @@ export default function AdminReviews() {
                 </div>
 
                 <div className="review-food-item">
-                  <strong>Food Item:</strong> {review.foodItemName}
+                  <strong>Food Item:</strong>{" "}
+                  {displayValue(review.foodItemName, "Unknown item")}
                 </div>
 
-                <p className="review-comment">{review.comment}</p>
+                <p className="review-comment">
+                  {displayValue(review.comment, "No comment provided.")}
+                </p>
 
                 <div className="review-footer">
                   <span className="review-date">
-                    {new Date(review.createdAt).toLocaleDateString()}
+                    {formatReviewDate(review.createdAt)}
                   </span>
                   <div className="review-actions">
                     <button
@@ -234,11 +267,22 @@ export default function AdminReviews() {
                 <div className="details-grid">
                   <div className="detail-item">
                     <label>Customer Name</label>
-                    <p>{selectedReview.customerName}</p>
+                    <p>
+                      {displayValue(
+                        selectedReview.customerName,
+                        "Anonymous customer",
+                      )}
+                    </p>
                   </div>
                   <div className="detail-item">
                     <label>Order ID</label>
-                    <p>#{selectedReview.orderId.slice(0, 8)}</p>
+                    <p>
+                      #
+                      {displayValue(
+                        selectedReview.orderId,
+                        "Unknown order",
+                      ).slice(0, 8)}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -248,7 +292,9 @@ export default function AdminReviews() {
                 <div className="details-grid">
                   <div className="detail-item">
                     <label>Food Item</label>
-                    <p>{selectedReview.foodItemName}</p>
+                    <p>
+                      {displayValue(selectedReview.foodItemName, "Unknown item")}
+                    </p>
                   </div>
                   <div className="detail-item">
                     <label>Rating</label>
@@ -262,14 +308,17 @@ export default function AdminReviews() {
                 <div className="detail-item full-width">
                   <label>Review Comment</label>
                   <p className="review-comment-text">
-                    {selectedReview.comment}
+                    {displayValue(
+                      selectedReview.comment,
+                      "No comment provided.",
+                    )}
                   </p>
                 </div>
               </div>
 
               <div className="details-section">
                 <h3>Review Date</h3>
-                <p>{new Date(selectedReview.createdAt).toLocaleString()}</p>
+                <p>{formatReviewDateTime(selectedReview.createdAt)}</p>
               </div>
 
               <div className="details-actions">
