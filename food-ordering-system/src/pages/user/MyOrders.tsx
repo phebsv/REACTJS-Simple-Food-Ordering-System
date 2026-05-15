@@ -24,6 +24,9 @@ const displayValue = (value?: string) => value || "Not provided";
 const getOrderTime = (order: Order) =>
   new Date(order.createdAt || order.updatedAt || 0).getTime() || 0;
 
+type OrderItem = Order["items"][number];
+type OrderModalMode = "details" | "reviews";
+
 type CurrentUser = {
   id: string;
   name?: string;
@@ -104,6 +107,14 @@ const readReviewItemName = (review?: ReviewLike | null) =>
       )
     : "";
 
+const readReviewComment = (review?: ReviewLike | null) =>
+  review?.comment?.trim() || "";
+
+const readReviewRating = (review?: ReviewLike | null) => {
+  const rating = Number(review?.rating);
+  return Number.isFinite(rating) ? Math.max(1, Math.min(5, rating)) : 0;
+};
+
 const getReviewList = (response: unknown): ReviewLike[] => {
   if (Array.isArray(response)) return response as ReviewLike[];
   if (response && typeof response === "object") {
@@ -119,6 +130,49 @@ const getReviewList = (response: unknown): ReviewLike[] => {
   return [];
 };
 
+const getItemName = (item: OrderItem) => displayValue(item.name).toLowerCase();
+
+const isMatchingReview = (
+  review: ReviewLike,
+  order: Order,
+  item: OrderItem,
+) => {
+  if (review.hidden) return false;
+
+  const sameOrder = readReviewOrderId(review) === order.id;
+  const reviewItemId = readReviewItemId(review);
+  const sameItem = reviewItemId
+    ? reviewItemId === item.id
+    : readReviewItemName(review).toLowerCase() === getItemName(item);
+  const reviewCustomerId = readReviewCustomerId(review);
+  const sameCustomer =
+    !reviewCustomerId ||
+    !order.customerId ||
+    reviewCustomerId === order.customerId;
+
+  return sameOrder && sameItem && sameCustomer;
+};
+
+const findItemReview = (
+  reviews: ReviewLike[],
+  order: Order,
+  item: OrderItem,
+) => reviews.find((review) => isMatchingReview(review, order, item));
+
+const isOrderFullyReviewed = (reviews: ReviewLike[], order: Order) => {
+  const orderItems = order.items ?? [];
+  return (
+    order.status === "Delivered" &&
+    orderItems.length > 0 &&
+    orderItems.every((item) => findItemReview(reviews, order, item))
+  );
+};
+
+const renderStars = (rating: number) => {
+  const normalizedRating = Math.max(0, Math.min(5, Math.round(rating)));
+  return `${"★".repeat(normalizedRating)}${"☆".repeat(5 - normalizedRating)}`;
+};
+
 const getCurrentUser = (): CurrentUser | null => {
   const user = getStoredItem("currentUser");
   return user ? JSON.parse(user) : null;
@@ -126,13 +180,16 @@ const getCurrentUser = (): CurrentUser | null => {
 
 export default function MyOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [searchId, setSearchId] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [currentUser] = useState<CurrentUser | null>(() => getCurrentUser());
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [selectedOrderMode, setSelectedOrderMode] =
+    useState<OrderModalMode>("details");
+  const [reviews, setReviews] = useState<ReviewLike[]>([]);
   const navigate = useNavigate();
   const previousStatusRef = useRef<Record<string, string>>({});
 
@@ -179,6 +236,15 @@ export default function MyOrders() {
     }
   };
 
+  const fetchReviews = async () => {
+    try {
+      const response = await getReviews();
+      setReviews(getReviewList(response));
+    } catch {
+      setReviews([]);
+    }
+  };
+
   useEffect(() => {
     if (!currentUser) {
       navigate("/login");
@@ -189,6 +255,7 @@ export default function MyOrders() {
     if (currentUser?.id) {
       const initialLoad = window.setTimeout(() => {
         fetchOrders(currentUser.id);
+        fetchReviews();
       }, 0);
       // Refresh orders every 5 seconds to show updated status
       const interval = window.setInterval(() => {
@@ -204,10 +271,11 @@ export default function MyOrders() {
   const filteredOrders = useMemo(() => {
     let filtered = orders;
 
-    // Search filter
-    if (searchId.trim()) {
+    // Search by ordered item name
+    if (searchQuery.trim()) {
+      const query = searchQuery.trim().toLowerCase();
       filtered = filtered.filter((order) =>
-        order.id.toLowerCase().includes(searchId.toLowerCase()),
+        (order.items ?? []).some((item) => getItemName(item).includes(query)),
       );
     }
 
@@ -217,7 +285,16 @@ export default function MyOrders() {
     }
 
     return [...filtered].sort((a, b) => getOrderTime(b) - getOrderTime(a));
-  }, [orders, searchId, selectedStatus]);
+  }, [orders, searchQuery, selectedStatus]);
+
+  const openOrderModal = (order: Order, mode: OrderModalMode) => {
+    setSelectedOrder(order);
+    setSelectedOrderMode(mode);
+  };
+
+  const handleReviewSaved = (review: ReviewLike) => {
+    setReviews((prev) => [...prev, review]);
+  };
 
   const statusBadgeColor = (status: string) => {
     switch (status) {
@@ -262,9 +339,9 @@ export default function MyOrders() {
           <div className="my-orders-controls">
             <input
               type="text"
-              placeholder="Search by Order ID..."
-              value={searchId}
-              onChange={(e) => setSearchId(e.target.value)}
+              placeholder="Search by item name..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="my-orders-search"
             />
           </div>
@@ -321,6 +398,10 @@ export default function MyOrders() {
             <div className="my-orders-list">
               {filteredOrders.map((order) => {
                 const orderItems = order.items ?? [];
+                const canReviewOrder =
+                  order.status === "Delivered" &&
+                  orderItems.length > 0 &&
+                  !isOrderFullyReviewed(reviews, order);
 
                 return (
                   <div key={order.id} className="my-orders-card">
@@ -385,17 +466,16 @@ export default function MyOrders() {
                     </div>
 
                     <div className="order-card-actions">
-                      {order.status === "Delivered" &&
-                        orderItems.length > 0 && (
-                          <button
-                            onClick={() => setSelectedOrder(order)}
-                            className="order-review-btn"
-                          >
-                            Review Items
-                          </button>
-                        )}
+                      {canReviewOrder && (
+                        <button
+                          onClick={() => openOrderModal(order, "reviews")}
+                          className="order-review-btn"
+                        >
+                          Review Items
+                        </button>
+                      )}
                       <button
-                        onClick={() => setSelectedOrder(order)}
+                        onClick={() => openOrderModal(order, "details")}
                         className="order-view-btn"
                       >
                         View Details
@@ -413,6 +493,9 @@ export default function MyOrders() {
       {selectedOrder && (
         <OrderDetailsModal
           order={selectedOrder}
+          mode={selectedOrderMode}
+          reviews={reviews}
+          onReviewSaved={handleReviewSaved}
           onClose={() => setSelectedOrder(null)}
         />
       )}
@@ -422,13 +505,17 @@ export default function MyOrders() {
 
 function OrderDetailsModal({
   order,
+  mode,
+  reviews,
+  onReviewSaved,
   onClose,
 }: {
   order: Order;
+  mode: OrderModalMode;
+  reviews: ReviewLike[];
+  onReviewSaved: (review: ReviewLike) => void;
   onClose: () => void;
 }) {
-  type OrderItem = Order["items"][number];
-
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
   const [cancelError, setCancelError] = useState("");
@@ -438,32 +525,10 @@ function OrderDetailsModal({
   const [reviewLoading, setReviewLoading] = useState(false);
   const [reviewError, setReviewError] = useState("");
   const [reviewSuccess, setReviewSuccess] = useState("");
-  const [existingReviews, setExistingReviews] = useState<ReviewLike[]>([]);
   const navigate = useNavigate();
   const orderItems = order.items ?? [];
   const canReview = order.status === "Delivered";
-
-  useEffect(() => {
-    if (!canReview) return;
-
-    let isMounted = true;
-
-    getReviews()
-      .then((response) => {
-        if (isMounted) {
-          setExistingReviews(getReviewList(response));
-        }
-      })
-      .catch(() => {
-        if (isMounted) {
-          setExistingReviews([]);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [canReview, order.id]);
+  const isReviewMode = mode === "reviews";
 
   useEffect(() => {
     const body = document.body;
@@ -484,22 +549,7 @@ function OrderDetailsModal({
   }, []);
 
   const findExistingReview = (item: OrderItem) =>
-    existingReviews.find((review) => {
-      if (review.hidden) return false;
-
-      const sameOrder = readReviewOrderId(review) === order.id;
-      const reviewItemId = readReviewItemId(review);
-      const sameItem = reviewItemId
-        ? reviewItemId === item.id
-        : readReviewItemName(review).toLowerCase() === item.name.toLowerCase();
-      const reviewCustomerId = readReviewCustomerId(review);
-      const sameCustomer =
-        !reviewCustomerId ||
-        !order.customerId ||
-        reviewCustomerId === order.customerId;
-
-      return sameOrder && sameItem && sameCustomer;
-    });
+    findItemReview(reviews, order, item);
 
   const startReview = (item: OrderItem) => {
     if (findExistingReview(item)) {
@@ -523,6 +573,11 @@ function OrderDetailsModal({
     if (!reviewingItem) return;
 
     const cleanComment = comment.trim();
+    if (!cleanComment) {
+      setReviewError("Please write a short review comment.");
+      return;
+    }
+
     if (cleanComment.length > 180) {
       setReviewError("Please keep your review under 180 characters.");
       return;
@@ -552,13 +607,10 @@ function OrderDetailsModal({
       };
 
       const createdReview = await addReview(reviewPayload);
-      setExistingReviews((prev) => [
-        ...prev,
-        {
-          ...reviewPayload,
-          ...createdReview,
-        },
-      ]);
+      onReviewSaved({
+        ...reviewPayload,
+        ...createdReview,
+      });
       setReviewSuccess("Thanks! Your review was submitted.");
 
       setReviewingItem(null);
@@ -606,13 +658,15 @@ function OrderDetailsModal({
       <div className="modal-overlay" onClick={onClose}></div>
       <div className="order-details-modal">
         <div className="modal-header">
-          <h2>Order Details</h2>
+          <h2>{isReviewMode ? "Review Items" : "Order Details"}</h2>
           <button onClick={onClose} className="modal-close">
             X
           </button>
         </div>
 
         <div className="modal-content">
+          {!isReviewMode && (
+            <>
           <div className="detail-section">
             <h3>Order Information</h3>
             <div className="detail-row">
@@ -646,36 +700,61 @@ function OrderDetailsModal({
               <span>{displayValue(order.customerAddress)}</span>
             </div>
           </div>
+            </>
+          )}
 
           <div className="detail-section">
-            <h3>Items Ordered</h3>
+            <h3>{isReviewMode ? "Item Reviews" : "Items Ordered"}</h3>
             {orderItems.length === 0 ? (
               <p className="detail-placeholder">No item details available.</p>
             ) : (
               orderItems.map((item, idx) => {
                 const existingReview = findExistingReview(item);
+                const reviewRating = readReviewRating(existingReview);
+                const reviewComment = readReviewComment(existingReview);
 
                 return (
-                  <div key={idx} className="order-item">
+                  <div
+                    key={idx}
+                    className={`order-item ${isReviewMode ? "review-only-item" : ""}`}
+                  >
                     <div className="item-info">
                       <h4>{displayValue(item.name)}</h4>
-                      <p>
-                        Qty: {item.quantity ?? 0} x {formatPrice(item.price)}
-                      </p>
-                      {canReview && (
+                      {!isReviewMode && (
+                        <p>
+                          Qty: {item.quantity ?? 0} x {formatPrice(item.price)}
+                        </p>
+                      )}
+                      {existingReview ? (
+                        <div className="submitted-review">
+                          <span className="review-status-pill">Reviewed</span>
+                          <p className="submitted-review-rating">
+                            {renderStars(reviewRating)}{" "}
+                            <span>{reviewRating}/5</span>
+                          </p>
+                          <p className="submitted-review-comment">
+                            {reviewComment || "No comment provided."}
+                          </p>
+                        </div>
+                      ) : canReview ? (
                         <button
                           type="button"
                           className="item-review-btn"
                           onClick={() => startReview(item)}
-                          disabled={Boolean(existingReview)}
                         >
-                          {existingReview ? "Reviewed" : "Write Review"}
+                          Write a Review
                         </button>
+                      ) : (
+                        <p className="review-unavailable">
+                          Reviews open after delivery.
+                        </p>
                       )}
                     </div>
-                    <span className="item-subtotal">
-                      {formatPrice((item.price ?? 0) * (item.quantity ?? 0))}
-                    </span>
+                    {!isReviewMode && (
+                      <span className="item-subtotal">
+                        {formatPrice((item.price ?? 0) * (item.quantity ?? 0))}
+                      </span>
+                    )}
                   </div>
                 );
               })
@@ -735,6 +814,8 @@ function OrderDetailsModal({
             </div>
           )}
 
+          {!isReviewMode && (
+            <>
           <div className="detail-section">
             <h3>Summary</h3>
             <div className="detail-row">
@@ -799,6 +880,8 @@ function OrderDetailsModal({
                 </div>
               )}
             </div>
+          )}
+            </>
           )}
         </div>
       </div>
