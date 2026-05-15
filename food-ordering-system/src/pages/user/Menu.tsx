@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import BgFood from "../../components/BgFood";
 import { useCart } from "../../context/CartContext";
@@ -19,7 +20,6 @@ type MenuItemProps = {
   onCategoryToggle: (category: string) => void;
   onAddToCart: (item: FoodItem) => void;
   selectedItemId: string | null;
-  onToastShow?: (message: string) => void;
 };
 
 function MenuList({
@@ -29,11 +29,9 @@ function MenuList({
   onCategoryToggle,
   onAddToCart,
   selectedItemId,
-  onToastShow,
 }: MenuItemProps) {
   const handleAddClick = (item: FoodItem) => {
     onAddToCart(item);
-    onToastShow?.(`${decodeHtmlEntities(item.name)} added to cart!`);
   };
 
   return (
@@ -110,16 +108,9 @@ export default function Menu() {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [addedItem, setAddedItem] = useState<FoodItem | null>(null);
   const { addItem } = useCart();
-
-  // Auto-hide toast after 3 seconds
-  useEffect(() => {
-    if (toastMessage) {
-      const timer = setTimeout(() => setToastMessage(null), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [toastMessage]);
+  const navigate = useNavigate();
 
   // Fetch menu items from API
   useEffect(() => {
@@ -165,6 +156,7 @@ export default function Menu() {
   const handleAddToCart = (item: FoodItem) => {
     addItem(item);
     setSelectedItemId(item.id);
+    setAddedItem(item);
   };
 
   const visibleMenuItems = allMenuItems.filter(
@@ -185,12 +177,6 @@ export default function Menu() {
       <Navbar title="MENU" showNavLinks={true} />
       <div className="menu-page-container">
         <BgFood />
-        {/* Toast Notification */}
-        {toastMessage && (
-          <div className="menu-toast">
-            Success: {toastMessage}
-          </div>
-        )}
 
         {/* Hero Banner */}
         {featuredItem && (
@@ -204,7 +190,6 @@ export default function Menu() {
                   className="menu-hero-btn"
                   onClick={() => {
                     handleAddToCart(featuredItem);
-                    setToastMessage(`${decodeHtmlEntities(featuredItem.name)} added to cart!`);
                   }}
                 >
                   Order Now
@@ -255,11 +240,73 @@ export default function Menu() {
                 onCategoryToggle={handleCategoryToggle}
                 onAddToCart={handleAddToCart}
                 selectedItemId={selectedItemId}
-                onToastShow={setToastMessage}
               />
             )}
           </div>
         </div>
+
+        {addedItem && (
+          <div
+            className="menu-add-modal-overlay"
+            role="presentation"
+            onClick={() => setAddedItem(null)}
+          >
+            <div
+              className="menu-add-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="menu-add-modal-title"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <button
+                type="button"
+                className="menu-add-modal-close"
+                onClick={() => setAddedItem(null)}
+                aria-label="Close"
+              >
+                X
+              </button>
+
+              <div className="menu-add-modal-image">
+                <img
+                  src={addedItem.image || FALLBACK_FOOD_IMAGE}
+                  alt={decodeHtmlEntities(addedItem.name)}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = FALLBACK_FOOD_IMAGE;
+                  }}
+                />
+              </div>
+
+              <div className="menu-add-modal-content">
+                <p className="menu-add-modal-kicker">Added to cart</p>
+                <h2 id="menu-add-modal-title">
+                  {decodeHtmlEntities(addedItem.name)}
+                </h2>
+                <p>
+                  Your item has been added successfully. You can keep browsing
+                  the menu or review your cart when you are ready.
+                </p>
+              </div>
+
+              <div className="menu-add-modal-actions">
+                <button
+                  type="button"
+                  className="menu-modal-secondary-btn"
+                  onClick={() => setAddedItem(null)}
+                >
+                  Continue Shopping
+                </button>
+                <button
+                  type="button"
+                  className="menu-modal-primary-btn"
+                  onClick={() => navigate("/cart")}
+                >
+                  View Cart
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

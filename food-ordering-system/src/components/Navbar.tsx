@@ -1,6 +1,7 @@
 ﻿import { Link } from "react-router-dom";
 import C from "../constants/colors";
 import NomNomLogo from "./NomNomLogo";
+import { useCart } from "../context/CartContext";
 
 interface NavbarProps {
   title: string;
@@ -16,6 +17,9 @@ const handleLogout = () => {
 };
 
 export default function Navbar({ title, showNavLinks = false }: NavbarProps) {
+  const { items } = useCart();
+  const cartItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+
   return (
     <div style={{
       position: "fixed", top: 0, left: 0, right: 0, height: 64,
@@ -37,7 +41,41 @@ export default function Navbar({ title, showNavLinks = false }: NavbarProps) {
         <nav style={{ display: "flex", alignItems: "center", gap: "2rem" }}>
           <Link to="/dashboard" style={{ textDecoration: "none", color: C.text, fontWeight: 600, fontSize: 14 }}>Home</Link>
           <Link to="/menu" style={{ textDecoration: "none", color: C.text, fontWeight: 600, fontSize: 14 }}>Menu</Link>
-          <Link to="/cart" style={{ textDecoration: "none", color: C.text, fontWeight: 600, fontSize: 14 }}>Cart</Link>
+          <Link
+            to="/cart"
+            style={{
+              textDecoration: "none",
+              color: C.text,
+              fontWeight: 600,
+              fontSize: 14,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+            }}
+            aria-label={`Cart with ${cartItemCount} item${cartItemCount === 1 ? "" : "s"}`}
+          >
+            Cart
+            {cartItemCount > 0 && (
+              <span
+                style={{
+                  minWidth: 20,
+                  height: 20,
+                  padding: "0 6px",
+                  borderRadius: 999,
+                  background: "var(--red)",
+                  color: "white",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 11,
+                  fontWeight: 800,
+                  lineHeight: 1,
+                }}
+              >
+                {cartItemCount > 99 ? "99+" : cartItemCount}
+              </span>
+            )}
+          </Link>
           <Link to="/my-orders" style={{ textDecoration: "none", color: C.text, fontWeight: 600, fontSize: 14 }}>Orders</Link>
           <Link to="/profile" style={{ textDecoration: "none", color: C.text, fontWeight: 600, fontSize: 14 }}>Profile</Link>
           <button 
