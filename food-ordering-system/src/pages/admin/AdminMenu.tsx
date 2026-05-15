@@ -36,10 +36,7 @@ export default function AdminMenu() {
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>("All");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<FoodItem | null>(null);
-  const [confirmDialog, setConfirmDialog] = useState<{
-    isOpen: boolean;
-    itemId?: string;
-  }>({
+  const [confirmDialog, setConfirmDialog] = useState<{ isOpen: boolean; itemId?: string }>({
     isOpen: false,
   });
   const [actionLoading, setActionLoading] = useState(false);
@@ -54,20 +51,13 @@ export default function AdminMenu() {
 
   useEffect(() => {
     fetchMenuItems();
-    const interval = window.setInterval(() => {
-      fetchMenuItems({ silent: true });
-    }, 5000);
-    return () => window.clearInterval(interval);
   }, []);
 
   // ==================== FILTERING ====================
   const filteredItems = useMemo(() => {
     return menuItems.filter((item) => {
-      const matchesSearch = item.name
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-      const matchesCategory =
-        categoryFilter === "All" || item.category === categoryFilter;
+      const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = categoryFilter === "All" || item.category === categoryFilter;
       return matchesSearch && matchesCategory;
     });
   }, [menuItems, searchQuery, categoryFilter]);
@@ -171,21 +161,13 @@ export default function AdminMenu() {
       setActionLoading(true);
       await toggleItemAvailability(itemId);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to toggle availability",
-      );
+      setError(err instanceof Error ? err.message : "Failed to toggle availability");
     } finally {
       setActionLoading(false);
     }
   };
 
-  const categories: CategoryFilter[] = [
-    "All",
-    "Meals",
-    "Drinks",
-    "Snacks",
-    "Desserts",
-  ];
+  const categories: CategoryFilter[] = ["All", "Meals", "Drinks", "Snacks", "Desserts"];
 
   return (
     <div className="admin-layout">
@@ -251,9 +233,7 @@ export default function AdminMenu() {
                 {item.image && (
                   <div className="menu-card-image">
                     <img src={item.image} alt={item.name} />
-                    <div
-                      className={`availability-badge ${item.available ? "available" : "unavailable"}`}
-                    >
+                    <div className={`availability-badge ${item.available ? "available" : "unavailable"}`}>
                       {item.available ? "Available" : "Unavailable"}
                     </div>
                   </div>
@@ -269,24 +249,16 @@ export default function AdminMenu() {
                   <div className="item-price">₱{item.price.toFixed(2)}</div>
 
                   {item.stock !== undefined && (
-                    <div
-                      className={`stock-info ${item.stock === 0 ? "out-of-stock" : ""}`}
-                    >
+                    <div className={`stock-info ${item.stock === 0 ? "out-of-stock" : ""}`}>
                       Stock: {item.stock} units
                     </div>
                   )}
 
                   <div className="menu-card-actions">
-                    <button
-                      className="action-btn edit-btn"
-                      onClick={() => handleEditItem(item)}
-                    >
+                    <button className="action-btn edit-btn" onClick={() => handleEditItem(item)}>
                       Edit
                     </button>
-                    <button
-                      className="action-btn delete-btn"
-                      onClick={() => handleDeleteClick(item.id)}
-                    >
+                    <button className="action-btn delete-btn" onClick={() => handleDeleteClick(item.id)}>
                       Delete
                     </button>
                     <button
@@ -317,9 +289,7 @@ export default function AdminMenu() {
                 type="text"
                 placeholder="e.g., Burger"
                 value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required
               />
             </div>
@@ -330,9 +300,7 @@ export default function AdminMenu() {
                 <select
                   id="category"
                   value={formData.category}
-                  onChange={(e) =>
-                    setFormData({ ...formData, category: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   required
                 >
                   <option>Meals</option>
@@ -351,9 +319,7 @@ export default function AdminMenu() {
                   step="0.01"
                   min="0"
                   value={formData.price}
-                  onChange={(e) =>
-                    setFormData({ ...formData, price: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                   required
                 />
               </div>
@@ -365,9 +331,7 @@ export default function AdminMenu() {
                 id="description"
                 placeholder="Describe the item..."
                 value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 rows={3}
               />
             </div>
@@ -379,9 +343,7 @@ export default function AdminMenu() {
                 type="url"
                 placeholder="https://example.com/image.jpg"
                 value={formData.image}
-                onChange={(e) =>
-                  setFormData({ ...formData, image: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, image: e.target.value })}
               />
             </div>
 
@@ -390,9 +352,7 @@ export default function AdminMenu() {
                 id="available"
                 type="checkbox"
                 checked={formData.available}
-                onChange={(e) =>
-                  setFormData({ ...formData, available: e.target.checked })
-                }
+                onChange={(e) => setFormData({ ...formData, available: e.target.checked })}
               />
               <label htmlFor="available">Available for ordering</label>
             </div>
@@ -406,16 +366,8 @@ export default function AdminMenu() {
               >
                 Cancel
               </button>
-              <button
-                type="submit"
-                className="submit-btn"
-                disabled={actionLoading}
-              >
-                {actionLoading
-                  ? "..."
-                  : editingItem
-                    ? "Update Item"
-                    : "Add Item"}
+              <button type="submit" className="submit-btn" disabled={actionLoading}>
+                {actionLoading ? "..." : editingItem ? "Update Item" : "Add Item"}
               </button>
             </div>
           </form>

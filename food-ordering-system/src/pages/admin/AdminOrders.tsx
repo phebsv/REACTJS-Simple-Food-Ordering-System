@@ -75,10 +75,6 @@ export default function AdminOrders() {
 
   useEffect(() => {
     fetchOrders();
-    const interval = window.setInterval(() => {
-      fetchOrders({ silent: true });
-    }, 5000);
-    return () => window.clearInterval(interval);
   }, []);
 
   // Debounce search input to avoid heavy filtering on every keystroke
@@ -268,17 +264,14 @@ export default function AdminOrders() {
                         )}
                       </div>
                     </td>
-                    <td className="order-total">
-                      {formatCurrency(order.total)}
-                    </td>
+                    <td className="order-total">{formatCurrency(order.total)}</td>
                     <td>
                       <StatusBadge status={order.status} />
                     </td>
                     <td className="order-datetime">
                       {getOrderTime(order) ? (
                         <>
-                          {new Date(order.createdAt).toLocaleDateString()}{" "}
-                          <br />
+                          {new Date(order.createdAt).toLocaleDateString()} <br />
                           {new Date(order.createdAt).toLocaleTimeString()}
                         </>
                       ) : (
@@ -385,9 +378,7 @@ export default function AdminOrders() {
                           <span className="item-name">
                             {item.name || "Unnamed item"}
                           </span>
-                          <span className="item-qty">
-                            x{item.quantity || 0}
-                          </span>
+                          <span className="item-qty">x{item.quantity || 0}</span>
                         </div>
                         <div className="item-prices">
                           <span className="item-price">
