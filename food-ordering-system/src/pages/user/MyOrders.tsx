@@ -6,7 +6,7 @@ import "./MyOrders.css";
 import type { Order } from "../../types";
 import { apiUrl } from "../../config/api";
 import { getStoredItem } from "../../utils/storage";
-import { addReview } from "../../services/api";
+import { addReview, getReviews } from "../../services/api";
 
 const ORDER_STATUSES = [
   "All",
@@ -28,6 +28,95 @@ type CurrentUser = {
   id: string;
   name?: string;
   email?: string;
+};
+
+type ReviewLike = {
+  id?: string;
+  _id?: string;
+  reviewId?: string;
+  review_id?: string;
+  orderId?: string;
+  order_id?: string;
+  customerId?: string;
+  customer_id?: string;
+  userId?: string;
+  user_id?: string;
+  foodItemId?: string;
+  food_item_id?: string;
+  itemId?: string;
+  item_id?: string;
+  productId?: string;
+  product_id?: string;
+  foodItemName?: string;
+  food_item_name?: string;
+  itemName?: string;
+  item_name?: string;
+  productName?: string;
+  product_name?: string;
+  rating?: number | string;
+  comment?: string;
+  createdAt?: string;
+  created_at?: string;
+  updatedAt?: string;
+  updated_at?: string;
+  hidden?: boolean;
+};
+
+const readText = (...values: Array<unknown>) => {
+  const value = values.find((entry) => entry !== undefined && entry !== null);
+  return value === undefined || value === null ? "" : String(value);
+};
+
+const readReviewOrderId = (review?: ReviewLike | null) =>
+  review ? readText(review.orderId, review.order_id) : "";
+
+const readReviewCustomerId = (review?: ReviewLike | null) =>
+  review
+    ? readText(
+        review.customerId,
+        review.customer_id,
+        review.userId,
+        review.user_id,
+      )
+    : "";
+
+const readReviewItemId = (review?: ReviewLike | null) =>
+  review
+    ? readText(
+        review.foodItemId,
+        review.food_item_id,
+        review.itemId,
+        review.item_id,
+        review.productId,
+        review.product_id,
+      )
+    : "";
+
+const readReviewItemName = (review?: ReviewLike | null) =>
+  review
+    ? readText(
+        review.foodItemName,
+        review.food_item_name,
+        review.itemName,
+        review.item_name,
+        review.productName,
+        review.product_name,
+      )
+    : "";
+
+const getReviewList = (response: unknown): ReviewLike[] => {
+  if (Array.isArray(response)) return response as ReviewLike[];
+  if (response && typeof response === "object") {
+    const record = response as {
+      data?: unknown;
+      reviews?: unknown;
+      items?: unknown;
+    };
+    if (Array.isArray(record.data)) return record.data as ReviewLike[];
+    if (Array.isArray(record.reviews)) return record.reviews as ReviewLike[];
+    if (Array.isArray(record.items)) return record.items as ReviewLike[];
+  }
+  return [];
 };
 
 const getCurrentUser = (): CurrentUser | null => {
@@ -343,14 +432,57 @@ function OrderDetailsModal({
   const [reviewLoading, setReviewLoading] = useState(false);
   const [reviewError, setReviewError] = useState("");
   const [reviewSuccess, setReviewSuccess] = useState("");
-  const [reviewedItems, setReviewedItems] = useState<Record<string, boolean>>(
-    {},
-  );
+  const [existingReviews, setExistingReviews] = useState<ReviewLike[]>([]);
   const navigate = useNavigate();
   const orderItems = order.items ?? [];
   const canReview = order.status === "Delivered";
 
+  useEffect(() => {
+    if (!canReview) return;
+
+    let isMounted = true;
+
+    getReviews()
+      .then((response) => {
+        if (isMounted) {
+          setExistingReviews(getReviewList(response));
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setExistingReviews([]);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [canReview, order.id]);
+
+  const findExistingReview = (item: OrderItem) =>
+    existingReviews.find((review) => {
+      if (review.hidden) return false;
+
+      const sameOrder = readReviewOrderId(review) === order.id;
+      const reviewItemId = readReviewItemId(review);
+      const sameItem = reviewItemId
+        ? reviewItemId === item.id
+        : readReviewItemName(review).toLowerCase() === item.name.toLowerCase();
+      const reviewCustomerId = readReviewCustomerId(review);
+      const sameCustomer =
+        !reviewCustomerId ||
+        !order.customerId ||
+        reviewCustomerId === order.customerId;
+
+      return sameOrder && sameItem && sameCustomer;
+    });
+
   const startReview = (item: OrderItem) => {
+    if (findExistingReview(item)) {
+      setReviewSuccess("This item has already been reviewed.");
+      return;
+    }
+
     setReviewingItem(item);
     setRating(5);
     setComment("");
@@ -375,7 +507,14 @@ function OrderDetailsModal({
     setReviewLoading(true);
     setReviewError("");
     try {
-      await addReview({
+      if (findExistingReview(reviewingItem)) {
+        setReviewingItem(null);
+        setReviewSuccess("This item has already been reviewed.");
+        return;
+      }
+
+      const now = new Date().toISOString();
+      const reviewPayload = {
         orderId: order.id,
         customerId: order.customerId,
         customerName: order.customerName,
@@ -383,21 +522,27 @@ function OrderDetailsModal({
         foodItemName: reviewingItem.name,
         rating,
         comment: cleanComment,
-        createdAt: new Date().toISOString(),
+        createdAt: currentReview?.createdAt ?? currentReview?.created_at ?? now,
+        updatedAt: now,
         hidden: false,
-      });
+      };
 
-      setReviewedItems((prev) => ({
+      const createdReview = await addReview(reviewPayload);
+      setExistingReviews((prev) => [
         ...prev,
-        [`${order.id}-${reviewingItem.id}`]: true,
-      }));
+        {
+          ...reviewPayload,
+          ...createdReview,
+        },
+      ]);
       setReviewSuccess("Thanks! Your review was submitted.");
+
       setReviewingItem(null);
       setComment("");
       setRating(5);
     } catch (err) {
       setReviewError(
-        err instanceof Error ? err.message : "Failed to submit review.",
+        err instanceof Error ? err.message : "Failed to save review.",
       );
     } finally {
       setReviewLoading(false);
@@ -484,8 +629,7 @@ function OrderDetailsModal({
               <p className="detail-placeholder">No item details available.</p>
             ) : (
               orderItems.map((item, idx) => {
-                const reviewKey = `${order.id}-${item.id}`;
-                const hasReviewed = reviewedItems[reviewKey];
+                const existingReview = findExistingReview(item);
 
                 return (
                 <div key={idx} className="order-item">
@@ -499,9 +643,9 @@ function OrderDetailsModal({
                         type="button"
                         className="item-review-btn"
                         onClick={() => startReview(item)}
-                        disabled={hasReviewed}
+                        disabled={Boolean(existingReview)}
                       >
-                        {hasReviewed ? "Reviewed" : "Review"}
+                        {existingReview ? "Reviewed" : "Write Review"}
                       </button>
                     )}
                   </div>
@@ -522,8 +666,8 @@ function OrderDetailsModal({
             <div className="review-form-panel">
               <div className="review-form-header">
                 <div>
-                  <p>Reviewing</p>
-                  <h3>{displayValue(reviewingItem.name)}</h3>
+                  <p>{displayValue(reviewingItem.name)}</p>
+                  <h3>Write Review</h3>
                 </div>
                 <button type="button" onClick={closeReview}>
                   X
