@@ -101,7 +101,8 @@
   border-radius: 8px;
   overflow: hidden;
   flex-shrink: 0;
-  background: var(--pink);
+  background: linear-gradient(135deg, var(--pink) 0%, #f5efe0 100%);
+  border: 1px solid rgba(200, 0, 10, 0.1);
 }
 
 .cart-item-image img {
@@ -151,33 +152,45 @@
 .quantity-selector {
   display: flex;
   align-items: center;
-  gap: 8px;
-  background: transparent;
-  border-radius: 6px;
-  padding: 0;
+  gap: 10px;
+  background: var(--pink);
+  border: 1px solid rgba(200, 0, 10, 0.12);
+  border-radius: 999px;
+  padding: 4px;
 }
 
 .qty-btn {
-  width: auto;
-  min-width: 40px;
+  width: 32px;
+  min-width: 32px;
   height: 32px;
   border: none;
   background: var(--red);
   color: var(--white);
   cursor: pointer;
-  font-size: 11px;
-  font-weight: 700;
-  border-radius: 4px;
+  font-size: 20px;
+  font-weight: 800;
+  border-radius: 50%;
   transition: all 0.2s;
-  padding: 0 8px;
+  padding: 0;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.qty-btn:hover {
+.qty-btn:hover:not(:disabled) {
   background: var(--red-dark);
+  transform: scale(1.05);
+}
+
+.qty-btn:disabled {
+  background: #d9c7c7;
+  color: #8f7e7e;
+  cursor: not-allowed;
 }
 
 .qty-display {
-  min-width: 30px;
+  min-width: 24px;
   text-align: center;
   font-weight: 700;
   color: var(--text);
