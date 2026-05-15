@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import BgFood from "../../components/BgFood";
@@ -7,8 +8,54 @@ import chicken1 from "../../assets/chicken1.png";
 import pizza1 from "../../assets/pizza1.png";
 import "./Dashboard.css";
 
+const carouselSlides = [
+  {
+    kicker: "Crispy, Every Bite Taste",
+    lines: ["HOT SPICY", "CHICKEN", "BURGER"],
+    offer: "Limited Offer / PHP 5",
+    image: burger1,
+    alt: "Chicken burger",
+  },
+  {
+    kicker: "Fresh From The Oven",
+    lines: ["CHEESY", "PIZZA", "SLICE"],
+    offer: "Made hot for every craving",
+    image: pizza1,
+    alt: "Pizza",
+  },
+  {
+    kicker: "Golden And Juicy",
+    lines: ["CRISPY", "CHICKEN", "MEAL"],
+    offer: "Perfect for lunch or dinner",
+    image: chicken1,
+    alt: "Chicken meal",
+  },
+];
+
 export default function Dashboard() {
   const navigate = useNavigate();
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setActiveSlide((current) => (current + 1) % carouselSlides.length);
+    }, 5000);
+
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const showPreviousSlide = () => {
+    setActiveSlide(
+      (current) =>
+        (current - 1 + carouselSlides.length) % carouselSlides.length,
+    );
+  };
+
+  const showNextSlide = () => {
+    setActiveSlide((current) => (current + 1) % carouselSlides.length);
+  };
+
+  const slide = carouselSlides[activeSlide];
 
   return (
     <>
@@ -16,15 +63,28 @@ export default function Dashboard() {
       <div className="dashboard-container">
         <BgFood />
         <div className="dashboard-intro">
-          <div className="dashboard-offer">
+          <section
+            className="dashboard-offer"
+            aria-roledescription="carousel"
+            aria-label="Featured food offers"
+          >
+            <button
+              type="button"
+              className="dashboard-carousel-control dashboard-carousel-prev"
+              onClick={showPreviousSlide}
+              aria-label="Previous offer"
+            >
+              {"<"}
+            </button>
+
             <div className="dashboard-text">
-              <div className="dashboard-hot">Crispy, Every Bite Taste</div>
+              <div className="dashboard-hot">{slide.kicker}</div>
               <div className="dashboard-spicy">
-                <span>HOT SPICY</span>
-                <span>CHICKEN</span>
-                <span>BURGER</span>
+                {slide.lines.map((line) => (
+                  <span key={line}>{line}</span>
+                ))}
               </div>
-              <div className="dashboard-limited">Limited Offer / ₱5</div>
+              <div className="dashboard-limited">{slide.offer}</div>
               <button
                 onClick={() => navigate("/menu")}
                 className="dashboard-order-btn"
@@ -32,14 +92,38 @@ export default function Dashboard() {
                 Order Now
               </button>
             </div>
-            <img src={burger1} alt="Burger" className="dashboard-burger-img" />
 
-            <div className="dashboard-dots" aria-hidden="true">
-              <span className="dashboard-dot" />
-              <span className="dashboard-dot dashboard-dot-active" />
-              <span className="dashboard-dot" />
+            <img
+              key={slide.image}
+              src={slide.image}
+              alt={slide.alt}
+              className="dashboard-burger-img"
+            />
+
+            <button
+              type="button"
+              className="dashboard-carousel-control dashboard-carousel-next"
+              onClick={showNextSlide}
+              aria-label="Next offer"
+            >
+              {">"}
+            </button>
+
+            <div className="dashboard-dots">
+              {carouselSlides.map((item, index) => (
+                <button
+                  key={item.alt}
+                  type="button"
+                  className={`dashboard-dot ${
+                    index === activeSlide ? "dashboard-dot-active" : ""
+                  }`}
+                  onClick={() => setActiveSlide(index)}
+                  aria-label={`Show ${item.alt} offer`}
+                  aria-current={index === activeSlide}
+                />
+              ))}
             </div>
-          </div>
+          </section>
 
           <div className="dashboard-popular">
             <p className="dashboard-popular-kicker">The Best</p>

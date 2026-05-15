@@ -207,6 +207,9 @@
 .dashboard-text {
   color: var(--white);
   max-width: 440px;
+  position: relative;
+  z-index: 2;
+  animation: dashboard-copy-in 340ms ease;
 }
 
 .dashboard-hot {
@@ -252,6 +255,49 @@
   max-height: 360px;
   object-fit: contain;
   filter: drop-shadow(0 20px 26px rgba(0, 0, 0, 0.22));
+  position: relative;
+  z-index: 1;
+  animation: dashboard-image-in 360ms ease;
+}
+
+.dashboard-carousel-control {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--white);
+  font-size: 1.4rem;
+  font-weight: 900;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition:
+    background 180ms ease,
+    transform 180ms ease,
+    border-color 180ms ease;
+}
+
+.dashboard-carousel-control:hover,
+.dashboard-carousel-control:focus-visible {
+  background: #ffc629;
+  border-color: #ffc629;
+  color: var(--red-dark);
+  transform: translateY(-50%) scale(1.05);
+  outline: none;
+}
+
+.dashboard-carousel-prev {
+  left: 18px;
+}
+
+.dashboard-carousel-next {
+  right: 18px;
 }
 
 .dashboard-dots {
@@ -262,6 +308,7 @@
   display: flex;
   gap: 10px;
   align-items: center;
+  z-index: 3;
 }
 
 .dashboard-dot {
@@ -270,13 +317,43 @@
   border-radius: 999px;
   border: 2px solid rgba(255, 255, 255, 0.55);
   background: transparent;
+  padding: 0;
+  cursor: pointer;
+  transition:
+    width 180ms ease,
+    background 180ms ease,
+    border-color 180ms ease;
 }
 
 .dashboard-dot-active {
-  width: 10px;
+  width: 22px;
   height: 10px;
   background: #fff;
   border-color: #fff;
+}
+
+@keyframes dashboard-copy-in {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes dashboard-image-in {
+  from {
+    opacity: 0;
+    transform: translateX(18px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
 }
 
 .dashboard-popular {
@@ -411,20 +488,39 @@
     flex-direction: column;
     align-items: flex-start;
     min-height: auto;
-    padding: 36px 24px;
+    padding: 42px 24px 56px;
     margin-bottom: 42px;
   }
 
   .dashboard-burger-img {
-    width: 100%;
+    width: min(100%, 360px);
     align-self: center;
   }
 
-  .dashboard-dots {
-    position: static;
+  .dashboard-carousel-control {
+    top: auto;
+    bottom: 14px;
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
     transform: none;
-    margin-top: 18px;
-    align-self: center;
+  }
+
+  .dashboard-carousel-control:hover,
+  .dashboard-carousel-control:focus-visible {
+    transform: scale(1.05);
+  }
+
+  .dashboard-carousel-prev {
+    left: 24px;
+  }
+
+  .dashboard-carousel-next {
+    right: 24px;
+  }
+
+  .dashboard-dots {
+    bottom: 27px;
   }
 
   .dashboard-service-grid {
