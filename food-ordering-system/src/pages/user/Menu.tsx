@@ -111,13 +111,9 @@ function MenuList({
                         ★
                       </span>
                       <span>{reviewSummary.averageRating.toFixed(1)}</span>
-                      <span className="menu-card-review-count">
-                        ({reviewSummary.count} review
-                        {reviewSummary.count === 1 ? "" : "s"})
-                      </span>
                     </>
                   ) : (
-                    <span className="menu-card-no-reviews">No reviews yet.</span>
+                    <span className="menu-card-no-rating">Not rated yet</span>
                   )}
                 </div>
                 <div className="menu-card-footer">

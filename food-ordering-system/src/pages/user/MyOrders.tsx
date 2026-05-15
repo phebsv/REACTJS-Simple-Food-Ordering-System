@@ -14,7 +14,6 @@ const ORDER_STATUSES = [
   "Preparing",
   "Ready",
   "Delivered",
-  "Cancelled",
 ];
 
 const formatPrice = (value?: number) => `₱${(value ?? 0).toFixed(2)}`;
@@ -23,6 +22,8 @@ const formatDate = (value?: string) =>
 const displayValue = (value?: string) => value || "Not provided";
 const getOrderTime = (order: Order) =>
   new Date(order.createdAt || order.updatedAt || 0).getTime() || 0;
+const isCancelledOrder = (order: Order) =>
+  order.status?.toLowerCase() === "cancelled";
 
 type OrderItem = Order["items"][number];
 type OrderModalMode = "details" | "reviews";
@@ -209,7 +210,7 @@ export default function MyOrders() {
 
       // Filter orders for current customer
       const customerOrders = data.filter(
-        (order: Order) => order.customerId === userId,
+        (order: Order) => order.customerId === userId && !isCancelledOrder(order),
       );
 
       // Notify on status changes (poll-friendly)
@@ -294,6 +295,10 @@ export default function MyOrders() {
 
   const handleReviewSaved = (review: ReviewLike) => {
     setReviews((prev) => [...prev, review]);
+  };
+
+  const handleOrderCancelled = (orderId: string) => {
+    setOrders((prev) => prev.filter((order) => order.id !== orderId));
   };
 
   const statusBadgeColor = (status: string) => {
@@ -496,6 +501,7 @@ export default function MyOrders() {
           mode={selectedOrderMode}
           reviews={reviews}
           onReviewSaved={handleReviewSaved}
+          onOrderCancelled={handleOrderCancelled}
           onClose={() => setSelectedOrder(null)}
         />
       )}
@@ -508,12 +514,14 @@ function OrderDetailsModal({
   mode,
   reviews,
   onReviewSaved,
+  onOrderCancelled,
   onClose,
 }: {
   order: Order;
   mode: OrderModalMode;
   reviews: ReviewLike[];
   onReviewSaved: (review: ReviewLike) => void;
+  onOrderCancelled: (orderId: string) => void;
   onClose: () => void;
 }) {
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
@@ -642,6 +650,7 @@ function OrderDetailsModal({
 
       if (!res.ok) throw new Error("Failed to cancel order");
 
+      onOrderCancelled(order.id);
       onClose();
       navigate("/my-orders");
     } catch (err) {

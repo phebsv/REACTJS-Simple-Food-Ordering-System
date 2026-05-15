@@ -27,6 +27,16 @@
       "passwordHash": "$2a$10$lKeUl1yQKY47lFsbaPhsau3TBhS1voFpKUJhAXqngQiYwByPfh/q2",
       "address": "",
       "role": "user"
+    },
+    {
+      "id": "mp78tt1s0ws30pha939",
+      "name": "sylvie eula",
+      "email": "phebsvillaflor@gmail.com",
+      "phone": "09566189098",
+      "password": "phebs1234",
+      "passwordHash": "$2a$10$g2ebJhLvWIThSyaZZrOu6Oejm.HBJxziI5M7O8fMxkddhiYYRG2Y.",
+      "address": "",
+      "role": "user"
     }
   ],
   "admins": [],
@@ -225,6 +235,89 @@
       "deliveryNotes": "",
       "createdAt": "2026-05-15T17:31:53.842Z",
       "updatedAt": "2026-05-15T17:32:59.882Z"
+    },
+    {
+      "id": "ordermp78uxvk",
+      "customerId": "mp78tt1s0ws30pha939",
+      "customerName": "sylvie eula",
+      "customerEmail": "phebsvillaflor@gmail.com",
+      "customerPhone": "09566189098",
+      "customerAddress": "usjr qc basak main",
+      "items": [
+        {
+          "id": "2",
+          "name": "Pepperoni Pizza",
+          "description": "Crispy crust topped with mozzarella and pepperoni",
+          "price": 130,
+          "category": "Meals",
+          "quantity": 1
+        },
+        {
+          "id": "moxbo18vpdrzdvkx56a",
+          "name": "Cheesy Burger",
+          "description": "Cheesy Burger with lots of cheese and flavorful sauce",
+          "price": 120,
+          "category": "Meals",
+          "quantity": 1
+        }
+      ],
+      "subtotal": 250,
+      "total": 250,
+      "status": "Delivered",
+      "paymentMethod": "cash",
+      "deliveryNotes": "",
+      "createdAt": "2026-05-15T18:21:52.257Z",
+      "updatedAt": "2026-05-15T18:22:32.692Z"
+    },
+    {
+      "id": "ordermp78xx6q",
+      "customerId": "mp78tt1s0ws30pha939",
+      "customerName": "sylvie eula",
+      "customerEmail": "phebsvillaflor@gmail.com",
+      "customerPhone": "09566189098",
+      "customerAddress": "tejero t.pdailla cc",
+      "items": [
+        {
+          "id": "moxbo18vpdrzdvkx56a",
+          "name": "Cheesy Burger",
+          "description": "Cheesy Burger with lots of cheese and flavorful sauce",
+          "price": 120,
+          "category": "Meals",
+          "quantity": 1
+        }
+      ],
+      "subtotal": 120,
+      "total": 120,
+      "status": "Cancelled",
+      "paymentMethod": "credit-card",
+      "deliveryNotes": "",
+      "createdAt": "2026-05-15T18:24:11.330Z",
+      "updatedAt": "2026-05-15T18:24:24.020Z"
+    },
+    {
+      "id": "ordermp7976ac",
+      "customerId": "mp78tt1s0ws30pha939",
+      "customerName": "sylvie eula",
+      "customerEmail": "phebsvillaflor@gmail.com",
+      "customerPhone": "09566189098",
+      "customerAddress": "tejero cebu city",
+      "items": [
+        {
+          "id": "1",
+          "name": "Classic Burger",
+          "description": "Fresh beef patty with lettuce, tomato, and special sauce",
+          "price": 150,
+          "category": "Meals",
+          "quantity": 1
+        }
+      ],
+      "subtotal": 150,
+      "total": 150,
+      "status": "Cancelled",
+      "paymentMethod": "cash",
+      "deliveryNotes": "",
+      "createdAt": "2026-05-15T18:31:23.028Z",
+      "updatedAt": "2026-05-15T18:31:32.839Z"
     }
   ],
   "inventory": [
@@ -292,6 +385,30 @@
       "rating": 5,
       "comment": "the burger was so juicy",
       "createdAt": "2026-05-15T17:41:39.440Z",
+      "hidden": false
+    },
+    {
+      "id": "reviewmp78wfez",
+      "orderId": "ordermp78uxvk",
+      "customerId": "mp78tt1s0ws30pha939",
+      "customerName": "sylvie eula",
+      "foodItemId": "2",
+      "foodItemName": "Pepperoni Pizza",
+      "rating": 4,
+      "comment": "yummy !",
+      "createdAt": "2026-05-15T18:23:01.643Z",
+      "hidden": false
+    },
+    {
+      "id": "reviewmp78wkvh",
+      "orderId": "ordermp78uxvk",
+      "customerId": "mp78tt1s0ws30pha939",
+      "customerName": "sylvie eula",
+      "foodItemId": "moxbo18vpdrzdvkx56a",
+      "foodItemName": "Cheesy Burger",
+      "rating": 5,
+      "comment": "BESTEST EVER",
+      "createdAt": "2026-05-15T18:23:08.717Z",
       "hidden": false
     }
   ],
