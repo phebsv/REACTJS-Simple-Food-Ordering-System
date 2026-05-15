@@ -27,6 +27,16 @@
       "passwordHash": "$2a$10$lKeUl1yQKY47lFsbaPhsau3TBhS1voFpKUJhAXqngQiYwByPfh/q2",
       "address": "",
       "role": "user"
+    },
+    {
+      "id": "mp77kn9lnc07rhekw3k",
+      "name": "Christian Demetillo",
+      "email": "christian.demetillo.23@usjr.edu.ph",
+      "phone": "09617095667",
+      "password": "ninja123",
+      "passwordHash": "$2a$10$UiAlyUY8nxThPW2tMSc0z.ubr6WrbIK63yNK.3BbiVwJKotqPPpDC",
+      "address": "",
+      "role": "user"
     }
   ],
   "admins": [],
