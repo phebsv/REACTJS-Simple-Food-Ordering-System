@@ -11,6 +11,28 @@ import "./AdminOrders.css";
 type FilterStatus = OrderStatus | "All";
 
 const PAGE_SIZE = 10;
+const FALLBACK_TEXT = "Not provided";
+
+function getOrderTime(order: AdminOrder) {
+  return new Date(order.createdAt || order.updatedAt || 0).getTime() || 0;
+}
+
+function displayValue(value?: string) {
+  return value?.trim() || FALLBACK_TEXT;
+}
+
+function formatCurrency(value?: number) {
+  return `₱${Number(value || 0).toFixed(2)}`;
+}
+
+function getOrderItemsPreview(order: AdminOrder) {
+  if (!order.items.length) return "Item details unavailable";
+
+  return order.items
+    .slice(0, 2)
+    .map((item) => `${item.name || "Unnamed item"} x${item.quantity || 0}`)
+    .join(", ");
+}
 
 export default function AdminOrders() {
   const {
@@ -48,25 +70,28 @@ export default function AdminOrders() {
     return () => window.clearTimeout(timer);
   }, [searchQuery]);
 
-  // Reset pagination when filters change
-  useEffect(() => {
-    setPage(1);
-  }, [debouncedSearchQuery, filterStatus]);
-
   // ==================== FILTERING ====================
   const filteredOrders = useMemo(() => {
-    return orders.filter((order) => {
-      const query = debouncedSearchQuery.toLowerCase();
-      const matchesSearch =
-        !query ||
-        order.id.toLowerCase().includes(query) ||
-        order.customerName.toLowerCase().includes(query);
+    return orders
+      .filter((order) => {
+        const query = debouncedSearchQuery.toLowerCase();
+        const itemText = order.items
+          .map((item) => item.name)
+          .join(" ")
+          .toLowerCase();
+        const matchesSearch =
+          !query ||
+          order.id.toLowerCase().includes(query) ||
+          order.customerName.toLowerCase().includes(query) ||
+          order.customerEmail.toLowerCase().includes(query) ||
+          itemText.includes(query);
 
-      const matchesStatus =
-        filterStatus === "All" || order.status === filterStatus;
+        const matchesStatus =
+          filterStatus === "All" || order.status === filterStatus;
 
-      return matchesSearch && matchesStatus;
-    });
+        return matchesSearch && matchesStatus;
+      })
+      .sort((a, b) => getOrderTime(b) - getOrderTime(a));
   }, [orders, debouncedSearchQuery, filterStatus]);
 
   const totalPages = Math.max(1, Math.ceil(filteredOrders.length / PAGE_SIZE));
@@ -205,23 +230,38 @@ export default function AdminOrders() {
               <tbody>
                 {paginatedOrders.map((order) => (
                   <tr key={order.id}>
-                    <td className="order-id">#{order.id.slice(0, 8)}</td>
+                    <td className="order-id">#{displayValue(order.id)}</td>
                     <td>
                       <div className="customer-info">
-                        <div>{order.customerName}</div>
+                        <div>{displayValue(order.customerName)}</div>
                         <div className="customer-email">
-                          {order.customerEmail}
+                          {displayValue(order.customerEmail)}
                         </div>
                       </div>
                     </td>
-                    <td>{order.items.length} item(s)</td>
-                    <td className="order-total">₱{order.total.toFixed(2)}</td>
+                    <td>
+                      <div className="order-items-summary">
+                        <span>{getOrderItemsPreview(order)}</span>
+                        {order.items.length > 2 && (
+                          <span className="order-items-more">
+                            +{order.items.length - 2} more
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="order-total">{formatCurrency(order.total)}</td>
                     <td>
                       <StatusBadge status={order.status} />
                     </td>
                     <td className="order-datetime">
-                      {new Date(order.createdAt).toLocaleDateString()} <br />
-                      {new Date(order.createdAt).toLocaleTimeString()}
+                      {getOrderTime(order) ? (
+                        <>
+                          {new Date(order.createdAt).toLocaleDateString()} <br />
+                          {new Date(order.createdAt).toLocaleTimeString()}
+                        </>
+                      ) : (
+                        FALLBACK_TEXT
+                      )}
                     </td>
                     <td>
                       <button
@@ -279,7 +319,7 @@ export default function AdminOrders() {
         {selectedOrder && (
           <AdminModal
             isOpen={isDetailsOpen}
-            title={`Order #${selectedOrder.id.slice(0, 8)}`}
+            title={`Order #${displayValue(selectedOrder.id)}`}
             onClose={() => setIsDetailsOpen(false)}
             size="large"
           >
@@ -289,19 +329,19 @@ export default function AdminOrders() {
                 <div className="details-grid">
                   <div className="detail-item">
                     <label>Name</label>
-                    <p>{selectedOrder.customerName}</p>
+                    <p>{displayValue(selectedOrder.customerName)}</p>
                   </div>
                   <div className="detail-item">
                     <label>Email</label>
-                    <p>{selectedOrder.customerEmail}</p>
+                    <p>{displayValue(selectedOrder.customerEmail)}</p>
                   </div>
                   <div className="detail-item">
                     <label>Phone</label>
-                    <p>{selectedOrder.customerPhone}</p>
+                    <p>{displayValue(selectedOrder.customerPhone)}</p>
                   </div>
                   <div className="detail-item">
                     <label>Address</label>
-                    <p>{selectedOrder.customerAddress}</p>
+                    <p>{displayValue(selectedOrder.customerAddress)}</p>
                   </div>
                 </div>
               </div>
@@ -309,22 +349,33 @@ export default function AdminOrders() {
               <div className="details-section">
                 <h3>Order Items</h3>
                 <div className="items-list">
-                  {selectedOrder.items.map((item) => (
-                    <div key={item.id} className="order-item-detail">
-                      <div className="item-name-qty">
-                        <span className="item-name">{item.name}</span>
-                        <span className="item-qty">x{item.quantity}</span>
+                  {selectedOrder.items.length === 0 ? (
+                    <p className="items-unavailable">
+                      Item details unavailable
+                    </p>
+                  ) : (
+                    selectedOrder.items.map((item, index) => (
+                      <div
+                        key={item.id || `${selectedOrder.id}-${index}`}
+                        className="order-item-detail"
+                      >
+                        <div className="item-name-qty">
+                          <span className="item-name">
+                            {item.name || "Unnamed item"}
+                          </span>
+                          <span className="item-qty">x{item.quantity || 0}</span>
+                        </div>
+                        <div className="item-prices">
+                          <span className="item-price">
+                            {formatCurrency(item.price)} each
+                          </span>
+                          <span className="item-subtotal">
+                            {formatCurrency(item.price * item.quantity)}
+                          </span>
+                        </div>
                       </div>
-                      <div className="item-prices">
-                        <span className="item-price">
-                          ₱{item.price.toFixed(2)} each
-                        </span>
-                        <span className="item-subtotal">
-                          ₱{(item.price * item.quantity).toFixed(2)}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               </div>
 
@@ -333,11 +384,11 @@ export default function AdminOrders() {
                 <div className="summary-items">
                   <div className="summary-row">
                     <span>Subtotal</span>
-                    <span>₱{selectedOrder.subtotal.toFixed(2)}</span>
+                    <span>{formatCurrency(selectedOrder.subtotal)}</span>
                   </div>
                   <div className="summary-row total">
                     <span>Total</span>
-                    <span>₱{selectedOrder.total.toFixed(2)}</span>
+                    <span>{formatCurrency(selectedOrder.total)}</span>
                   </div>
                 </div>
               </div>
@@ -351,11 +402,19 @@ export default function AdminOrders() {
                   </div>
                   <div className="status-datetime">
                     <label>Created</label>
-                    <p>{new Date(selectedOrder.createdAt).toLocaleString()}</p>
+                    <p>
+                      {getOrderTime(selectedOrder)
+                        ? new Date(selectedOrder.createdAt).toLocaleString()
+                        : FALLBACK_TEXT}
+                    </p>
                   </div>
                   <div className="status-datetime">
                     <label>Updated</label>
-                    <p>{new Date(selectedOrder.updatedAt).toLocaleString()}</p>
+                    <p>
+                      {selectedOrder.updatedAt
+                        ? new Date(selectedOrder.updatedAt).toLocaleString()
+                        : FALLBACK_TEXT}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -366,7 +425,7 @@ export default function AdminOrders() {
                   <div className="payment-info">
                     <div className="info-row">
                       <label>Payment Method</label>
-                      <p>{selectedOrder.paymentMethod}</p>
+                      <p>{displayValue(selectedOrder.paymentMethod)}</p>
                     </div>
                     {selectedOrder.deliveryNotes && (
                       <div className="info-row">
@@ -467,14 +526,16 @@ export default function AdminOrders() {
 
 // ==================== STATUS BADGE ====================
 function StatusBadge({ status }: { status: string }) {
+  const normalizedStatus = String(status || "").toLowerCase();
   const statusClass =
     {
-      Pending: "badge-pending",
-      Preparing: "badge-preparing",
-      Ready: "badge-ready",
-      Delivered: "badge-delivered",
-      Cancelled: "badge-cancelled",
-    }[status] || "badge-default";
+      pending: "badge-pending",
+      preparing: "badge-preparing",
+      ready: "badge-ready",
+      delivered: "badge-delivered",
+      cancelled: "badge-cancelled",
+      canceled: "badge-cancelled",
+    }[normalizedStatus] || "badge-default";
 
   return <span className={`status-badge ${statusClass}`}>{status}</span>;
 }

@@ -82,32 +82,125 @@ function mapMenuItem(item: any): FoodItem {
   };
 }
 
+function firstValue(...values: any[]) {
+  return values.find((value) => value !== undefined && value !== null);
+}
+
+function getOrderId(order: any) {
+  return String(
+    firstValue(
+      order.id,
+      order.orderId,
+      order.order_id,
+      order.order?.id,
+      order.order?.order_id,
+      "",
+    ),
+  );
+}
+
+function getOrderItems(order: any, items?: any[]) {
+  return (
+    items ??
+    order.items ??
+    order.orderItems ??
+    order.order_items ??
+    order.order_details ??
+    order.details ??
+    []
+  );
+}
+
+function getOrderList(response: any) {
+  if (Array.isArray(response)) return response;
+  if (Array.isArray(response?.data)) return response.data;
+  if (Array.isArray(response?.orders)) return response.orders;
+  return [];
+}
+
 // Helper: map PHP Order to AdminOrder
 function mapOrder(order: any, customer?: any, items?: any[]): AdminOrder {
-  const itemList = items ?? order.items ?? [];
+  const baseOrder = order.order ?? order;
+  const itemList = getOrderItems(order, items);
 
   return {
-    id: String(order.id ?? order.order_id),
+    id: getOrderId(order),
     customerName:
-      order.customerName || order.customer_name || customer?.name || "Customer",
-    customerEmail: order.customerEmail || customer?.email || "",
-    customerPhone: order.customerPhone || customer?.phone || "",
-    customerAddress: order.customerAddress || customer?.address || "",
+      firstValue(
+        order.customerName,
+        order.customer_name,
+        baseOrder.customerName,
+        baseOrder.customer_name,
+        order.customer?.name,
+        customer?.name,
+      ) || "Customer",
+    customerEmail:
+      firstValue(
+        order.customerEmail,
+        order.customer_email,
+        baseOrder.customerEmail,
+        baseOrder.customer_email,
+        order.customer?.email,
+        customer?.email,
+      ) || "",
+    customerPhone:
+      firstValue(
+        order.customerPhone,
+        order.customer_phone,
+        baseOrder.customerPhone,
+        baseOrder.customer_phone,
+        order.customer?.phone,
+        customer?.phone,
+      ) || "",
+    customerAddress:
+      firstValue(
+        order.customerAddress,
+        order.customer_address,
+        baseOrder.customerAddress,
+        baseOrder.customer_address,
+        order.customer?.address,
+        customer?.address,
+      ) || "",
     items: itemList.map(
       (i: any): AdminOrderItem => ({
-        id: String(i.id ?? i.order_item_id),
-        name: i.name ?? i.food_name ?? "",
-        quantity: Number(i.quantity ?? 0),
-        price: Number(i.price ?? 0),
+        id: String(firstValue(i.id, i.menuId, i.menu_id, i.order_item_id, "")),
+        name:
+          firstValue(
+            i.name,
+            i.foodName,
+            i.food_name,
+            i.itemName,
+            i.item_name,
+            i.menuName,
+            i.menu_name,
+            i.menu?.name,
+            i.menu?.food_name,
+          ) || "",
+        quantity: Number(firstValue(i.quantity, i.qty, 0)),
+        price: Number(firstValue(i.price, i.unitPrice, i.unit_price, 0)),
       }),
     ),
-    subtotal: Number(order.subtotal ?? order.total_amount ?? order.total ?? 0),
-    total: Number(order.total ?? order.total_amount ?? 0),
-    status: (order.status ?? order.order_status) as OrderStatus,
-    createdAt: order.createdAt ?? order.order_date ?? new Date().toISOString(),
-    updatedAt: order.updatedAt ?? order.order_date ?? new Date().toISOString(),
-    paymentMethod: order.paymentMethod ?? order.payment_method,
-    deliveryNotes: order.deliveryNotes ?? order.delivery_notes,
+    subtotal: Number(
+      firstValue(baseOrder.subtotal, baseOrder.total_amount, baseOrder.total, 0),
+    ),
+    total: Number(firstValue(baseOrder.total, baseOrder.total_amount, 0)),
+    status: firstValue(
+      baseOrder.status,
+      baseOrder.order_status,
+      "Pending",
+    ) as OrderStatus,
+    createdAt:
+      firstValue(baseOrder.createdAt, baseOrder.created_at, baseOrder.order_date) ??
+      new Date().toISOString(),
+    updatedAt:
+      firstValue(
+        baseOrder.updatedAt,
+        baseOrder.updated_at,
+        baseOrder.order_date,
+        baseOrder.createdAt,
+      ) ?? new Date().toISOString(),
+    paymentMethod: firstValue(baseOrder.paymentMethod, baseOrder.payment_method),
+    deliveryNotes: firstValue(baseOrder.deliveryNotes, baseOrder.delivery_notes),
   };
 }
 
@@ -230,7 +323,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     try {
       const data = await adminGetOrders();
-      setOrders(data.map((o: any) => mapOrder(o)));
+      setOrders(getOrderList(data).map((o: any) => mapOrder(o)));
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to fetch orders.");
     } finally {

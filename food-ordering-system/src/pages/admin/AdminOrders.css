@@ -159,6 +159,22 @@
   color: #999;
 }
 
+.order-items-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 260px;
+  color: #333;
+  line-height: 1.35;
+}
+
+.order-items-more {
+  width: fit-content;
+  color: #999;
+  font-size: 12px;
+  font-weight: 600;
+}
+
 .order-total {
   font-weight: 700;
   color: #4caf50;
@@ -266,6 +282,16 @@
   gap: 12px;
 }
 
+.items-unavailable {
+  margin: 0;
+  padding: 14px;
+  background: #fff3cd;
+  color: #856404;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
 .order-item-detail {
   display: flex;
   justify-content: space-between;
@@ -279,11 +305,13 @@
   display: flex;
   gap: 12px;
   align-items: center;
+  min-width: 0;
 }
 
 .item-name {
   font-weight: 600;
   color: #1a1a2e;
+  overflow-wrap: anywhere;
 }
 
 .item-qty {
@@ -299,6 +327,7 @@
   gap: 16px;
   align-items: center;
   font-size: 13px;
+  flex-shrink: 0;
 }
 
 .item-price {
