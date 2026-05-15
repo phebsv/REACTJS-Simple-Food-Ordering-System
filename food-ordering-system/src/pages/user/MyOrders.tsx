@@ -340,13 +340,16 @@ export default function MyOrders() {
                         <p className="order-date">
                           {formatDate(order.createdAt)}
                         </p>
-                        <p className="order-total">{formatPrice(order.total)}</p>
+                        <p className="order-total">
+                          {formatPrice(order.total)}
+                        </p>
                       </div>
                     </div>
 
                     <div className="order-card-details">
                       <p>
-                        <span>Deliver to:</span> {displayValue(order.customerAddress)}
+                        <span>Deliver to:</span>{" "}
+                        {displayValue(order.customerAddress)}
                       </p>
                       <p>
                         <span>Payment:</span>{" "}
@@ -361,7 +364,9 @@ export default function MyOrders() {
                       </p>
                       <div className="order-items-preview">
                         {orderItems.length === 0 ? (
-                          <span className="item-tag muted">No item details</span>
+                          <span className="item-tag muted">
+                            No item details
+                          </span>
                         ) : (
                           <>
                             {orderItems.slice(0, 2).map((item, idx) => (
@@ -380,14 +385,15 @@ export default function MyOrders() {
                     </div>
 
                     <div className="order-card-actions">
-                      {order.status === "Delivered" && orderItems.length > 0 && (
-                        <button
-                          onClick={() => setSelectedOrder(order)}
-                          className="order-review-btn"
-                        >
-                          Review Items
-                        </button>
-                      )}
+                      {order.status === "Delivered" &&
+                        orderItems.length > 0 && (
+                          <button
+                            onClick={() => setSelectedOrder(order)}
+                            className="order-review-btn"
+                          >
+                            Review Items
+                          </button>
+                        )}
                       <button
                         onClick={() => setSelectedOrder(order)}
                         className="order-view-btn"
@@ -459,6 +465,24 @@ function OrderDetailsModal({
     };
   }, [canReview, order.id]);
 
+  useEffect(() => {
+    const body = document.body;
+    const previousOverflow = body.style.overflow;
+    const previousPaddingRight = body.style.paddingRight;
+    const scrollbarWidth =
+      window.innerWidth - document.documentElement.clientWidth;
+
+    body.style.overflow = "hidden";
+    if (scrollbarWidth > 0) {
+      body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+
+    return () => {
+      body.style.overflow = previousOverflow;
+      body.style.paddingRight = previousPaddingRight;
+    };
+  }, []);
+
   const findExistingReview = (item: OrderItem) =>
     existingReviews.find((review) => {
       if (review.hidden) return false;
@@ -522,7 +546,7 @@ function OrderDetailsModal({
         foodItemName: reviewingItem.name,
         rating,
         comment: cleanComment,
-        createdAt: currentReview?.createdAt ?? currentReview?.created_at ?? now,
+        createdAt: now,
         updatedAt: now,
         hidden: false,
       };
@@ -632,27 +656,27 @@ function OrderDetailsModal({
                 const existingReview = findExistingReview(item);
 
                 return (
-                <div key={idx} className="order-item">
-                  <div className="item-info">
-                    <h4>{displayValue(item.name)}</h4>
-                    <p>
-                      Qty: {item.quantity ?? 0} x {formatPrice(item.price)}
-                    </p>
-                    {canReview && (
-                      <button
-                        type="button"
-                        className="item-review-btn"
-                        onClick={() => startReview(item)}
-                        disabled={Boolean(existingReview)}
-                      >
-                        {existingReview ? "Reviewed" : "Write Review"}
-                      </button>
-                    )}
+                  <div key={idx} className="order-item">
+                    <div className="item-info">
+                      <h4>{displayValue(item.name)}</h4>
+                      <p>
+                        Qty: {item.quantity ?? 0} x {formatPrice(item.price)}
+                      </p>
+                      {canReview && (
+                        <button
+                          type="button"
+                          className="item-review-btn"
+                          onClick={() => startReview(item)}
+                          disabled={Boolean(existingReview)}
+                        >
+                          {existingReview ? "Reviewed" : "Write Review"}
+                        </button>
+                      )}
+                    </div>
+                    <span className="item-subtotal">
+                      {formatPrice((item.price ?? 0) * (item.quantity ?? 0))}
+                    </span>
                   </div>
-                  <span className="item-subtotal">
-                    {formatPrice((item.price ?? 0) * (item.quantity ?? 0))}
-                  </span>
-                </div>
                 );
               })
             )}

@@ -27,16 +27,6 @@
       "passwordHash": "$2a$10$lKeUl1yQKY47lFsbaPhsau3TBhS1voFpKUJhAXqngQiYwByPfh/q2",
       "address": "",
       "role": "user"
-    },
-    {
-      "id": "mp77kn9lnc07rhekw3k",
-      "name": "Christian Demetillo",
-      "email": "christian.demetillo.23@usjr.edu.ph",
-      "phone": "09617095667",
-      "password": "ninja123",
-      "passwordHash": "$2a$10$UiAlyUY8nxThPW2tMSc0z.ubr6WrbIK63yNK.3BbiVwJKotqPPpDC",
-      "address": "",
-      "role": "user"
     }
   ],
   "admins": [],
@@ -103,97 +93,6 @@
     }
   ],
   "orders": [
-    {
-      "id": "order1",
-      "customerId": "OcZ4bjEAvBs",
-      "customerName": "christian Demetillo",
-      "customerEmail": "dmtchrs@gmail.com",
-      "customerPhone": "09617095667",
-      "customerAddress": "123 Main Street, City",
-      "items": [
-        {
-          "id": "1",
-          "name": "Classic Burger",
-          "description": "Fresh beef patty with lettuce, tomato, and special sauce",
-          "price": 8.99,
-          "category": "Meals",
-          "quantity": 2
-        },
-        {
-          "id": "3",
-          "name": "Iced Coffee",
-          "description": "Refreshing iced coffee with a smooth finish",
-          "price": 3.99,
-          "category": "Drinks",
-          "quantity": 1
-        }
-      ],
-      "subtotal": 21.97,
-      "total": 21.97,
-      "status": "Delivered",
-      "paymentMethod": "Credit Card",
-      "deliveryNotes": "Leave at door",
-      "createdAt": "2024-04-28T10:00:00Z",
-      "updatedAt": "2024-04-28T15:30:00Z"
-    },
-    {
-      "id": "order2",
-      "customerId": "tIrSAMc1Dts",
-      "customerName": "Hello World",
-      "customerEmail": "villerboy123@gmail.com",
-      "customerPhone": "09617095668",
-      "customerAddress": "456 Oak Avenue, Town",
-      "items": [
-        {
-          "id": "2",
-          "name": "Pepperoni Pizza",
-          "description": "Crispy crust topped with mozzarella and pepperoni",
-          "price": 12.99,
-          "category": "Meals",
-          "quantity": 1
-        }
-      ],
-      "subtotal": 12.99,
-      "total": 12.99,
-      "status": "Ready",
-      "paymentMethod": "Debit Card",
-      "deliveryNotes": "",
-      "createdAt": "2024-04-29T14:00:00Z",
-      "updatedAt": "2024-04-29T16:00:00Z"
-    },
-    {
-      "id": "order3",
-      "customerId": "7isIEDpkKl0",
-      "customerName": "Samantha Pasague",
-      "customerEmail": "samanthaleonor.pasague.23@usjr.edu.ph",
-      "customerPhone": "09089659262",
-      "customerAddress": "789 Pine Road, Village",
-      "items": [
-        {
-          "id": "1",
-          "name": "Classic Burger",
-          "description": "Fresh beef patty with lettuce, tomato, and special sauce",
-          "price": 8.99,
-          "category": "Meals",
-          "quantity": 1
-        },
-        {
-          "id": "4",
-          "name": "French Fries",
-          "description": "Crispy golden fries served hot",
-          "price": 2.99,
-          "category": "Snacks",
-          "quantity": 1
-        }
-      ],
-      "subtotal": 11.98,
-      "total": 11.98,
-      "status": "Cancelled",
-      "paymentMethod": "Cash",
-      "deliveryNotes": "Ring doorbell twice",
-      "createdAt": "2024-04-30T08:00:00Z",
-      "updatedAt": "2026-04-30T01:28:59.755Z"
-    },
     {
       "id": "ordermox6kl6n",
       "customerId": "mox6imuq7zn4m00vmag",
@@ -301,6 +200,31 @@
       "deliveryNotes": "nideliver ko guys ",
       "createdAt": "2026-05-09T01:10:52.357Z",
       "updatedAt": "2026-05-09T01:28:47.770Z"
+    },
+    {
+      "id": "ordermp772oaa",
+      "customerId": "mowsjsivwstapw3zb2r",
+      "customerName": "jiyong denpai",
+      "customerEmail": "jiyong@gmail.com",
+      "customerPhone": "09291052281",
+      "customerAddress": "Luyo seaoil",
+      "items": [
+        {
+          "id": "1",
+          "name": "Classic Burger",
+          "description": "Fresh beef patty with lettuce, tomato, and special sauce",
+          "price": 150,
+          "category": "Meals",
+          "quantity": 1
+        }
+      ],
+      "subtotal": 150,
+      "total": 150,
+      "status": "Delivered",
+      "paymentMethod": "cash",
+      "deliveryNotes": "",
+      "createdAt": "2026-05-15T17:31:53.842Z",
+      "updatedAt": "2026-05-15T17:32:59.882Z"
     }
   ],
   "inventory": [
@@ -347,39 +271,27 @@
   ],
   "reviews": [
     {
-      "id": "review1",
-      "orderId": "order1",
-      "customerId": "OcZ4bjEAvBs",
-      "customerName": "christian Demetillo",
+      "id": "reviewmp77bdj8",
+      "orderId": "ordermp772oaa",
+      "customerId": "mowsjsivwstapw3zb2r",
+      "customerName": "jiyong denpai",
       "foodItemId": "1",
       "foodItemName": "Classic Burger",
       "rating": 5,
-      "comment": "Absolutely delicious! Fresh ingredients and great taste. Will order again.",
-      "createdAt": "2024-04-28T20:00:00Z",
+      "comment": "the burger was cooked to perfection",
+      "createdAt": "2026-05-15T17:38:39.812Z",
       "hidden": false
     },
     {
-      "id": "review2",
-      "orderId": "order1",
-      "customerId": "OcZ4bjEAvBs",
-      "customerName": "christian Demetillo",
-      "foodItemId": "3",
-      "foodItemName": "Iced Coffee",
-      "rating": 4,
-      "comment": "Good coffee, cold and refreshing. Could use a bit more flavor.",
-      "createdAt": "2024-04-28T20:05:00Z",
-      "hidden": false
-    },
-    {
-      "id": "review3",
-      "orderId": "order2",
-      "customerId": "tIrSAMc1Dts",
-      "customerName": "Hello World",
-      "foodItemId": "2",
-      "foodItemName": "Pepperoni Pizza",
-      "rating": 3,
-      "comment": "Average pizza. Toppings were okay but crust could be crispier.",
-      "createdAt": "2024-04-29T18:00:00Z",
+      "id": "reviewmp77f84w",
+      "orderId": "ordermoxndyh1",
+      "customerId": "mowsjsivwstapw3zb2r",
+      "customerName": "jiyong denpai",
+      "foodItemId": "1",
+      "foodItemName": "Classic Burger",
+      "rating": 5,
+      "comment": "the burger was so juicy",
+      "createdAt": "2026-05-15T17:41:39.440Z",
       "hidden": false
     }
   ],
