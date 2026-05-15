@@ -3,15 +3,21 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import BgFood from "../../components/BgFood";
 import { useCart } from "../../context/CartContext";
-import { decodeHtmlEntities, formatPricePHP, formatRating } from "../../utils/textHelpers";
+import { decodeHtmlEntities, formatPricePHP } from "../../utils/textHelpers";
 import "./Dashboard.css";
 import "./Menu.css";
 import { apiUrl } from "../../config/api";
+import { getReviews } from "../../services/api";
 
-import type { FoodItem } from "../../types";
+import type { FoodItem, Review } from "../../types";
 
 // Fallback image
 const FALLBACK_FOOD_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23F5EFE0' width='200' height='200'/%3E%3Ctext x='50%25' y='50%25' font-size='20' fill='%23888080' text-anchor='middle' dominant-baseline='middle'%3ENo Image%3C/text%3E%3C/svg%3E";
+
+type ReviewSummary = {
+  averageRating: number;
+  count: number;
+};
 
 type MenuItemProps = {
   items: FoodItem[];
@@ -20,6 +26,7 @@ type MenuItemProps = {
   onCategoryToggle: (category: string) => void;
   onAddToCart: (item: FoodItem) => void;
   selectedItemId: string | null;
+  reviewSummaries: Record<string, ReviewSummary>;
 };
 
 function MenuList({
@@ -29,6 +36,7 @@ function MenuList({
   onCategoryToggle,
   onAddToCart,
   selectedItemId,
+  reviewSummaries,
 }: MenuItemProps) {
   const handleAddClick = (item: FoodItem) => {
     onAddToCart(item);
@@ -59,51 +67,108 @@ function MenuList({
       </div>
 
       <div className="menu-grid">
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className={`menu-card ${selectedItemId === item.id ? "menu-card-active" : ""}`}
-          >
-            <div className="menu-card-image-container">
-              <img
-                src={item.image || FALLBACK_FOOD_IMAGE}
-                alt={decodeHtmlEntities(item.name)}
-                className="menu-card-image"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = FALLBACK_FOOD_IMAGE;
-                }}
-              />
+        {items.map((item) => {
+          const reviewSummary = reviewSummaries[item.id];
+
+          return (
+            <div
+              key={item.id}
+              className={`menu-card ${selectedItemId === item.id ? "menu-card-active" : ""}`}
+            >
+              <div className="menu-card-image-container">
+                <img
+                  src={item.image || FALLBACK_FOOD_IMAGE}
+                  alt={decodeHtmlEntities(item.name)}
+                  className="menu-card-image"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = FALLBACK_FOOD_IMAGE;
+                  }}
+                />
+              </div>
+              <div className="menu-card-content">
+                <div className="menu-card-title">
+                  <h4>{decodeHtmlEntities(item.name)}</h4>
+                  <span className="menu-card-price">{formatPricePHP(item.price)}</span>
+                </div>
+                <p className="menu-card-description">{item.description}</p>
+                <div className="menu-card-rating">
+                  {reviewSummary ? (
+                    <>
+                      <span className="menu-card-stars" aria-hidden="true">
+                        ★
+                      </span>
+                      <span>{reviewSummary.averageRating.toFixed(1)}</span>
+                      <span className="menu-card-review-count">
+                        ({reviewSummary.count} review
+                        {reviewSummary.count === 1 ? "" : "s"})
+                      </span>
+                    </>
+                  ) : (
+                    <span className="menu-card-no-reviews">No reviews yet.</span>
+                  )}
+                </div>
+                <div className="menu-card-footer">
+                  <span className="menu-card-category">{item.category}</span>
+                  <button
+                    className="menu-add-btn"
+                    onClick={() => handleAddClick(item)}
+                    disabled={item.available === false}
+                    title={item.available === false ? "Item unavailable" : ""}
+                  >
+                    {item.available === false ? "Unavailable" : "Add to Cart"}
+                  </button>
+                </div>
+              </div>
             </div>
-            <div className="menu-card-content">
-              <div className="menu-card-title">
-                <h4>{decodeHtmlEntities(item.name)}</h4>
-                <span className="menu-card-price">{formatPricePHP(item.price)}</span>
-              </div>
-              <p className="menu-card-description">{item.description}</p>
-              <div className="menu-card-rating">
-                {formatRating(0, 0)}
-              </div>
-              <div className="menu-card-footer">
-                <span className="menu-card-category">{item.category}</span>
-                <button
-                  className="menu-add-btn"
-                  onClick={() => handleAddClick(item)}
-                  disabled={item.available === false}
-                  title={item.available === false ? "Item unavailable" : ""}
-                >
-                  {item.available === false ? "Unavailable" : "Add to Cart"}
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
 }
 
+function buildReviewSummaries(
+  items: FoodItem[],
+  reviews: Review[],
+): Record<string, ReviewSummary> {
+  const visibleReviews = reviews.filter((review) => !review.hidden);
+
+  return items.reduce<Record<string, ReviewSummary>>((summaries, item) => {
+    const normalizedItemName = decodeHtmlEntities(item.name).toLowerCase();
+    const itemReviews = visibleReviews.filter((review) => {
+      const normalizedReviewName = decodeHtmlEntities(
+        review.foodItemName || "",
+      ).toLowerCase();
+
+      return (
+        String(review.foodItemId) === String(item.id) ||
+        normalizedReviewName === normalizedItemName
+      );
+    });
+
+    if (itemReviews.length === 0) {
+      return summaries;
+    }
+
+    const totalRating = itemReviews.reduce(
+      (sum, review) => sum + Number(review.rating || 0),
+      0,
+    );
+
+    summaries[item.id] = {
+      averageRating: totalRating / itemReviews.length,
+      count: itemReviews.length,
+    };
+
+    return summaries;
+  }, {});
+}
+
 export default function Menu() {
   const [allMenuItems, setAllMenuItems] = useState<FoodItem[]>([]);
+  const [reviewSummaries, setReviewSummaries] = useState<
+    Record<string, ReviewSummary>
+  >({});
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -127,6 +192,13 @@ export default function Menu() {
         );
         setAllMenuItems(availableItems);
 
+        try {
+          const reviews = (await getReviews()) as Review[];
+          setReviewSummaries(buildReviewSummaries(availableItems, reviews));
+        } catch {
+          setReviewSummaries({});
+        }
+
         // Extract unique categories and set as selected by default
         const uniqueCategories = [
           ...new Set(availableItems.map((item: FoodItem) => item.category)),
@@ -137,6 +209,7 @@ export default function Menu() {
         setError(err instanceof Error ? err.message : "Failed to load menu");
         // Fallback to empty menu if API fails
         setAllMenuItems([]);
+        setReviewSummaries({});
       } finally {
         setLoading(false);
       }
@@ -240,6 +313,7 @@ export default function Menu() {
                 onCategoryToggle={handleCategoryToggle}
                 onAddToCart={handleAddToCart}
                 selectedItemId={selectedItemId}
+                reviewSummaries={reviewSummaries}
               />
             )}
           </div>
