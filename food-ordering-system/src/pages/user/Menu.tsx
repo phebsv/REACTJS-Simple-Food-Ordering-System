@@ -12,7 +12,8 @@ import { getReviews } from "../../services/api";
 import type { FoodItem, Review } from "../../types";
 
 // Fallback image
-const FALLBACK_FOOD_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23F5EFE0' width='200' height='200'/%3E%3Ctext x='50%25' y='50%25' font-size='20' fill='%23888080' text-anchor='middle' dominant-baseline='middle'%3ENo Image%3C/text%3E%3C/svg%3E";
+const FALLBACK_FOOD_IMAGE =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23F5EFE0' width='200' height='200'/%3E%3Ctext x='50%25' y='50%25' font-size='20' fill='%23888080' text-anchor='middle' dominant-baseline='middle'%3ENo Image%3C/text%3E%3C/svg%3E";
 
 type ReviewSummary = {
   averageRating: number;
@@ -101,7 +102,9 @@ function MenuList({
               <div className="menu-card-content">
                 <div className="menu-card-title">
                   <h4>{decodeHtmlEntities(item.name)}</h4>
-                  <span className="menu-card-price">{formatPricePHP(item.price)}</span>
+                  <span className="menu-card-price">
+                    {formatPricePHP(item.price)}
+                  </span>
                 </div>
                 <p className="menu-card-description">{item.description}</p>
                 <div className="menu-card-rating">
@@ -213,45 +216,53 @@ export default function Menu() {
   const { addItem } = useCart();
   const navigate = useNavigate();
 
-  // Fetch menu items from API
-  useEffect(() => {
-    const fetchMenu = async () => {
-      try {
+  const fetchMenu = async (showLoading = true) => {
+    try {
+      if (showLoading) {
         setLoading(true);
-        const res = await fetch(apiUrl("/menu"));
-        if (!res.ok) throw new Error("Failed to fetch menu");
-        const data = await res.json();
+      }
+      const res = await fetch(apiUrl("/menu"));
+      if (!res.ok) throw new Error("Failed to fetch menu");
+      const data = await res.json();
 
-        // Filter out unavailable items
-        const availableItems = data.filter(
-          (item: FoodItem) => item.available !== false,
-        );
-        setAllMenuItems(availableItems);
+      const availableItems = data.filter(
+        (item: FoodItem) => item.available !== false,
+      );
+      setAllMenuItems(availableItems);
 
-        try {
-          const reviews = getReviewList(await getReviews());
-          setReviewSummaries(buildReviewSummaries(availableItems, reviews));
-        } catch {
-          setReviewSummaries({});
-        }
-
-        // Extract unique categories and set as selected by default
-        const uniqueCategories = [
-          ...new Set(availableItems.map((item: FoodItem) => item.category)),
-        ] as string[];
-        setSelectedCategories(uniqueCategories);
-        setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load menu");
-        // Fallback to empty menu if API fails
-        setAllMenuItems([]);
+      try {
+        const reviews = getReviewList(await getReviews());
+        setReviewSummaries(buildReviewSummaries(availableItems, reviews));
+      } catch {
         setReviewSummaries({});
-      } finally {
+      }
+
+      const uniqueCategories = [
+        ...new Set(availableItems.map((item: FoodItem) => item.category)),
+      ] as string[];
+      setSelectedCategories((prev) =>
+        prev.length > 0 ? prev : uniqueCategories,
+      );
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load menu");
+      setAllMenuItems([]);
+      setReviewSummaries({});
+    } finally {
+      if (showLoading) {
         setLoading(false);
       }
-    };
+    }
+  };
 
-    fetchMenu();
+  // Fetch menu items from API
+  useEffect(() => {
+    fetchMenu(true);
+    const interval = window.setInterval(() => {
+      fetchMenu(false);
+    }, 5000);
+
+    return () => window.clearInterval(interval);
   }, []);
 
   const handleCategoryToggle = (category: string) => {
@@ -293,8 +304,12 @@ export default function Menu() {
             <div className="menu-hero-content">
               <div className="menu-hero-text">
                 <div className="menu-hero-label">Try our best</div>
-                <h2 className="menu-hero-title">{decodeHtmlEntities(featuredItem.name)}</h2>
-                <div className="menu-hero-price">{formatPricePHP(featuredItem.price)}</div>
+                <h2 className="menu-hero-title">
+                  {decodeHtmlEntities(featuredItem.name)}
+                </h2>
+                <div className="menu-hero-price">
+                  {formatPricePHP(featuredItem.price)}
+                </div>
                 <button
                   className="menu-hero-btn"
                   onClick={() => {

@@ -2,6 +2,12 @@ const express = require("express");
 const router = express.Router();
 const { getCollection, setCollection } = require("../data/db");
 
+const statusFromStock = (stock) => {
+  if (stock <= 0) return "Out of Stock";
+  if (stock < 10) return "Low Stock";
+  return "Available";
+};
+
 router.get("/", (req, res) => {
   return res.json(getCollection("inventory"));
 });
@@ -21,8 +27,12 @@ router.patch("/:id", (req, res) => {
     return res.status(404).json({ message: "Inventory item not found." });
 
   const { stock, status } = req.body;
-  if (stock !== undefined) items[idx].stock = Number(stock);
-  if (status !== undefined) items[idx].status = status;
+  if (stock !== undefined) {
+    items[idx].stock = Number(stock);
+    items[idx].status = statusFromStock(items[idx].stock);
+  } else if (status !== undefined) {
+    items[idx].status = status;
+  }
   items[idx].lastUpdated = new Date().toISOString();
 
   setCollection("inventory", items);

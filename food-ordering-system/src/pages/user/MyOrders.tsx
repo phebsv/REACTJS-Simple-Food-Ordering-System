@@ -8,13 +8,7 @@ import { apiUrl } from "../../config/api";
 import { getStoredItem } from "../../utils/storage";
 import { addReview, getReviews } from "../../services/api";
 
-const ORDER_STATUSES = [
-  "All",
-  "Pending",
-  "Preparing",
-  "Ready",
-  "Delivered",
-];
+const ORDER_STATUSES = ["All", "Pending", "Preparing", "Ready", "Delivered"];
 
 const formatPrice = (value?: number) => `₱${(value ?? 0).toFixed(2)}`;
 const formatDate = (value?: string) =>
@@ -154,11 +148,8 @@ const isMatchingReview = (
   return sameOrder && sameItem && sameCustomer;
 };
 
-const findItemReview = (
-  reviews: ReviewLike[],
-  order: Order,
-  item: OrderItem,
-) => reviews.find((review) => isMatchingReview(review, order, item));
+const findItemReview = (reviews: ReviewLike[], order: Order, item: OrderItem) =>
+  reviews.find((review) => isMatchingReview(review, order, item));
 
 const isOrderFullyReviewed = (reviews: ReviewLike[], order: Order) => {
   const orderItems = order.items ?? [];
@@ -200,9 +191,14 @@ export default function MyOrders() {
     return () => window.clearTimeout(t);
   }, [toastMessage]);
 
-  const fetchOrders = async (userId: string) => {
+  const fetchOrders = async (
+    userId: string,
+    options: { showLoading?: boolean } = {},
+  ) => {
     try {
-      setLoading(true);
+      if (options.showLoading) {
+        setLoading(true);
+      }
       setError("");
       const res = await fetch(apiUrl("/orders"));
       if (!res.ok) throw new Error("Failed to fetch orders");
@@ -210,7 +206,8 @@ export default function MyOrders() {
 
       // Filter orders for current customer
       const customerOrders = data.filter(
-        (order: Order) => order.customerId === userId && !isCancelledOrder(order),
+        (order: Order) =>
+          order.customerId === userId && !isCancelledOrder(order),
       );
 
       // Notify on status changes (poll-friendly)
@@ -233,7 +230,9 @@ export default function MyOrders() {
         err instanceof Error ? err.message : "Failed to load your orders.",
       );
     } finally {
-      setLoading(false);
+      if (options.showLoading) {
+        setLoading(false);
+      }
     }
   };
 
@@ -255,7 +254,7 @@ export default function MyOrders() {
   useEffect(() => {
     if (currentUser?.id) {
       const initialLoad = window.setTimeout(() => {
-        fetchOrders(currentUser.id);
+        fetchOrders(currentUser.id, { showLoading: true });
         fetchReviews();
       }, 0);
       // Refresh orders every 5 seconds to show updated status
@@ -382,7 +381,10 @@ export default function MyOrders() {
               <h2>Couldn’t load orders</h2>
               <p>{error}</p>
               <button
-                onClick={() => currentUser?.id && fetchOrders(currentUser.id)}
+                onClick={() =>
+                  currentUser?.id &&
+                  fetchOrders(currentUser.id, { showLoading: true })
+                }
                 className="my-orders-action-btn"
               >
                 Try Again
@@ -676,39 +678,41 @@ function OrderDetailsModal({
         <div className="modal-content">
           {!isReviewMode && (
             <>
-          <div className="detail-section">
-            <h3>Order Information</h3>
-            <div className="detail-row">
-              <span>Order ID:</span>
-              <span className="detail-value">{displayValue(order.id)}</span>
-            </div>
-            <div className="detail-row">
-              <span>Status:</span>
-              <span className="detail-value">{displayValue(order.status)}</span>
-            </div>
-            <div className="detail-row">
-              <span>Date:</span>
-              <span className="detail-value">
-                {formatDate(order.createdAt)}
-              </span>
-            </div>
-          </div>
+              <div className="detail-section">
+                <h3>Order Information</h3>
+                <div className="detail-row">
+                  <span>Order ID:</span>
+                  <span className="detail-value">{displayValue(order.id)}</span>
+                </div>
+                <div className="detail-row">
+                  <span>Status:</span>
+                  <span className="detail-value">
+                    {displayValue(order.status)}
+                  </span>
+                </div>
+                <div className="detail-row">
+                  <span>Date:</span>
+                  <span className="detail-value">
+                    {formatDate(order.createdAt)}
+                  </span>
+                </div>
+              </div>
 
-          <div className="detail-section">
-            <h3>Delivery Information</h3>
-            <div className="detail-row">
-              <span>Name:</span>
-              <span>{displayValue(order.customerName)}</span>
-            </div>
-            <div className="detail-row">
-              <span>Phone:</span>
-              <span>{displayValue(order.customerPhone)}</span>
-            </div>
-            <div className="detail-row">
-              <span>Address:</span>
-              <span>{displayValue(order.customerAddress)}</span>
-            </div>
-          </div>
+              <div className="detail-section">
+                <h3>Delivery Information</h3>
+                <div className="detail-row">
+                  <span>Name:</span>
+                  <span>{displayValue(order.customerName)}</span>
+                </div>
+                <div className="detail-row">
+                  <span>Phone:</span>
+                  <span>{displayValue(order.customerPhone)}</span>
+                </div>
+                <div className="detail-row">
+                  <span>Address:</span>
+                  <span>{displayValue(order.customerAddress)}</span>
+                </div>
+              </div>
             </>
           )}
 
@@ -825,71 +829,71 @@ function OrderDetailsModal({
 
           {!isReviewMode && (
             <>
-          <div className="detail-section">
-            <h3>Summary</h3>
-            <div className="detail-row">
-              <span>Subtotal:</span>
-              <span>{formatPrice(order.subtotal)}</span>
-            </div>
-            <div className="detail-row total-row">
-              <span>Total:</span>
-              <span>{formatPrice(order.total)}</span>
-            </div>
-          </div>
+              <div className="detail-section">
+                <h3>Summary</h3>
+                <div className="detail-row">
+                  <span>Subtotal:</span>
+                  <span>{formatPrice(order.subtotal)}</span>
+                </div>
+                <div className="detail-row total-row">
+                  <span>Total:</span>
+                  <span>{formatPrice(order.total)}</span>
+                </div>
+              </div>
 
-          <div className="detail-section">
-            <h3>Payment</h3>
-            <div className="detail-row">
-              <span>Method:</span>
-              <span className="capitalize">
-                {displayValue(order.paymentMethod?.replace("-", " "))}
-              </span>
-            </div>
-          </div>
+              <div className="detail-section">
+                <h3>Payment</h3>
+                <div className="detail-row">
+                  <span>Method:</span>
+                  <span className="capitalize">
+                    {displayValue(order.paymentMethod?.replace("-", " "))}
+                  </span>
+                </div>
+              </div>
 
-          {order.deliveryNotes && (
-            <div className="detail-section">
-              <h3>Special Instructions</h3>
-              <p>{order.deliveryNotes}</p>
-            </div>
-          )}
-
-          {["Pending", "Preparing"].includes(order.status) && (
-            <div className="modal-actions">
-              {!showCancelConfirm ? (
-                <button
-                  onClick={() => setShowCancelConfirm(true)}
-                  className="cancel-btn"
-                >
-                  Cancel Order
-                </button>
-              ) : (
-                <div className="cancel-confirm">
-                  <p>Are you sure you want to cancel this order?</p>
-                  {cancelError && (
-                    <p style={{ color: "#d32f2f", marginTop: 8 }}>
-                      {cancelError}
-                    </p>
-                  )}
-                  <div className="confirm-buttons">
-                    <button
-                      onClick={() => setShowCancelConfirm(false)}
-                      disabled={cancelLoading}
-                    >
-                      Back
-                    </button>
-                    <button
-                      onClick={handleCancelOrder}
-                      disabled={cancelLoading}
-                      className="confirm-cancel-btn"
-                    >
-                      {cancelLoading ? "Cancelling..." : "Confirm Cancel"}
-                    </button>
-                  </div>
+              {order.deliveryNotes && (
+                <div className="detail-section">
+                  <h3>Special Instructions</h3>
+                  <p>{order.deliveryNotes}</p>
                 </div>
               )}
-            </div>
-          )}
+
+              {["Pending", "Preparing"].includes(order.status) && (
+                <div className="modal-actions">
+                  {!showCancelConfirm ? (
+                    <button
+                      onClick={() => setShowCancelConfirm(true)}
+                      className="cancel-btn"
+                    >
+                      Cancel Order
+                    </button>
+                  ) : (
+                    <div className="cancel-confirm">
+                      <p>Are you sure you want to cancel this order?</p>
+                      {cancelError && (
+                        <p style={{ color: "#d32f2f", marginTop: 8 }}>
+                          {cancelError}
+                        </p>
+                      )}
+                      <div className="confirm-buttons">
+                        <button
+                          onClick={() => setShowCancelConfirm(false)}
+                          disabled={cancelLoading}
+                        >
+                          Back
+                        </button>
+                        <button
+                          onClick={handleCancelOrder}
+                          disabled={cancelLoading}
+                          className="confirm-cancel-btn"
+                        >
+                          {cancelLoading ? "Cancelling..." : "Confirm Cancel"}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </>
           )}
         </div>
