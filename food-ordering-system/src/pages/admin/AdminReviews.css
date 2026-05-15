@@ -140,19 +140,36 @@
 
 .review-rating {
   display: flex;
-  flex-direction: column;
   align-items: center;
   gap: 4px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .rating-stars {
-  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 18px;
+  line-height: 1;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.star-filled {
+  color: #ffc107;
+}
+
+.star-empty {
+  color: #d8d8d8;
 }
 
 .rating-value {
+  min-width: 24px;
   font-size: 12px;
   font-weight: 600;
-  color: #ffc107;
+  color: #856404;
+  text-align: right;
 }
 
 /* ==================== REVIEW CONTENT ==================== */
@@ -298,6 +315,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 /* ==================== DETAILS ACTIONS ==================== */
@@ -334,6 +352,10 @@
   .review-header {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .review-rating {
+    justify-content: flex-start;
   }
 
   .review-footer {

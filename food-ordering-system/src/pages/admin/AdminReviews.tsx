@@ -316,9 +316,22 @@ export default function AdminReviews() {
 
 // ==================== RATING STARS COMPONENT ====================
 function RatingStars({ rating }: { rating: number }) {
+  const normalizedRating = Math.max(0, Math.min(5, Math.round(rating)));
+
   return (
-    <span className="rating-stars">
-      {`${rating} of 5 stars`}
+    <span
+      className="rating-stars"
+      aria-label={`${normalizedRating} out of 5 stars`}
+    >
+      {[1, 2, 3, 4, 5].map((star) => (
+        <span
+          key={star}
+          className={star <= normalizedRating ? "star-filled" : "star-empty"}
+          aria-hidden="true"
+        >
+          ★
+        </span>
+      ))}
     </span>
   );
 }
