@@ -8,6 +8,27 @@ import { useAdmin } from "../../context/AdminContext";
 import type { AdminProfile } from "../../interfaces";
 import "./AdminDashboard.css";
 
+type OrderWithDateFields = {
+  createdAt?: string;
+  created_at?: string;
+  order_date?: string;
+  timestamp?: string;
+  date?: string;
+  updatedAt?: string;
+};
+
+function getOrderTime(order: OrderWithDateFields) {
+  const dateValue =
+    order.createdAt ??
+    order.created_at ??
+    order.order_date ??
+    order.timestamp ??
+    order.date ??
+    order.updatedAt;
+
+  return new Date(dateValue || 0).getTime() || 0;
+}
+
 function AdminDashboard() {
   const navigate = useNavigate();
   const { orders, inventoryItems, fetchOrders, loading, error } = useAdmin();
@@ -112,10 +133,7 @@ function AdminDashboard() {
         );
       })
       .sort((a, b) => {
-        const dateA = new Date(a.createdAt || a.date || 0).getTime();
-        const dateB = new Date(b.createdAt || b.date || 0).getTime();
-
-        return dateB - dateA;
+        return getOrderTime(b) - getOrderTime(a);
       })
       .slice(0, 10);
   }, [ordersList, searchTerm]);

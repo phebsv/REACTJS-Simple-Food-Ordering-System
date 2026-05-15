@@ -13,8 +13,23 @@ type FilterStatus = OrderStatus | "All";
 const PAGE_SIZE = 10;
 const FALLBACK_TEXT = "Not provided";
 
-function getOrderTime(order: AdminOrder) {
-  return new Date(order.createdAt || order.updatedAt || 0).getTime() || 0;
+type AdminOrderWithDateFields = AdminOrder & {
+  created_at?: string;
+  order_date?: string;
+  timestamp?: string;
+  date?: string;
+};
+
+function getOrderTime(order: AdminOrderWithDateFields) {
+  const dateValue =
+    order.createdAt ??
+    order.created_at ??
+    order.order_date ??
+    order.timestamp ??
+    order.date ??
+    order.updatedAt;
+
+  return new Date(dateValue || 0).getTime() || 0;
 }
 
 function displayValue(value?: string) {
