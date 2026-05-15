@@ -53,6 +53,10 @@ export default function AdminReviews() {
 
   useEffect(() => {
     fetchReviews();
+    const interval = window.setInterval(() => {
+      fetchReviews({ silent: true });
+    }, 5000);
+    return () => window.clearInterval(interval);
   }, []);
 
   // ==================== FILTERING ====================
@@ -205,7 +209,11 @@ export default function AdminReviews() {
                       {displayValue(review.customerName, "Anonymous customer")}
                     </h3>
                     <p className="review-meta">
-                      Order #{displayValue(review.orderId, "Unknown order").slice(0, 8)}
+                      Order #
+                      {displayValue(review.orderId, "Unknown order").slice(
+                        0,
+                        8,
+                      )}
                     </p>
                   </div>
                   <div className="review-rating">
@@ -293,7 +301,10 @@ export default function AdminReviews() {
                   <div className="detail-item">
                     <label>Food Item</label>
                     <p>
-                      {displayValue(selectedReview.foodItemName, "Unknown item")}
+                      {displayValue(
+                        selectedReview.foodItemName,
+                        "Unknown item",
+                      )}
                     </p>
                   </div>
                   <div className="detail-item">

@@ -31,7 +31,14 @@ function getOrderTime(order: OrderWithDateFields) {
 
 function AdminDashboard() {
   const navigate = useNavigate();
-  const { orders, inventoryItems, fetchOrders, loading, error } = useAdmin();
+  const {
+    orders,
+    inventoryItems,
+    fetchOrders,
+    fetchInventory,
+    loading,
+    error,
+  } = useAdmin();
 
   const [searchTerm, setSearchTerm] = useState<string>("");
 
@@ -42,6 +49,12 @@ function AdminDashboard() {
 
   useEffect(() => {
     fetchOrders();
+    fetchInventory();
+    const interval = window.setInterval(() => {
+      fetchOrders({ silent: true });
+      fetchInventory({ silent: true });
+    }, 5000);
+    return () => window.clearInterval(interval);
   }, []);
 
   const ordersList = orders as any[];
@@ -60,7 +73,7 @@ function AdminDashboard() {
       return ordersList.filter(
         (order) =>
           String(order.status || "").toLowerCase() ===
-          targetStatus.toLowerCase()
+          targetStatus.toLowerCase(),
       ).length;
     };
 
@@ -68,20 +81,21 @@ function AdminDashboard() {
       totalOrders: todayOrders.length,
       totalRevenue: todayOrders.reduce(
         (sum, order) => sum + Number(order.total || 0),
-        0
+        0,
       ),
       pending: getStatusCount("Pending"),
       preparing: getStatusCount("Preparing"),
       ready: getStatusCount("Ready"),
       delivered: getStatusCount("Delivered"),
-      cancelled:
-        getStatusCount("Cancelled") + getStatusCount("Canceled"),
+      cancelled: getStatusCount("Cancelled") + getStatusCount("Canceled"),
     };
   }, [ordersList]);
 
   const popularItems = useMemo(() => {
-    const itemCounts: Record<string, { name: string; count: number; id: string }> =
-      {};
+    const itemCounts: Record<
+      string,
+      { name: string; count: number; id: string }
+    > = {};
 
     ordersList.forEach((order) => {
       const items = order.items || [];
@@ -110,7 +124,7 @@ function AdminDashboard() {
     return inventoryItems
       .filter(
         (item: any) =>
-          item.status === "Low Stock" || item.status === "Out of Stock"
+          item.status === "Low Stock" || item.status === "Out of Stock",
       )
       .slice(0, 5);
   }, [inventoryItems]);

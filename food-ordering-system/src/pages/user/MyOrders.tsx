@@ -23,6 +23,8 @@ const formatDate = (value?: string) =>
 const displayValue = (value?: string) => value || "Not provided";
 const getOrderTime = (order: Order) =>
   new Date(order.createdAt || order.updatedAt || 0).getTime() || 0;
+const isDeliveredStatus = (status?: string) =>
+  String(status || "").toLowerCase() === "delivered";
 
 type OrderItem = Order["items"][number];
 type OrderModalMode = "details" | "reviews";
@@ -199,10 +201,15 @@ export default function MyOrders() {
     return () => window.clearTimeout(t);
   }, [toastMessage]);
 
-  const fetchOrders = async (userId: string) => {
+  const fetchOrders = async (
+    userId: string,
+    options?: { silent?: boolean },
+  ) => {
     try {
-      setLoading(true);
-      setError("");
+      if (!options?.silent) {
+        setLoading(true);
+        setError("");
+      }
       const res = await fetch(apiUrl("/orders"));
       if (!res.ok) throw new Error("Failed to fetch orders");
       const data = await res.json();
@@ -227,12 +234,16 @@ export default function MyOrders() {
 
       setOrders(customerOrders);
     } catch (err) {
-      setOrders([]);
-      setError(
-        err instanceof Error ? err.message : "Failed to load your orders.",
-      );
+      if (!options?.silent) {
+        setOrders([]);
+        setError(
+          err instanceof Error ? err.message : "Failed to load your orders.",
+        );
+      }
     } finally {
-      setLoading(false);
+      if (!options?.silent) {
+        setLoading(false);
+      }
     }
   };
 
@@ -259,7 +270,7 @@ export default function MyOrders() {
       }, 0);
       // Refresh orders every 5 seconds to show updated status
       const interval = window.setInterval(() => {
-        fetchOrders(currentUser.id);
+        fetchOrders(currentUser.id, { silent: true });
       }, 5000);
       return () => {
         window.clearTimeout(initialLoad);
@@ -267,6 +278,14 @@ export default function MyOrders() {
       };
     }
   }, [currentUser]);
+
+  useEffect(() => {
+    if (!selectedOrder) return;
+    const next = orders.find((order) => order.id === selectedOrder.id);
+    if (next && next !== selectedOrder) {
+      setSelectedOrder(next);
+    }
+  }, [orders, selectedOrder]);
 
   const filteredOrders = useMemo(() => {
     let filtered = orders;
@@ -466,6 +485,7 @@ export default function MyOrders() {
                     </div>
 
                     <div className="order-card-actions">
+<<<<<<< Updated upstream
                       {canReviewOrder && (
                         <button
                           onClick={() => openOrderModal(order, "reviews")}
@@ -474,6 +494,17 @@ export default function MyOrders() {
                           Review Items
                         </button>
                       )}
+=======
+                      {isDeliveredStatus(order.status) &&
+                        orderItems.length > 0 && (
+                          <button
+                            onClick={() => setSelectedOrder(order)}
+                            className="order-review-btn"
+                          >
+                            Review Items
+                          </button>
+                        )}
+>>>>>>> Stashed changes
                       <button
                         onClick={() => openOrderModal(order, "details")}
                         className="order-view-btn"
@@ -527,8 +558,34 @@ function OrderDetailsModal({
   const [reviewSuccess, setReviewSuccess] = useState("");
   const navigate = useNavigate();
   const orderItems = order.items ?? [];
+<<<<<<< Updated upstream
   const canReview = order.status === "Delivered";
   const isReviewMode = mode === "reviews";
+=======
+  const canReview = isDeliveredStatus(order.status);
+
+  useEffect(() => {
+    if (!canReview) return;
+
+    let isMounted = true;
+
+    getReviews()
+      .then((response) => {
+        if (isMounted) {
+          setExistingReviews(getReviewList(response));
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setExistingReviews([]);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [canReview, order.id]);
+>>>>>>> Stashed changes
 
   useEffect(() => {
     const body = document.body;

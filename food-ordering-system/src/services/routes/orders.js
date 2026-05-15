@@ -38,6 +38,7 @@ router.post("/", (req, res) => {
       .json({ message: "customerId and items are required." });
 
   const orders = getCollection("orders");
+  const menuItems = getCollection("menu");
   const newOrder = {
     id: "order" + Date.now().toString(36),
     customerId,
@@ -54,6 +55,24 @@ router.post("/", (req, res) => {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
+
+  if (Array.isArray(items) && items.length) {
+    items.forEach((orderItem) => {
+      const idx = menuItems.findIndex(
+        (menuItem) => String(menuItem.id) === String(orderItem.id),
+      );
+      if (idx === -1) return;
+
+      const quantity = Math.max(0, Number(orderItem.quantity) || 0);
+      const nextStock = Math.max(0, Number(menuItems[idx].stock) - quantity);
+      menuItems[idx].stock = nextStock;
+      if (nextStock === 0) {
+        menuItems[idx].available = false;
+      }
+    });
+
+    setCollection("menu", menuItems);
+  }
 
   orders.push(newOrder);
   setCollection("orders", orders);
