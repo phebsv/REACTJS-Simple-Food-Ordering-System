@@ -68,7 +68,7 @@
       "price": 100,
       "category": "Drinks",
       "image": "https://cdn.loveandlemons.com/wp-content/uploads/2025/05/iced-coffee.jpg",
-      "available": false,
+      "available": true,
       "stock": 5
     },
     {
@@ -88,7 +88,7 @@
       "price": 70,
       "category": "Desserts",
       "image": "https://sallysbakingaddiction.com/wp-content/uploads/2013/04/triple-chocolate-cake-4.jpg",
-      "available": false,
+      "available": true,
       "stock": 8
     },
     {
@@ -99,6 +99,16 @@
       "category": "Meals",
       "image": "https://137483765.cdn6.editmysite.com/uploads/1/3/7/4/137483765/RFY4TYOAJDV7RW2UHCD5J4FJ.jpeg",
       "available": true,
+      "stock": 0
+    },
+    {
+      "id": "mp79kslmffb0wgq02ku",
+      "name": "Choco Float",
+      "description": "hot like desert, cold like blizzard",
+      "price": 99,
+      "category": "Drinks",
+      "image": "https://i0.wp.com/i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/8e8a2c58-a5a3-4ca5-97d0-aacdcf27f05b_Go-Biz_20220106_110442.jpeg?resize=728%2C500",
+      "available": false,
       "stock": 0
     }
   ],
