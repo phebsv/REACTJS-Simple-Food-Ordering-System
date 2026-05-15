@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import BgFood from "../../components/BgFood";
@@ -6,6 +6,7 @@ import "./MyOrders.css";
 import type { Order } from "../../types";
 import { apiUrl } from "../../config/api";
 import { getStoredItem } from "../../utils/storage";
+import { addReview } from "../../services/api";
 
 const ORDER_STATUSES = [
   "All",
@@ -20,16 +21,28 @@ const formatPrice = (value?: number) => `₱${(value ?? 0).toFixed(2)}`;
 const formatDate = (value?: string) =>
   value ? new Date(value).toLocaleDateString() : "No date available";
 const displayValue = (value?: string) => value || "Not provided";
+const getOrderTime = (order: Order) =>
+  new Date(order.createdAt || order.updatedAt || 0).getTime() || 0;
+
+type CurrentUser = {
+  id: string;
+  name?: string;
+  email?: string;
+};
+
+const getCurrentUser = (): CurrentUser | null => {
+  const user = getStoredItem("currentUser");
+  return user ? JSON.parse(user) : null;
+};
 
 export default function MyOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [searchId, setSearchId] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [currentUser] = useState<CurrentUser | null>(() => getCurrentUser());
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const navigate = useNavigate();
   const previousStatusRef = useRef<Record<string, string>>({});
@@ -78,26 +91,28 @@ export default function MyOrders() {
   };
 
   useEffect(() => {
-    const user = getStoredItem("currentUser");
-    if (!user) {
+    if (!currentUser) {
       navigate("/login");
-      return;
     }
-    setCurrentUser(JSON.parse(user));
-  }, [navigate]);
+  }, [currentUser, navigate]);
 
   useEffect(() => {
     if (currentUser?.id) {
-      fetchOrders(currentUser.id);
+      const initialLoad = window.setTimeout(() => {
+        fetchOrders(currentUser.id);
+      }, 0);
       // Refresh orders every 5 seconds to show updated status
-      const interval = setInterval(() => {
+      const interval = window.setInterval(() => {
         fetchOrders(currentUser.id);
       }, 5000);
-      return () => clearInterval(interval);
+      return () => {
+        window.clearTimeout(initialLoad);
+        window.clearInterval(interval);
+      };
     }
   }, [currentUser]);
 
-  useEffect(() => {
+  const filteredOrders = useMemo(() => {
     let filtered = orders;
 
     // Search filter
@@ -112,7 +127,7 @@ export default function MyOrders() {
       filtered = filtered.filter((order) => order.status === selectedStatus);
     }
 
-    setFilteredOrders(filtered);
+    return [...filtered].sort((a, b) => getOrderTime(b) - getOrderTime(a));
   }, [orders, searchId, selectedStatus]);
 
   const statusBadgeColor = (status: string) => {
@@ -275,12 +290,22 @@ export default function MyOrders() {
                       </div>
                     </div>
 
-                    <button
-                      onClick={() => setSelectedOrder(order)}
-                      className="order-view-btn"
-                    >
-                      View Details
-                    </button>
+                    <div className="order-card-actions">
+                      {order.status === "Delivered" && orderItems.length > 0 && (
+                        <button
+                          onClick={() => setSelectedOrder(order)}
+                          className="order-review-btn"
+                        >
+                          Review Items
+                        </button>
+                      )}
+                      <button
+                        onClick={() => setSelectedOrder(order)}
+                        className="order-view-btn"
+                      >
+                        View Details
+                      </button>
+                    </div>
                   </div>
                 );
               })}
@@ -307,11 +332,77 @@ function OrderDetailsModal({
   order: Order;
   onClose: () => void;
 }) {
+  type OrderItem = Order["items"][number];
+
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
   const [cancelError, setCancelError] = useState("");
+  const [reviewingItem, setReviewingItem] = useState<OrderItem | null>(null);
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState("");
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [reviewError, setReviewError] = useState("");
+  const [reviewSuccess, setReviewSuccess] = useState("");
+  const [reviewedItems, setReviewedItems] = useState<Record<string, boolean>>(
+    {},
+  );
   const navigate = useNavigate();
   const orderItems = order.items ?? [];
+  const canReview = order.status === "Delivered";
+
+  const startReview = (item: OrderItem) => {
+    setReviewingItem(item);
+    setRating(5);
+    setComment("");
+    setReviewError("");
+    setReviewSuccess("");
+  };
+
+  const closeReview = () => {
+    setReviewingItem(null);
+    setReviewError("");
+  };
+
+  const handleSubmitReview = async () => {
+    if (!reviewingItem) return;
+
+    const cleanComment = comment.trim();
+    if (cleanComment.length > 180) {
+      setReviewError("Please keep your review under 180 characters.");
+      return;
+    }
+
+    setReviewLoading(true);
+    setReviewError("");
+    try {
+      await addReview({
+        orderId: order.id,
+        customerId: order.customerId,
+        customerName: order.customerName,
+        foodItemId: reviewingItem.id,
+        foodItemName: reviewingItem.name,
+        rating,
+        comment: cleanComment,
+        createdAt: new Date().toISOString(),
+        hidden: false,
+      });
+
+      setReviewedItems((prev) => ({
+        ...prev,
+        [`${order.id}-${reviewingItem.id}`]: true,
+      }));
+      setReviewSuccess("Thanks! Your review was submitted.");
+      setReviewingItem(null);
+      setComment("");
+      setRating(5);
+    } catch (err) {
+      setReviewError(
+        err instanceof Error ? err.message : "Failed to submit review.",
+      );
+    } finally {
+      setReviewLoading(false);
+    }
+  };
 
   const handleCancelOrder = async () => {
     if (!["Pending", "Preparing"].includes(order.status)) return;
@@ -392,21 +483,89 @@ function OrderDetailsModal({
             {orderItems.length === 0 ? (
               <p className="detail-placeholder">No item details available.</p>
             ) : (
-              orderItems.map((item, idx) => (
+              orderItems.map((item, idx) => {
+                const reviewKey = `${order.id}-${item.id}`;
+                const hasReviewed = reviewedItems[reviewKey];
+
+                return (
                 <div key={idx} className="order-item">
                   <div className="item-info">
                     <h4>{displayValue(item.name)}</h4>
                     <p>
                       Qty: {item.quantity ?? 0} x {formatPrice(item.price)}
                     </p>
+                    {canReview && (
+                      <button
+                        type="button"
+                        className="item-review-btn"
+                        onClick={() => startReview(item)}
+                        disabled={hasReviewed}
+                      >
+                        {hasReviewed ? "Reviewed" : "Review"}
+                      </button>
+                    )}
                   </div>
                   <span className="item-subtotal">
                     {formatPrice((item.price ?? 0) * (item.quantity ?? 0))}
                   </span>
                 </div>
-              ))
+                );
+              })
             )}
           </div>
+
+          {reviewSuccess && (
+            <p className="review-success-message">{reviewSuccess}</p>
+          )}
+
+          {reviewingItem && (
+            <div className="review-form-panel">
+              <div className="review-form-header">
+                <div>
+                  <p>Reviewing</p>
+                  <h3>{displayValue(reviewingItem.name)}</h3>
+                </div>
+                <button type="button" onClick={closeReview}>
+                  X
+                </button>
+              </div>
+
+              <div className="star-rating-control" aria-label="Select rating">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    className={star <= rating ? "star active" : "star"}
+                    onClick={() => setRating(star)}
+                    aria-label={`${star} star${star === 1 ? "" : "s"}`}
+                  >
+                    ★
+                  </button>
+                ))}
+              </div>
+
+              <textarea
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                maxLength={180}
+                placeholder="Write a short review..."
+                className="review-comment-input"
+              />
+
+              <div className="review-form-footer">
+                <span>{comment.trim().length}/180</span>
+                <button
+                  type="button"
+                  className="submit-review-btn"
+                  onClick={handleSubmitReview}
+                  disabled={reviewLoading}
+                >
+                  {reviewLoading ? "Submitting..." : "Submit Review"}
+                </button>
+              </div>
+              {reviewError && <p className="review-error">{reviewError}</p>}
+            </div>
+          )}
 
           <div className="detail-section">
             <h3>Summary</h3>
