@@ -10,6 +10,7 @@ import UInput from "../components/UInput";
 import RedBtn from "../components/RedBtn";
 import { MailIcon, LockIcon, UserIcon, PhoneIcon } from "../components/UInput";
 import { useAuth } from "../context/AuthContext";
+import { validateRegisterForm } from "../utils/validationHelpers";
 import "./Register.css";
 
 export default function Register() {
@@ -33,24 +34,20 @@ export default function Register() {
     const first = firstName.trim();
     const last = lastName.trim();
 
-    const isLikelyEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTrimmed);
-    const hasMinPasswordLen = password.length >= 8;
-    const hasLetter = /[A-Za-z]/.test(password);
-    const hasNumber = /\d/.test(password);
+    // Validate all form data using centralized validator
+    const validation = validateRegisterForm({
+      firstName: first,
+      lastName: last,
+      email: emailTrimmed,
+      phone,
+      password,
+      confirmPassword,
+      agree,
+    });
 
-    if (!agree) return setLocalError("Please agree to the terms.");
-    if (!first || !last || !emailTrimmed || !phoneDigits || !password || !confirmPassword)
-      return setLocalError("All fields are required.");
-    if (first.length < 2 || last.length < 2)
-      return setLocalError("Please enter your full name.");
-    if (!isLikelyEmail)
-      return setLocalError("Please enter a valid email address.");
-    if (phoneDigits.length < 10 || phoneDigits.length > 11)
-      return setLocalError("Please enter a valid phone number.");
-    if (!hasMinPasswordLen || !hasLetter || !hasNumber)
-      return setLocalError("Password must be at least 8 characters and include a letter and a number.");
-    if (password !== confirmPassword)
-      return setLocalError("Passwords do not match.");
+    if (!validation.valid) {
+      return setLocalError(validation.error || "Validation failed.");
+    }
 
     const success = await register({
       firstName: first,

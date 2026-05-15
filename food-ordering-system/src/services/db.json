@@ -27,16 +27,6 @@
       "passwordHash": "$2a$10$lKeUl1yQKY47lFsbaPhsau3TBhS1voFpKUJhAXqngQiYwByPfh/q2",
       "address": "",
       "role": "user"
-    },
-    {
-      "id": "mp76vlc4jqhlmoznvsp",
-      "name": "Robert Saydon",
-      "email": "saydon.avelino@gmail.com",
-      "phone": "09611339829",
-      "password": "vitamilk22",
-      "passwordHash": "$2a$10$NGi.ppfwLIcHbMgPuJN80OYHGTMqOB1YPGXNHW7dmAaSoCaLixq7u",
-      "address": "",
-      "role": "user"
     }
   ],
   "admins": [],
