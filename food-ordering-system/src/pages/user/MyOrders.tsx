@@ -17,7 +17,7 @@ const displayValue = (value?: string) => value || "Not provided";
 const getOrderTime = (order: Order) =>
   new Date(order.createdAt || order.updatedAt || 0).getTime() || 0;
 const isCancelledOrder = (order: Order) =>
-  order.status?.toLowerCase() === "cancelled";
+  ["cancelled", "canceled"].includes(String(order.status || "").toLowerCase());
 
 type OrderItem = Order["items"][number];
 type OrderModalMode = "details" | "reviews";

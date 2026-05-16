@@ -1,6 +1,8 @@
 import type { DashboardOrder, OrderStat } from "../interfaces";
 
 export function getOrderStats(orders: DashboardOrder[]): OrderStat[] {
+  const getStatus = (status: string) => status.toLowerCase();
+
   return [
     {
       label: "TOTAL ORDERS",
@@ -19,7 +21,9 @@ export function getOrderStats(orders: DashboardOrder[]): OrderStat[] {
     },
     {
       label: "CANCELED",
-      value: orders.filter((order) => order.status === "canceled").length,
+      value: orders.filter((order) =>
+        ["canceled", "cancelled"].includes(getStatus(order.status)),
+      ).length,
       icon: "X",
     },
   ];

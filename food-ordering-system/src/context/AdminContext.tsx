@@ -127,6 +127,15 @@ function getReviewList(response: any) {
   return [];
 }
 
+function normalizeOrderStatus(status: any): OrderStatus {
+  const value = String(status || "").toLowerCase();
+  if (value === "preparing") return "Preparing";
+  if (value === "ready") return "Ready";
+  if (value === "delivered") return "Delivered";
+  if (value === "cancelled" || value === "canceled") return "Cancelled";
+  return "Pending";
+}
+
 function mapReview(review: any): Review {
   return {
     id: String(firstValue(review.id, review.review_id, crypto.randomUUID())),
@@ -234,11 +243,9 @@ function mapOrder(order: any, customer?: any, items?: any[]): AdminOrder {
       ),
     ),
     total: Number(firstValue(baseOrder.total, baseOrder.total_amount, 0)),
-    status: firstValue(
-      baseOrder.status,
-      baseOrder.order_status,
-      "Pending",
-    ) as OrderStatus,
+    status: normalizeOrderStatus(
+      firstValue(baseOrder.status, baseOrder.order_status, "Pending"),
+    ),
     createdAt:
       firstValue(
         baseOrder.createdAt,
@@ -383,10 +390,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   };
 
   const cancelOrder = async (id: string) => {
-    // PHP backend doesn't have cancel endpoint - update locally
-    setOrders((prev) =>
-      prev.map((o) => (o.id === id ? { ...o, status: "Cancelled" as any } : o)),
-    );
+    await updateOrderStatus(id, "Cancelled");
   };
 
   // INVENTORY (derived from menu items)

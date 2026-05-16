@@ -118,10 +118,25 @@ router.post("/", requireAuth, (req, res) => {
   return res.status(201).json(newOrder);
 });
 
-router.patch("/:id", requireAdmin, (req, res) => {
+router.patch("/:id", requireAuth, (req, res) => {
   const orders = getCollection("orders");
   const idx = orders.findIndex((o) => o.id === req.params.id);
   if (idx === -1) return res.status(404).json({ message: "Order not found." });
+
+  const isAdmin = req.user?.role === "admin";
+  const isOwner = String(orders[idx].customerId) === String(req.user?.id);
+  const nextStatus =
+    req.body.status !== undefined ? String(req.body.status) : undefined;
+  const isCancelRequest = nextStatus?.toLowerCase() === "cancelled";
+  const currentStatus = String(orders[idx].status || "").toLowerCase();
+  const canCustomerCancel =
+    isOwner &&
+    isCancelRequest &&
+    ["pending", "preparing"].includes(currentStatus);
+
+  if (!isAdmin && !canCustomerCancel) {
+    return res.status(403).json({ message: "Forbidden." });
+  }
 
   const fields = ["status", "paymentMethod", "deliveryNotes", "updatedAt"];
   fields.forEach((f) => {
