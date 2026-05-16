@@ -6,9 +6,17 @@
       "passwordHash": "$2a$10$Z7yIe9z6V1hG/HkG9ho23OMEX9xlch.3WEVR6SMBvET/6hkJ/m7ty",
       "name": "Admin",
       "role": "admin"
+    },
+    {
+      "id": "mp7rordsfjr8ibujoxl",
+      "name": "Robert Avelino",
+      "email": "robert@gmail.com",
+      "phone": "09291052281",
+      "passwordHash": "$2a$10$.gl0Np6xq8eeg6AMfQN6ZeStEhR1ORuA3IHVyQp/eYpQSlrOgVW86",
+      "address": "",
+      "role": "user"
     }
   ],
-  "admins": [],
   "menu": [
     {
       "id": "1",
@@ -19,7 +27,7 @@
       "image": "https://thelocalpalate.com/wp-content/uploads/2025/04/TLP-featured-image-34-1.jpg",
       "available": true,
       "stock": 43,
-      "lastUpdated": "2026-05-16T01:55:46.697Z"
+      "lastUpdated": "2026-05-16T03:09:47.480Z"
     },
     {
       "id": "2",
@@ -51,8 +59,8 @@
       "category": "Snacks",
       "image": "https://www.allrecipes.com/thmb/8_B6OD1w6h1V0zPi8KAGzD41Kzs=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/50223-homemade-crispy-seasoned-french-fries-VAT-Beauty-4x3-789ecb2eaed34d6e879b9a93dd56a50a.jpg",
       "available": true,
-      "stock": 44,
-      "lastUpdated": "2026-05-16T02:58:17.482Z"
+      "stock": 43,
+      "lastUpdated": "2026-05-16T03:10:59.292Z"
     },
     {
       "id": "5",
@@ -73,8 +81,8 @@
       "category": "Meals",
       "image": "https://137483765.cdn6.editmysite.com/uploads/1/3/7/4/137483765/RFY4TYOAJDV7RW2UHCD5J4FJ.jpeg",
       "available": true,
-      "stock": 11,
-      "lastUpdated": "2026-05-16T02:58:17.482Z"
+      "stock": 9,
+      "lastUpdated": "2026-05-16T03:10:59.292Z"
     },
     {
       "id": "mp79kslmffb0wgq02ku",
@@ -83,9 +91,9 @@
       "price": 99,
       "category": "Drinks",
       "image": "https://i0.wp.com/i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/8e8a2c58-a5a3-4ca5-97d0-aacdcf27f05b_Go-Biz_20220106_110442.jpeg?resize=728%2C500",
-      "available": false,
-      "stock": 0,
-      "lastUpdated": "2026-05-16T02:58:17.482Z"
+      "available": true,
+      "stock": 15,
+      "lastUpdated": "2026-05-16T03:14:06.717Z"
     },
     {
       "id": "moxrt45pief0f4ccn8h",
@@ -101,12 +109,12 @@
   ],
   "orders": [
     {
-      "id": "ordermp7rb284",
-      "customerId": "mp7oytx45cpao8sl6bx",
-      "customerName": "Saydon Avelino",
-      "customerEmail": "saydon@gmail.com",
+      "id": "ordermp7rre1m",
+      "customerId": "mp7rordsfjr8ibujoxl",
+      "customerName": "Robert Avelino",
+      "customerEmail": "robert@gmail.com",
       "customerPhone": "09291052281",
-      "customerAddress": "14-13, Deca Homes, Phase 1, Tungkil, Minglanilla, Cebu",
+      "customerAddress": "Linao, Talisay City, Cebu",
       "items": [
         {
           "id": "mp79kslmffb0wgq02ku",
@@ -117,70 +125,32 @@
           "quantity": 1
         },
         {
+          "id": "moxbo18vpdrzdvkx56a",
+          "name": "Cheesy Burger",
+          "description": "Cheesy Burger with lots of cheese and flavorful sauce",
+          "price": 120,
+          "category": "Meals",
+          "quantity": 2
+        },
+        {
           "id": "4",
           "name": "French Fries",
           "description": "Crispy golden fries served hot",
           "price": 50,
           "category": "Snacks",
           "quantity": 1
-        },
-        {
-          "id": "moxbo18vpdrzdvkx56a",
-          "name": "Cheesy Burger",
-          "description": "Cheesy Burger with lots of cheese and flavorful sauce",
-          "price": 120,
-          "category": "Meals",
-          "quantity": 1
         }
       ],
-      "subtotal": 269,
-      "total": 269,
+      "subtotal": 389,
+      "total": 389,
       "status": "Delivered",
-      "paymentMethod": "credit-card",
+      "paymentMethod": "cash",
       "deliveryNotes": "",
-      "createdAt": "2026-05-16T02:58:17.476Z",
-      "updatedAt": "2026-05-16T02:59:07.474Z"
+      "createdAt": "2026-05-16T03:10:59.290Z",
+      "updatedAt": "2026-05-16T03:12:29.662Z"
     }
   ],
-  "inventory": [],
-  "reviews": [
-    {
-      "id": "reviewmp7rcuiu",
-      "orderId": "ordermp7rb284",
-      "customerId": "mp7oytx45cpao8sl6bx",
-      "customerName": "Saydon Avelino",
-      "foodItemId": "mp79kslmffb0wgq02ku",
-      "foodItemName": "Choco Float",
-      "rating": 3,
-      "comment": "So refreshing but too sweet for me",
-      "createdAt": "2026-05-16T02:59:40.806Z",
-      "hidden": false
-    },
-    {
-      "id": "reviewmp7rd2ts",
-      "orderId": "ordermp7rb284",
-      "customerId": "mp7oytx45cpao8sl6bx",
-      "customerName": "Saydon Avelino",
-      "foodItemId": "4",
-      "foodItemName": "French Fries",
-      "rating": 5,
-      "comment": "was good, not great",
-      "createdAt": "2026-05-16T02:59:51.568Z",
-      "hidden": false
-    },
-    {
-      "id": "reviewmp7rddq0",
-      "orderId": "ordermp7rb284",
-      "customerId": "mp7oytx45cpao8sl6bx",
-      "customerName": "Saydon Avelino",
-      "foodItemId": "moxbo18vpdrzdvkx56a",
-      "foodItemName": "Cheesy Burger",
-      "rating": 5,
-      "comment": "The burger was so juicy",
-      "createdAt": "2026-05-16T03:00:05.688Z",
-      "hidden": false
-    }
-  ],
+  "reviews": [],
   "cart_items": [],
   "$schema": "./node_modules/json-server/schema.json"
 }

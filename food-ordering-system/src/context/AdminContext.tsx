@@ -12,6 +12,7 @@ import {
   adminGetOrders,
   adminUpdateOrderStatus,
   getReviews as apiGetReviews,
+  deleteReview as apiDeleteReview,
   updateInventory,
 } from "../services/api.ts";
 import {
@@ -59,7 +60,6 @@ interface AdminContextType {
   // Reviews
   reviews: Review[];
   fetchReviews: (options?: { showLoading?: boolean }) => Promise<void>;
-  hideReview: (id: string) => Promise<void>;
   deleteReview: (id: string) => Promise<void>;
 
   // State
@@ -522,13 +522,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const hideReview = async (id: string) => {
-    setReviews((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, hidden: true } : r)),
-    );
-  };
-
   const deleteReview = async (id: string) => {
+    await apiDeleteReview(id);
     setReviews((prev) => prev.filter((r) => r.id !== id));
   };
 
@@ -573,7 +568,6 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         updateInventoryStatus,
         reviews,
         fetchReviews,
-        hideReview,
         deleteReview,
         loading,
         error,

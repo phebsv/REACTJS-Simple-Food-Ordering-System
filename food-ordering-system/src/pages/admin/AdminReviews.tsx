@@ -30,15 +30,8 @@ const formatReviewDateTime = (value: string | undefined) => {
 };
 
 export default function AdminReviews() {
-  const {
-    reviews,
-    fetchReviews,
-    hideReview,
-    deleteReview,
-    loading,
-    error,
-    setError,
-  } = useAdmin();
+  const { reviews, fetchReviews, deleteReview, loading, error, setError } =
+    useAdmin();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [ratingFilter, setRatingFilter] = useState<RatingFilter>("All");
@@ -47,7 +40,7 @@ export default function AdminReviews() {
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;
     reviewId?: string;
-    action?: "hide" | "delete";
+    action?: "delete";
   }>({ isOpen: false });
   const [actionLoading, setActionLoading] = useState(false);
 
@@ -74,9 +67,7 @@ export default function AdminReviews() {
 
       const matchesRating =
         ratingFilter === "All" || review.rating === ratingFilter;
-      const notHidden = !review.hidden;
-
-      return matchesSearch && matchesRating && notHidden;
+      return matchesSearch && matchesRating;
     });
   }, [reviews, searchQuery, ratingFilter]);
 
@@ -84,14 +75,6 @@ export default function AdminReviews() {
   const handleOpenDetails = (review: Review) => {
     setSelectedReview(review);
     setIsDetailsOpen(true);
-  };
-
-  const handleHideClick = (reviewId: string) => {
-    setConfirmDialog({
-      isOpen: true,
-      reviewId,
-      action: "hide",
-    });
   };
 
   const handleDeleteClick = (reviewId: string) => {
@@ -107,16 +90,9 @@ export default function AdminReviews() {
 
     try {
       setActionLoading(true);
-      if (confirmDialog.action === "hide") {
-        await hideReview(confirmDialog.reviewId);
-        if (selectedReview?.id === confirmDialog.reviewId) {
-          setIsDetailsOpen(false);
-        }
-      } else if (confirmDialog.action === "delete") {
-        await deleteReview(confirmDialog.reviewId);
-        if (selectedReview?.id === confirmDialog.reviewId) {
-          setIsDetailsOpen(false);
-        }
+      await deleteReview(confirmDialog.reviewId);
+      if (selectedReview?.id === confirmDialog.reviewId) {
+        setIsDetailsOpen(false);
       }
       setConfirmDialog({ isOpen: false });
     } catch (err) {
@@ -127,7 +103,6 @@ export default function AdminReviews() {
   };
 
   const ratingFilters: RatingFilter[] = ["All", 5, 4, 3, 2, 1];
-  const totalHiddenReviews = reviews.filter((r) => r.hidden).length;
 
   return (
     <div className="admin-layout">
@@ -139,12 +114,6 @@ export default function AdminReviews() {
         />
 
         {error && <div className="admin-error-banner">{error}</div>}
-
-        {totalHiddenReviews > 0 && (
-          <div className="info-banner">
-            {totalHiddenReviews} review(s) are hidden
-          </div>
-        )}
 
         {/* ==================== SEARCH BAR ==================== */}
         <div className="reviews-search-bar">
@@ -177,9 +146,8 @@ export default function AdminReviews() {
                 {rating === "All" ? "All" : `${rating} stars`}
                 <span className="tab-count">
                   {rating === "All"
-                    ? reviews.filter((r) => !r.hidden).length
-                    : reviews.filter((r) => r.rating === rating && !r.hidden)
-                        .length}
+                    ? reviews.length
+                    : reviews.filter((r) => r.rating === rating).length}
                 </span>
               </button>
             ))}
@@ -205,7 +173,11 @@ export default function AdminReviews() {
                       {displayValue(review.customerName, "Anonymous customer")}
                     </h3>
                     <p className="review-meta">
-                      Order #{displayValue(review.orderId, "Unknown order").slice(0, 8)}
+                      Order #
+                      {displayValue(review.orderId, "Unknown order").slice(
+                        0,
+                        8,
+                      )}
                     </p>
                   </div>
                   <div className="review-rating">
@@ -233,12 +205,6 @@ export default function AdminReviews() {
                       onClick={() => handleOpenDetails(review)}
                     >
                       View
-                    </button>
-                    <button
-                      className="action-btn hide-btn"
-                      onClick={() => handleHideClick(review.id)}
-                    >
-                      Hide
                     </button>
                     <button
                       className="action-btn delete-btn"
@@ -293,7 +259,10 @@ export default function AdminReviews() {
                   <div className="detail-item">
                     <label>Food Item</label>
                     <p>
-                      {displayValue(selectedReview.foodItemName, "Unknown item")}
+                      {displayValue(
+                        selectedReview.foodItemName,
+                        "Unknown item",
+                      )}
                     </p>
                   </div>
                   <div className="detail-item">
@@ -323,12 +292,6 @@ export default function AdminReviews() {
 
               <div className="details-actions">
                 <button
-                  className="action-btn hide-btn"
-                  onClick={() => handleHideClick(selectedReview.id)}
-                >
-                  Hide Review
-                </button>
-                <button
                   className="action-btn delete-btn"
                   onClick={() => handleDeleteClick(selectedReview.id)}
                 >
@@ -342,18 +305,10 @@ export default function AdminReviews() {
         {/* ==================== CONFIRM DIALOG ==================== */}
         <ConfirmDialog
           isOpen={confirmDialog.isOpen}
-          title={
-            confirmDialog.action === "delete"
-              ? "Delete Review?"
-              : "Hide Review?"
-          }
-          message={
-            confirmDialog.action === "delete"
-              ? "Are you sure you want to delete this review? This action cannot be undone."
-              : "This review will be hidden from public view."
-          }
-          confirmText={confirmDialog.action === "delete" ? "Delete" : "Hide"}
-          isDangerous={confirmDialog.action === "delete"}
+          title="Delete Review?"
+          message="Are you sure you want to delete this review? This action cannot be undone."
+          confirmText="Delete"
+          isDangerous={true}
           onConfirm={handleConfirmAction}
           onCancel={() => setConfirmDialog({ isOpen: false })}
           isLoading={actionLoading}

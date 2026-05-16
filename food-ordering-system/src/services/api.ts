@@ -125,7 +125,6 @@ export async function adminDeleteMenuItem(id: string) {
   return res.data;
 }
 
-
 export async function adminGetOrders() {
   const res = await API.get("/orders");
   return res.data;
