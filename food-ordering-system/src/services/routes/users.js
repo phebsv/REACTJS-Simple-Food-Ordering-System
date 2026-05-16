@@ -1,4 +1,5 @@
 const express = require("express");
+const bcrypt = require("bcryptjs");
 const router = express.Router();
 const { getCollection, setCollection } = require("../data/db");
 const { requireAuth } = require("../middleware/auth");
@@ -8,18 +9,24 @@ router.get("/", (req, res) => {
   let users = getCollection("users");
 
   if (email && password) {
-    users = users.filter((u) => u.email === email && u.password === password);
-    return res.json(users.map(({ password: _, ...u }) => u));
+    const normalized = String(email).trim().toLowerCase();
+    users = users.filter(
+      (u) =>
+        String(u.email).toLowerCase() === normalized &&
+        u.passwordHash &&
+        bcrypt.compareSync(String(password), String(u.passwordHash)),
+    );
+    return res.json(users.map(({ password: _, passwordHash: __, ...u }) => u));
   }
 
-  return res.json(users.map(({ password: _, ...u }) => u));
+  return res.json(users.map(({ password: _, passwordHash: __, ...u }) => u));
 });
 
 router.get("/:id", requireAuth, (req, res) => {
   const users = getCollection("users");
   const user = users.find((u) => u.id === req.params.id);
   if (!user) return res.status(404).json({ message: "User not found." });
-  const { password: _, ...safeUser } = user;
+  const { password: _, passwordHash: __, ...safeUser } = user;
   return res.json(safeUser);
 });
 
@@ -34,7 +41,7 @@ router.patch("/:id", requireAuth, (req, res) => {
   if (address !== undefined) users[idx].address = address;
 
   setCollection("users", users);
-  const { password: _, ...safeUser } = users[idx];
+  const { password: _, passwordHash: __, ...safeUser } = users[idx];
   return res.json(safeUser);
 });
 

@@ -22,7 +22,6 @@ router.post("/register", (req, res) => {
     name,
     email,
     phone,
-    password,
     passwordHash,
     address,
     role: "user",
@@ -56,9 +55,8 @@ router.post("/login", (req, res) => {
       String(u.role).toLowerCase() === "admin" &&
       (String(u.username || "").toLowerCase() === normalized ||
         String(u.email || "").toLowerCase() === normalized) &&
-      (u.passwordHash
-        ? bcrypt.compareSync(String(password), String(u.passwordHash))
-        : String(u.password) === String(password)),
+      u.passwordHash &&
+      bcrypt.compareSync(String(password), String(u.passwordHash)),
   );
 
   if (admin) {
@@ -75,9 +73,9 @@ router.post("/login", (req, res) => {
   if (!user)
     return res.status(401).json({ message: "Invalid email or password." });
 
-  const matches = user.passwordHash
-    ? bcrypt.compareSync(String(password), String(user.passwordHash))
-    : String(user.password) === String(password);
+  const matches =
+    user.passwordHash &&
+    bcrypt.compareSync(String(password), String(user.passwordHash));
 
   if (!matches)
     return res.status(401).json({ message: "Invalid email or password." });
@@ -106,9 +104,8 @@ router.post("/admin-login", (req, res) => {
       String(u.role).toLowerCase() === "admin" &&
       (String(u.username || "").toLowerCase() === normalized ||
         String(u.email || "").toLowerCase() === normalized) &&
-      (u.passwordHash
-        ? bcrypt.compareSync(String(password), String(u.passwordHash))
-        : String(u.password) === String(password)),
+      u.passwordHash &&
+      bcrypt.compareSync(String(password), String(u.passwordHash)),
   );
 
   if (!admin)

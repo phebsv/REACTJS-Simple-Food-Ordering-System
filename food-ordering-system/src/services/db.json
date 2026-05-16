@@ -3,7 +3,6 @@
     {
       "id": "1",
       "email": "admin",
-      "password": "Admin1234",
       "passwordHash": "$2a$10$Z7yIe9z6V1hG/HkG9ho23OMEX9xlch.3WEVR6SMBvET/6hkJ/m7ty",
       "name": "Admin",
       "role": "admin"
@@ -13,13 +12,20 @@
       "name": "Saydon Avelino",
       "email": "saydon@gmail.com",
       "phone": "09291052281",
-      "password": "vitamilk22",
       "passwordHash": "$2a$10$2qSoCOISxgW6Ns0myL9P0.9twfpvq15i/02d1pcdmil.Vtz4pDkaa",
+      "address": "",
+      "role": "user"
+    },
+    {
+      "id": "mp7plp92f2ymxtcnnwb",
+      "name": "Jiyong Gimeno",
+      "email": "quiela@gmail.com",
+      "phone": "09611339829",
+      "passwordHash": "$2a$10$/588TbxVE3ri0G3pSA1dHO.YzidQuhcU8Mv2p26E0dg.nyNQfTWOS",
       "address": "",
       "role": "user"
     }
   ],
-  "admins": [],
   "menu": [
     {
       "id": "1",

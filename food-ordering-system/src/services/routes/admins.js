@@ -15,7 +15,7 @@ router.get("/", (req, res) => {
     );
   }
 
-  return res.json(admins.map(({ password: _, ...a }) => a));
+  return res.json(admins.map(({ password: _, passwordHash: __, ...a }) => a));
 });
 
 module.exports = router;
