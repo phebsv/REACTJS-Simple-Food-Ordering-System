@@ -18,7 +18,6 @@ import "./Login.css";
 export default function Login() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [remember, setRemember] = useState<boolean>(false);
   const [localError, setLocalError] = useState<string>("");
 
   const { login, loading, error } = useAuth();
@@ -36,7 +35,7 @@ export default function Login() {
       return setLocalError(validation.error || "Validation failed.");
     }
 
-    const customerSuccess = await login(loginId, password, { remember });
+    const customerSuccess = await login(loginId, password, { remember: false });
     if (!customerSuccess) {
       return;
     }
@@ -102,17 +101,6 @@ export default function Login() {
               />
 
               <div className="login-options">
-                <label className="login-remember">
-                  <input
-                    type="checkbox"
-                    checked={remember}
-                    onChange={(e) => setRemember(e.target.checked)}
-                  />
-                  Remember me
-                </label>
-                <button type="button" className="login-forgot">
-                  Forgot Password ?
-                </button>
               </div>
 
               {displayError && <p className="login-error">{displayError}</p>}
