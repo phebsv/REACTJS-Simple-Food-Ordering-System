@@ -119,46 +119,12 @@
   ],
   "orders": [
     {
-<<<<<<< .merge_file_pyyuhn
-      "id": "ordermox6kl6n",
-      "customerId": "mox6imuq7zn4m00vmag",
-      "customerName": "Christian  Demetillo",
-      "customerEmail": "dmtchrs@gmail.com",
-      "customerPhone": "09617095667",
-      "customerAddress": "Pakigne, Minglanilla, Cebu",
-      "items": [
-        {
-          "id": "1",
-          "name": "Classic Burger",
-          "description": "Fresh beef patty with lettuce, tomato, and special sauce",
-          "price": 8.99,
-          "category": "Meals",
-          "quantity": 1
-        }
-      ],
-      "subtotal": 8.99,
-      "total": 8.99,
-      "status": "Ready",
-      "paymentMethod": "cash",
-      "deliveryNotes": "asdas",
-      "createdAt": "2026-05-08T17:20:08.255Z",
-      "updatedAt": "2026-05-08T17:34:15.249Z"
-    },
-    {
-      "id": "ordermox7a76u",
-      "customerId": "1",
-      "customerName": "Admin",
-      "customerEmail": "admin",
-      "customerPhone": "09617095667",
-      "customerAddress": "Pakigne, Minglanilla, Cebu",
-=======
       "id": "ordermp7as6ny",
       "customerId": "mp7aert5uy6yo8yfobk",
       "customerName": "Robert Avelino",
       "customerEmail": "robert@gmail.com",
       "customerPhone": "09291052281",
       "customerAddress": "Linao, Talisay City, Cebu",
->>>>>>> .merge_file_NaKvwm
       "items": [
         {
           "id": "1",
@@ -222,42 +188,10 @@
       "subtotal": 3250,
       "total": 3250,
       "status": "Delivered",
-<<<<<<< .merge_file_pyyuhn
-      "paymentMethod": "cash",
-      "deliveryNotes": "nideliver ko guys ",
-      "createdAt": "2026-05-09T01:10:52.357Z",
-      "updatedAt": "2026-05-09T01:28:47.770Z"
-    },
-    {
-      "id": "ordermoxrnrcy",
-      "customerId": "mox6imuq7zn4m00vmag",
-      "customerName": "Christian  Demetillo",
-      "customerEmail": "dmtchrs@gmail.com",
-      "customerPhone": "09617095667",
-      "customerAddress": "Pakigne, Minglanilla, Cebu",
-      "items": [
-        {
-          "id": "1",
-          "name": "Classic Burger",
-          "description": "Fresh beef patty with lettuce, tomato, and special sauce",
-          "price": 150,
-          "category": "Meals",
-          "quantity": 1
-        }
-      ],
-      "subtotal": 150,
-      "total": 150,
-      "status": "Delivered",
-      "paymentMethod": "credit-card",
-      "deliveryNotes": "",
-      "createdAt": "2026-05-09T03:10:28.162Z",
-      "updatedAt": "2026-05-09T03:13:18.836Z"
-=======
       "paymentMethod": "credit-card",
       "deliveryNotes": "",
       "createdAt": "2026-05-15T19:33:25.502Z",
       "updatedAt": "2026-05-15T19:34:03.596Z"
->>>>>>> .merge_file_NaKvwm
     }
   ],
   "inventory": [
