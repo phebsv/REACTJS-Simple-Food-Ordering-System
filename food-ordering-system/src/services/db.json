@@ -9,22 +9,12 @@
       "role": "admin"
     },
     {
-      "id": "mowsjsivwstapw3zb2r",
-      "name": "jiyong denpai",
-      "email": "jiyong@gmail.com",
+      "id": "mp7bc5cahh6wk9rgvcj",
+      "name": "Robert Avelino",
+      "email": "avelino@gmail.com",
       "phone": "09291052281",
       "password": "vitamilk22",
-      "passwordHash": "$2a$10$rDBMWsbBp50B7Wih12fOH.0Q.L380aR9afQeje/CslVbjAFR.wRm.",
-      "address": "",
-      "role": "user"
-    },
-    {
-      "id": "mox6imuq7zn4m00vmag",
-      "name": "Christian  Demetillo",
-      "email": "dmtchrs@gmail.com",
-      "phone": "09617095667",
-      "password": "ninja123",
-      "passwordHash": "$2a$10$lKeUl1yQKY47lFsbaPhsau3TBhS1voFpKUJhAXqngQiYwByPfh/q2",
+      "passwordHash": "$2a$10$RO/06QfsztidYZUVUbQvv.vP9wt9p6/FuNdXmLO7ZTH7ejWCN/HMq",
       "address": "",
       "role": "user"
     },
@@ -59,7 +49,8 @@
       "category": "Meals",
       "image": "https://www.simplyrecipes.com/thmb/KE6iMblr3R2Db6oE8HdyVsFSj2A=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/__opt__aboutcom__coeus__resources__content_migration__simply_recipes__uploads__2019__09__easy-pepperoni-pizza-lead-3-1024x682-583b275444104ef189d693a64df625da.jpg",
       "available": true,
-      "stock": 30
+      "stock": 50,
+      "lastUpdated": "2026-05-15T19:34:46.485Z"
     },
     {
       "id": "3",
@@ -68,8 +59,9 @@
       "price": 100,
       "category": "Drinks",
       "image": "https://cdn.loveandlemons.com/wp-content/uploads/2025/05/iced-coffee.jpg",
-      "available": false,
-      "stock": 5
+      "available": true,
+      "stock": 25,
+      "lastUpdated": "2026-05-15T19:34:54.397Z"
     },
     {
       "id": "4",
@@ -78,8 +70,9 @@
       "price": 50,
       "category": "Snacks",
       "image": "https://www.allrecipes.com/thmb/8_B6OD1w6h1V0zPi8KAGzD41Kzs=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/50223-homemade-crispy-seasoned-french-fries-VAT-Beauty-4x3-789ecb2eaed34d6e879b9a93dd56a50a.jpg",
-      "available": false,
-      "stock": 0
+      "available": true,
+      "stock": 45,
+      "lastUpdated": "2026-05-15T19:35:16.755Z"
     },
     {
       "id": "5",
@@ -88,8 +81,9 @@
       "price": 70,
       "category": "Desserts",
       "image": "https://sallysbakingaddiction.com/wp-content/uploads/2013/04/triple-chocolate-cake-4.jpg",
-      "available": false,
-      "stock": 8
+      "available": true,
+      "stock": 8,
+      "lastUpdated": "2026-05-15T19:35:27.806Z"
     },
     {
       "id": "moxbo18vpdrzdvkx56a",
@@ -98,7 +92,18 @@
       "price": 120,
       "category": "Meals",
       "image": "https://137483765.cdn6.editmysite.com/uploads/1/3/7/4/137483765/RFY4TYOAJDV7RW2UHCD5J4FJ.jpeg",
-      "available": true,
+      "available": false,
+      "stock": 0,
+      "lastUpdated": "2026-05-15T19:35:38.383Z"
+    },
+    {
+      "id": "mp79kslmffb0wgq02ku",
+      "name": "Choco Float",
+      "description": "hot like desert, cold like blizzard",
+      "price": 99,
+      "category": "Drinks",
+      "image": "https://i0.wp.com/i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/8e8a2c58-a5a3-4ca5-97d0-aacdcf27f05b_Go-Biz_20220106_110442.jpeg?resize=728%2C500",
+      "available": false,
       "stock": 0
     },
     {
@@ -114,6 +119,7 @@
   ],
   "orders": [
     {
+<<<<<<< .merge_file_pyyuhn
       "id": "ordermox6kl6n",
       "customerId": "mox6imuq7zn4m00vmag",
       "customerName": "Christian  Demetillo",
@@ -145,6 +151,14 @@
       "customerEmail": "admin",
       "customerPhone": "09617095667",
       "customerAddress": "Pakigne, Minglanilla, Cebu",
+=======
+      "id": "ordermp7as6ny",
+      "customerId": "mp7aert5uy6yo8yfobk",
+      "customerName": "Robert Avelino",
+      "customerEmail": "robert@gmail.com",
+      "customerPhone": "09291052281",
+      "customerAddress": "Linao, Talisay City, Cebu",
+>>>>>>> .merge_file_NaKvwm
       "items": [
         {
           "id": "1",
@@ -158,64 +172,57 @@
       "subtotal": 150,
       "total": 150,
       "status": "Delivered",
-      "paymentMethod": "cash",
+      "paymentMethod": "credit-card",
       "deliveryNotes": "",
-      "createdAt": "2026-05-08T17:40:03.174Z",
-      "updatedAt": "2026-05-08T17:43:19.530Z"
+      "createdAt": "2026-05-15T19:15:42.910Z",
+      "updatedAt": "2026-05-15T19:16:23.450Z"
     },
     {
-      "id": "ordermoxbpmh5",
-      "customerId": "mox6imuq7zn4m00vmag",
-      "customerName": "Christian  Demetillo",
-      "customerEmail": "dmtchrs@gmail.com",
-      "customerPhone": "09617095667",
-      "customerAddress": "Pakigne, Minglanilla, Cebu",
+      "id": "ordermp7bcotc",
+      "customerId": "mp7bc5cahh6wk9rgvcj",
+      "customerName": "Robert Avelino",
+      "customerEmail": "avelino@gmail.com",
+      "customerPhone": "09291052281",
+      "customerAddress": "Linao, Talisay City, Cebu",
       "items": [
         {
-          "id": "moxbo18vpdrzdvkx56a",
-          "name": "Cheesy Burger",
-          "description": "Cheesy Burger with lots of cheese and flavorful sauce",
-          "price": 120,
-          "category": "Meals",
-          "quantity": 1
-        },
-        {
-          "id": "1",
-          "name": "Classic Burger",
-          "description": "Fresh beef patty with lettuce, tomato, and special sauce",
-          "price": 150,
-          "category": "Meals",
+          "id": "3",
+          "name": "Iced Coffee",
+          "description": "Refreshing iced coffee with a smooth finish",
+          "price": 100,
+          "category": "Drinks",
           "quantity": 1
         }
       ],
-      "subtotal": 270,
-      "total": 270,
+      "subtotal": 100,
+      "total": 100,
       "status": "Delivered",
       "paymentMethod": "credit-card",
       "deliveryNotes": "",
-      "createdAt": "2026-05-08T19:44:01.289Z",
-      "updatedAt": "2026-05-08T19:46:54.039Z"
+      "createdAt": "2026-05-15T19:31:39.552Z",
+      "updatedAt": "2026-05-15T19:32:37.635Z"
     },
     {
-      "id": "ordermoxndyh1",
-      "customerId": "mowsjsivwstapw3zb2r",
-      "customerName": "jiyong denpai",
-      "customerEmail": "jiyong@gmail.com",
+      "id": "ordermp7beyke",
+      "customerId": "mp7bc5cahh6wk9rgvcj",
+      "customerName": "Robert Avelino",
+      "customerEmail": "avelino@gmail.com",
       "customerPhone": "09291052281",
-      "customerAddress": "USJR Quad Campus",
+      "customerAddress": "luyo sa seoil",
       "items": [
         {
-          "id": "1",
-          "name": "Classic Burger",
-          "description": "Fresh beef patty with lettuce, tomato, and special sauce",
-          "price": 150,
+          "id": "2",
+          "name": "Pepperoni Pizza",
+          "description": "Crispy crust topped with mozzarella and pepperoni",
+          "price": 130,
           "category": "Meals",
-          "quantity": 2
+          "quantity": 25
         }
       ],
-      "subtotal": 300,
-      "total": 300,
+      "subtotal": 3250,
+      "total": 3250,
       "status": "Delivered",
+<<<<<<< .merge_file_pyyuhn
       "paymentMethod": "cash",
       "deliveryNotes": "nideliver ko guys ",
       "createdAt": "2026-05-09T01:10:52.357Z",
@@ -245,6 +252,12 @@
       "deliveryNotes": "",
       "createdAt": "2026-05-09T03:10:28.162Z",
       "updatedAt": "2026-05-09T03:13:18.836Z"
+=======
+      "paymentMethod": "credit-card",
+      "deliveryNotes": "",
+      "createdAt": "2026-05-15T19:33:25.502Z",
+      "updatedAt": "2026-05-15T19:34:03.596Z"
+>>>>>>> .merge_file_NaKvwm
     }
   ],
   "inventory": [
@@ -260,25 +273,25 @@
       "id": "2",
       "name": "Pepperoni Pizza",
       "category": "Meals",
-      "stock": 30,
+      "stock": 50,
       "status": "Available",
-      "lastUpdated": "2024-04-30T10:00:00Z"
+      "lastUpdated": "2026-05-15T19:34:46.489Z"
     },
     {
       "id": "3",
       "name": "Iced Coffee",
       "category": "Drinks",
-      "stock": 5,
-      "status": "Low Stock",
-      "lastUpdated": "2024-04-30T10:00:00Z"
+      "stock": 25,
+      "status": "Available",
+      "lastUpdated": "2026-05-15T19:34:54.400Z"
     },
     {
       "id": "4",
       "name": "French Fries",
       "category": "Snacks",
-      "stock": 0,
-      "status": "Out of Stock",
-      "lastUpdated": "2024-04-30T10:00:00Z"
+      "stock": 45,
+      "status": "Available",
+      "lastUpdated": "2026-05-15T19:35:06.206Z"
     },
     {
       "id": "5",
@@ -291,39 +304,39 @@
   ],
   "reviews": [
     {
-      "id": "review1",
-      "orderId": "order1",
-      "customerId": "OcZ4bjEAvBs",
-      "customerName": "christian Demetillo",
+      "id": "reviewmp7atjyh",
+      "orderId": "ordermp7as6ny",
+      "customerId": "mp7aert5uy6yo8yfobk",
+      "customerName": "Robert Avelino",
       "foodItemId": "1",
       "foodItemName": "Classic Burger",
       "rating": 5,
-      "comment": "Absolutely delicious! Fresh ingredients and great taste. Will order again.",
-      "createdAt": "2024-04-28T20:00:00Z",
+      "comment": "The burger was so juicy",
+      "createdAt": "2026-05-15T19:16:46.793Z",
       "hidden": false
     },
     {
-      "id": "review2",
-      "orderId": "order1",
-      "customerId": "OcZ4bjEAvBs",
-      "customerName": "christian Demetillo",
+      "id": "reviewmp7becnw",
+      "orderId": "ordermp7bcotc",
+      "customerId": "mp7bc5cahh6wk9rgvcj",
+      "customerName": "Robert Avelino",
       "foodItemId": "3",
       "foodItemName": "Iced Coffee",
-      "rating": 4,
-      "comment": "Good coffee, cold and refreshing. Could use a bit more flavor.",
-      "createdAt": "2024-04-28T20:05:00Z",
+      "rating": 5,
+      "comment": "very yummy but too sweet for me",
+      "createdAt": "2026-05-15T19:32:57.116Z",
       "hidden": false
     },
     {
-      "id": "review3",
-      "orderId": "order2",
-      "customerId": "tIrSAMc1Dts",
-      "customerName": "Hello World",
+      "id": "reviewmp7bg4j6",
+      "orderId": "ordermp7beyke",
+      "customerId": "mp7bc5cahh6wk9rgvcj",
+      "customerName": "Robert Avelino",
       "foodItemId": "2",
       "foodItemName": "Pepperoni Pizza",
-      "rating": 3,
-      "comment": "Average pizza. Toppings were okay but crust could be crispier.",
-      "createdAt": "2024-04-29T18:00:00Z",
+      "rating": 5,
+      "comment": "mura rag angels pizza oi",
+      "createdAt": "2026-05-15T19:34:19.890Z",
       "hidden": false
     }
   ],
