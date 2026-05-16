@@ -27,6 +27,16 @@
       "passwordHash": "$2a$10$lKeUl1yQKY47lFsbaPhsau3TBhS1voFpKUJhAXqngQiYwByPfh/q2",
       "address": "",
       "role": "user"
+    },
+    {
+      "id": "moxqqdh27j0bxhu6228",
+      "name": "Owen Robert Magsayo",
+      "email": "owenrobertmags@gmail.com",
+      "phone": "09956782543",
+      "password": "QWERTY12",
+      "passwordHash": "$2a$10$6ZG4JUcNpuFl8y5zQSOA5usOZ3c2R6GnYkDv8QIEdTxlDMV7B/pqm",
+      "address": "",
+      "role": "user"
     }
   ],
   "admins": [],
@@ -90,100 +100,19 @@
       "image": "https://137483765.cdn6.editmysite.com/uploads/1/3/7/4/137483765/RFY4TYOAJDV7RW2UHCD5J4FJ.jpeg",
       "available": true,
       "stock": 0
+    },
+    {
+      "id": "moxrt45pief0f4ccn8h",
+      "name": "milo",
+      "description": "thick milo",
+      "price": 849.86,
+      "category": "Drinks",
+      "image": "https://th.bing.com/th/id/OIP.7QHS79goseDLskj7gwuAhQHaHa?w=191&h=192&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3",
+      "available": true,
+      "stock": 0
     }
   ],
   "orders": [
-    {
-      "id": "order1",
-      "customerId": "OcZ4bjEAvBs",
-      "customerName": "christian Demetillo",
-      "customerEmail": "dmtchrs@gmail.com",
-      "customerPhone": "09617095667",
-      "customerAddress": "123 Main Street, City",
-      "items": [
-        {
-          "id": "1",
-          "name": "Classic Burger",
-          "description": "Fresh beef patty with lettuce, tomato, and special sauce",
-          "price": 8.99,
-          "category": "Meals",
-          "quantity": 2
-        },
-        {
-          "id": "3",
-          "name": "Iced Coffee",
-          "description": "Refreshing iced coffee with a smooth finish",
-          "price": 3.99,
-          "category": "Drinks",
-          "quantity": 1
-        }
-      ],
-      "subtotal": 21.97,
-      "total": 21.97,
-      "status": "Delivered",
-      "paymentMethod": "Credit Card",
-      "deliveryNotes": "Leave at door",
-      "createdAt": "2024-04-28T10:00:00Z",
-      "updatedAt": "2024-04-28T15:30:00Z"
-    },
-    {
-      "id": "order2",
-      "customerId": "tIrSAMc1Dts",
-      "customerName": "Hello World",
-      "customerEmail": "villerboy123@gmail.com",
-      "customerPhone": "09617095668",
-      "customerAddress": "456 Oak Avenue, Town",
-      "items": [
-        {
-          "id": "2",
-          "name": "Pepperoni Pizza",
-          "description": "Crispy crust topped with mozzarella and pepperoni",
-          "price": 12.99,
-          "category": "Meals",
-          "quantity": 1
-        }
-      ],
-      "subtotal": 12.99,
-      "total": 12.99,
-      "status": "Ready",
-      "paymentMethod": "Debit Card",
-      "deliveryNotes": "",
-      "createdAt": "2024-04-29T14:00:00Z",
-      "updatedAt": "2024-04-29T16:00:00Z"
-    },
-    {
-      "id": "order3",
-      "customerId": "7isIEDpkKl0",
-      "customerName": "Samantha Pasague",
-      "customerEmail": "samanthaleonor.pasague.23@usjr.edu.ph",
-      "customerPhone": "09089659262",
-      "customerAddress": "789 Pine Road, Village",
-      "items": [
-        {
-          "id": "1",
-          "name": "Classic Burger",
-          "description": "Fresh beef patty with lettuce, tomato, and special sauce",
-          "price": 8.99,
-          "category": "Meals",
-          "quantity": 1
-        },
-        {
-          "id": "4",
-          "name": "French Fries",
-          "description": "Crispy golden fries served hot",
-          "price": 2.99,
-          "category": "Snacks",
-          "quantity": 1
-        }
-      ],
-      "subtotal": 11.98,
-      "total": 11.98,
-      "status": "Cancelled",
-      "paymentMethod": "Cash",
-      "deliveryNotes": "Ring doorbell twice",
-      "createdAt": "2024-04-30T08:00:00Z",
-      "updatedAt": "2026-04-30T01:28:59.755Z"
-    },
     {
       "id": "ordermox6kl6n",
       "customerId": "mox6imuq7zn4m00vmag",
@@ -291,6 +220,31 @@
       "deliveryNotes": "nideliver ko guys ",
       "createdAt": "2026-05-09T01:10:52.357Z",
       "updatedAt": "2026-05-09T01:28:47.770Z"
+    },
+    {
+      "id": "ordermoxrnrcy",
+      "customerId": "mox6imuq7zn4m00vmag",
+      "customerName": "Christian  Demetillo",
+      "customerEmail": "dmtchrs@gmail.com",
+      "customerPhone": "09617095667",
+      "customerAddress": "Pakigne, Minglanilla, Cebu",
+      "items": [
+        {
+          "id": "1",
+          "name": "Classic Burger",
+          "description": "Fresh beef patty with lettuce, tomato, and special sauce",
+          "price": 150,
+          "category": "Meals",
+          "quantity": 1
+        }
+      ],
+      "subtotal": 150,
+      "total": 150,
+      "status": "Delivered",
+      "paymentMethod": "credit-card",
+      "deliveryNotes": "",
+      "createdAt": "2026-05-09T03:10:28.162Z",
+      "updatedAt": "2026-05-09T03:13:18.836Z"
     }
   ],
   "inventory": [
@@ -373,6 +327,18 @@
       "hidden": false
     }
   ],
-  "cart_items": [],
+  "cart_items": [
+    {
+      "id": "moxrx1eqzo0xeuye6v",
+      "customerId": "mox6imuq7zn4m00vmag",
+      "menuId": "1",
+      "name": "Classic Burger",
+      "description": "Fresh beef patty with lettuce, tomato, and special sauce",
+      "price": 150,
+      "category": "Meals",
+      "image": "https://thelocalpalate.com/wp-content/uploads/2025/04/TLP-featured-image-34-1.jpg",
+      "quantity": 1
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }
