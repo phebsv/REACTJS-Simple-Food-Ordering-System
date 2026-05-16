@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const { getCollection } = require("../data/db");
+const { requireAdmin } = require("../middleware/auth");
 
-router.get("/", (req, res) => {
+router.get("/", requireAdmin, (req, res) => {
   let admins = getCollection("users").filter(
     (u) => String(u.role).toLowerCase() === "admin",
   );

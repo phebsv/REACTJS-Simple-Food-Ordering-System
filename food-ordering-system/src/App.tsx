@@ -30,14 +30,26 @@ import { useAdmin } from "./context/AdminContext";
 import type { ReactNode } from "react";
 
 function CustomerRoute({ children }: { children: ReactNode }) {
-  const { isAuthenticated, hydrating } = useAuth();
+  const { isAuthenticated, hydrating, customer } = useAuth();
   if (hydrating) return null;
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (customer?.role === "admin" || customer?.isAdmin) {
+    return <Navigate to="/admin/dashboard" replace />;
+  }
+  return <>{children}</>;
 }
 
 function AdminRoute({ children }: { children: ReactNode }) {
   const { isAuthenticated } = useAdmin();
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+  const { hydrating, customer } = useAuth();
+  if (hydrating) return null;
+  if (!isAuthenticated) {
+    if (customer && !(customer?.role === "admin" || customer?.isAdmin)) {
+      return <Navigate to="/dashboard" replace />;
+    }
+    return <Navigate to="/login" replace />;
+  }
+  return <>{children}</>;
 }
 
 function AppRoutes() {

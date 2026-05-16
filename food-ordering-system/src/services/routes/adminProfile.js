@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const { getCollection } = require("../data/db");
+const { requireAdmin } = require("../middleware/auth");
 
-router.get("/", (req, res) => {
+router.get("/", requireAdmin, (req, res) => {
   const admins = getCollection("users").filter(
     (u) => String(u.role).toLowerCase() === "admin",
   );
@@ -13,7 +14,7 @@ router.get("/", (req, res) => {
     });
   }
 
-  const { password, ...safeAdmin } = admins[0];
+  const { password, passwordHash, ...safeAdmin } = admins[0];
 
   return res.json(safeAdmin);
 });

@@ -1,12 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const { getCollection, setCollection } = require("../data/db");
+const { requireAuth } = require("../middleware/auth");
 
-router.get("/", (req, res) => {
+router.get("/", requireAuth, (req, res) => {
   return res.json(getCollection("reviews"));
 });
 
-router.post("/", (req, res) => {
+router.post("/", requireAuth, (req, res) => {
   const {
     orderId,
     customerId,
@@ -41,7 +42,7 @@ router.post("/", (req, res) => {
   return res.status(201).json(newReview);
 });
 
-router.patch("/:id", (req, res) => {
+router.patch("/:id", requireAuth, (req, res) => {
   const reviews = getCollection("reviews");
   const idx = reviews.findIndex((r) => r.id === req.params.id);
   if (idx === -1) return res.status(404).json({ message: "Review not found." });
@@ -52,7 +53,7 @@ router.patch("/:id", (req, res) => {
   return res.json(reviews[idx]);
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", requireAuth, (req, res) => {
   const reviews = getCollection("reviews");
   const filtered = reviews.filter((r) => r.id !== req.params.id);
   if (filtered.length === reviews.length)

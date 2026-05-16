@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { getCollection, setCollection } = require("../data/db");
+const { requireAdmin } = require("../middleware/auth");
 
 const statusFromStock = (stock) => {
   if (stock <= 0) return "Out of Stock";
@@ -8,11 +9,11 @@ const statusFromStock = (stock) => {
   return "Available";
 };
 
-router.get("/", (req, res) => {
+router.get("/", requireAdmin, (req, res) => {
   return res.json(getCollection("inventory"));
 });
 
-router.get("/:id", (req, res) => {
+router.get("/:id", requireAdmin, (req, res) => {
   const items = getCollection("inventory");
   const item = items.find((i) => i.id === req.params.id);
   if (!item)
@@ -20,7 +21,7 @@ router.get("/:id", (req, res) => {
   return res.json(item);
 });
 
-router.patch("/:id", (req, res) => {
+router.patch("/:id", requireAdmin, (req, res) => {
   const items = getCollection("inventory");
   const idx = items.findIndex((i) => i.id === req.params.id);
   if (idx === -1)

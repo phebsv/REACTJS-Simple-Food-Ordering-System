@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { getCollection, setCollection } = require("../data/db");
+const { requireAuth, requireAdmin } = require("../middleware/auth");
 
 const statusFromStock = (stock) => {
   if (stock <= 0) return "Out of Stock";
@@ -24,7 +25,7 @@ const findItemByIdOrName = (items, id, name) => {
   return undefined;
 };
 
-router.get("/", (req, res) => {
+router.get("/", requireAuth, (req, res) => {
   let orders = getCollection("orders");
   if (req.query.customerId) {
     orders = orders.filter((o) => o.customerId === req.query.customerId);
@@ -32,14 +33,14 @@ router.get("/", (req, res) => {
   return res.json(orders);
 });
 
-router.get("/:id", (req, res) => {
+router.get("/:id", requireAuth, (req, res) => {
   const orders = getCollection("orders");
   const order = orders.find((o) => o.id === req.params.id);
   if (!order) return res.status(404).json({ message: "Order not found." });
   return res.json(order);
 });
 
-router.post("/", (req, res) => {
+router.post("/", requireAuth, (req, res) => {
   const {
     customerId,
     customerName,
@@ -117,7 +118,7 @@ router.post("/", (req, res) => {
   return res.status(201).json(newOrder);
 });
 
-router.patch("/:id", (req, res) => {
+router.patch("/:id", requireAdmin, (req, res) => {
   const orders = getCollection("orders");
   const idx = orders.findIndex((o) => o.id === req.params.id);
   if (idx === -1) return res.status(404).json({ message: "Order not found." });

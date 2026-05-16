@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const { getCollection, setCollection } = require("../data/db");
+const { requireAuth } = require("../middleware/auth");
 
-router.get("/", (req, res) => {
+router.get("/", requireAuth, (req, res) => {
   let items = getCollection("cart_items");
 
   if (req.query.customerId) {
@@ -15,12 +16,22 @@ router.get("/", (req, res) => {
   return res.json(items);
 });
 
-router.post("/", (req, res) => {
-  const { customerId, menuId, name, description, price, category, image, quantity } =
-    req.body;
+router.post("/", requireAuth, (req, res) => {
+  const {
+    customerId,
+    menuId,
+    name,
+    description,
+    price,
+    category,
+    image,
+    quantity,
+  } = req.body;
 
   if (!customerId || !menuId || !name || price == null)
-    return res.status(400).json({ message: "customerId, menuId, name, and price are required." });
+    return res
+      .status(400)
+      .json({ message: "customerId, menuId, name, and price are required." });
 
   const items = getCollection("cart_items");
   const newItem = {
@@ -40,10 +51,11 @@ router.post("/", (req, res) => {
   return res.status(201).json(newItem);
 });
 
-router.patch("/:id", (req, res) => {
+router.patch("/:id", requireAuth, (req, res) => {
   const items = getCollection("cart_items");
   const idx = items.findIndex((i) => i.id === req.params.id);
-  if (idx === -1) return res.status(404).json({ message: "Cart item not found." });
+  if (idx === -1)
+    return res.status(404).json({ message: "Cart item not found." });
 
   if (req.body.quantity !== undefined) {
     items[idx].quantity = Number(req.body.quantity);
@@ -53,7 +65,7 @@ router.patch("/:id", (req, res) => {
   return res.json(items[idx]);
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", requireAuth, (req, res) => {
   const items = getCollection("cart_items");
   const filtered = items.filter((i) => i.id !== req.params.id);
   if (filtered.length === items.length)
