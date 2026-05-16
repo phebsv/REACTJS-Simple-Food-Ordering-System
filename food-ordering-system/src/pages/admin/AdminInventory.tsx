@@ -7,21 +7,35 @@ import { useAdmin } from "../../context/AdminContext";
 import type { InventoryItem } from "../../types";
 import "./AdminInventory.css";
 
-type StatusFilter = "All" | "Available" | "Low Stock" | "Out of Stock" | "Unavailable";
+type StatusFilter =
+  | "All"
+  | "Available"
+  | "Low Stock"
+  | "Out of Stock"
+  | "Unavailable";
 
 interface RestockFormData {
   quantity: string;
 }
 
 export default function AdminInventory() {
-  const { inventoryItems, fetchInventory, updateStock, updateInventoryStatus, loading, error, setError } =
-    useAdmin();
+  const {
+    inventoryItems,
+    fetchInventory,
+    updateStock,
+    updateInventoryStatus,
+    loading,
+    error,
+    setError,
+  } = useAdmin();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("All");
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
   const [isRestockOpen, setIsRestockOpen] = useState(false);
-  const [restockForm, setRestockForm] = useState<RestockFormData>({ quantity: "" });
+  const [restockForm, setRestockForm] = useState<RestockFormData>({
+    quantity: "",
+  });
   const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
@@ -31,8 +45,11 @@ export default function AdminInventory() {
   // ==================== FILTERING ====================
   const filteredItems = useMemo(() => {
     return inventoryItems.filter((item) => {
-      const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesStatus = statusFilter === "All" || item.status === statusFilter;
+      const matchesSearch = item.name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      const matchesStatus =
+        statusFilter === "All" || item.status === statusFilter;
       return matchesSearch && matchesStatus;
     });
   }, [inventoryItems, searchQuery, statusFilter]);
@@ -76,7 +93,13 @@ export default function AdminInventory() {
     }
   };
 
-  const statusFilters: StatusFilter[] = ["All", "Available", "Low Stock", "Out of Stock", "Unavailable"];
+  const statusFilters: StatusFilter[] = [
+    "All",
+    "Available",
+    "Low Stock",
+    "Out of Stock",
+    "Unavailable",
+  ];
 
   return (
     <div className="admin-layout">
@@ -149,19 +172,27 @@ export default function AdminInventory() {
               </thead>
               <tbody>
                 {filteredItems.map((item) => (
-                  <tr key={item.id} className={`status-${item.status.toLowerCase().replace(/\s+/g, "-")}`}>
+                  <tr
+                    key={item.id}
+                    className={`status-${item.status.toLowerCase().replace(/\s+/g, "-")}`}
+                  >
                     <td className="item-name">{item.name}</td>
                     <td>{item.category}</td>
                     <td className="stock-quantity">
-                      <span className={`stock-badge ${getStockClass(item.stock)}`}>
+                      <span
+                        className={`stock-badge ${getStockClass(item.stock)}`}
+                      >
                         {item.stock}
                       </span>
                     </td>
                     <td>
                       <StatusSelect
                         currentStatus={item.status}
-                        onStatusChange={(status) => handleStatusChange(item.id, status)}
+                        onStatusChange={(status) =>
+                          handleStatusChange(item.id, status)
+                        }
                         disabled={actionLoading}
+                        isOutOfStock={item.stock <= 0}
                       />
                     </td>
                     <td className="last-updated">
@@ -207,7 +238,9 @@ export default function AdminInventory() {
                 required
                 placeholder="Enter new quantity"
               />
-              <small className="form-hint">Set the total stock quantity (not the amount to add)</small>
+              <small className="form-hint">
+                Set the total stock quantity (not the amount to add)
+              </small>
             </div>
 
             <div className="form-actions">
@@ -219,7 +252,11 @@ export default function AdminInventory() {
               >
                 Cancel
               </button>
-              <button type="submit" className="submit-btn" disabled={actionLoading}>
+              <button
+                type="submit"
+                className="submit-btn"
+                disabled={actionLoading}
+              >
                 {actionLoading ? "..." : "Update Stock"}
               </button>
             </div>
@@ -235,9 +272,15 @@ interface StatusSelectProps {
   currentStatus: string;
   onStatusChange: (status: string) => void;
   disabled: boolean;
+  isOutOfStock: boolean;
 }
 
-function StatusSelect({ currentStatus, onStatusChange, disabled }: StatusSelectProps) {
+function StatusSelect({
+  currentStatus,
+  onStatusChange,
+  disabled,
+  isOutOfStock,
+}: StatusSelectProps) {
   const statuses = ["Available", "Low Stock", "Out of Stock", "Unavailable"];
 
   return (
@@ -248,7 +291,11 @@ function StatusSelect({ currentStatus, onStatusChange, disabled }: StatusSelectP
       disabled={disabled}
     >
       {statuses.map((status) => (
-        <option key={status} value={status}>
+        <option
+          key={status}
+          value={status}
+          disabled={isOutOfStock && status === "Available"}
+        >
           {status}
         </option>
       ))}

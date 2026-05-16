@@ -351,6 +351,9 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const toggleItemAvailability = async (id: string) => {
     const item = menuItems.find((i) => i.id === id);
     if (!item) return;
+    if (item.available === false && Number(item.stock ?? 0) <= 0) {
+      throw new Error("Out-of-stock items cannot be set to Available.");
+    }
     await adminUpdateMenuItem(id, {
       available: !item.available,
     });
@@ -462,6 +465,14 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   };
 
   const updateInventoryStatus = async (id: string, status: string) => {
+    const currentItem = inventoryItems.find((item) => item.id === id);
+    if (
+      status === "Available" &&
+      currentItem &&
+      Number(currentItem.stock ?? 0) <= 0
+    ) {
+      throw new Error("Out-of-stock items cannot be set to Available.");
+    }
     const nextAvailable = status === "Available" || status === "Low Stock";
     setInventoryItems((prev) =>
       prev.map((item) =>

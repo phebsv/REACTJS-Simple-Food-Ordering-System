@@ -9,22 +9,12 @@
       "role": "admin"
     },
     {
-      "id": "mp7bc5cahh6wk9rgvcj",
-      "name": "Robert Avelino",
-      "email": "avelino@gmail.com",
+      "id": "mp7oytx45cpao8sl6bx",
+      "name": "Saydon Avelino",
+      "email": "saydon@gmail.com",
       "phone": "09291052281",
       "password": "vitamilk22",
-      "passwordHash": "$2a$10$RO/06QfsztidYZUVUbQvv.vP9wt9p6/FuNdXmLO7ZTH7ejWCN/HMq",
-      "address": "",
-      "role": "user"
-    },
-    {
-      "id": "moxqqdh27j0bxhu6228",
-      "name": "Owen Robert Magsayo",
-      "email": "owenrobertmags@gmail.com",
-      "phone": "09956782543",
-      "password": "QWERTY12",
-      "passwordHash": "$2a$10$6ZG4JUcNpuFl8y5zQSOA5usOZ3c2R6GnYkDv8QIEdTxlDMV7B/pqm",
+      "passwordHash": "$2a$10$2qSoCOISxgW6Ns0myL9P0.9twfpvq15i/02d1pcdmil.Vtz4pDkaa",
       "address": "",
       "role": "user"
     }
@@ -39,7 +29,8 @@
       "category": "Meals",
       "image": "https://thelocalpalate.com/wp-content/uploads/2025/04/TLP-featured-image-34-1.jpg",
       "available": true,
-      "stock": 50
+      "stock": 43,
+      "lastUpdated": "2026-05-16T01:55:46.697Z"
     },
     {
       "id": "2",
@@ -83,7 +74,7 @@
       "image": "https://sallysbakingaddiction.com/wp-content/uploads/2013/04/triple-chocolate-cake-4.jpg",
       "available": true,
       "stock": 8,
-      "lastUpdated": "2026-05-15T19:35:27.806Z"
+      "lastUpdated": "2026-05-16T01:49:35.219Z"
     },
     {
       "id": "moxbo18vpdrzdvkx56a",
@@ -92,9 +83,9 @@
       "price": 120,
       "category": "Meals",
       "image": "https://137483765.cdn6.editmysite.com/uploads/1/3/7/4/137483765/RFY4TYOAJDV7RW2UHCD5J4FJ.jpeg",
-      "available": false,
-      "stock": 0,
-      "lastUpdated": "2026-05-15T19:35:38.383Z"
+      "available": true,
+      "stock": 12,
+      "lastUpdated": "2026-05-16T01:53:45.404Z"
     },
     {
       "id": "mp79kslmffb0wgq02ku",
@@ -104,7 +95,8 @@
       "category": "Drinks",
       "image": "https://i0.wp.com/i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/8e8a2c58-a5a3-4ca5-97d0-aacdcf27f05b_Go-Biz_20220106_110442.jpeg?resize=728%2C500",
       "available": false,
-      "stock": 0
+      "stock": 0,
+      "lastUpdated": "2026-05-16T01:58:57.262Z"
     },
     {
       "id": "moxrt45pief0f4ccn8h",
@@ -114,15 +106,16 @@
       "category": "Drinks",
       "image": "https://th.bing.com/th/id/OIP.7QHS79goseDLskj7gwuAhQHaHa?w=191&h=192&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3",
       "available": true,
-      "stock": 0
+      "stock": 15,
+      "lastUpdated": "2026-05-16T01:50:13.406Z"
     }
   ],
   "orders": [
     {
-      "id": "ordermp7as6ny",
-      "customerId": "mp7aert5uy6yo8yfobk",
-      "customerName": "Robert Avelino",
-      "customerEmail": "robert@gmail.com",
+      "id": "ordermp7p2o3n",
+      "customerId": "mp7oytx45cpao8sl6bx",
+      "customerName": "Saydon Avelino",
+      "customerEmail": "saydon@gmail.com",
       "customerPhone": "09291052281",
       "customerAddress": "Linao, Talisay City, Cebu",
       "items": [
@@ -138,60 +131,35 @@
       "subtotal": 150,
       "total": 150,
       "status": "Delivered",
-      "paymentMethod": "credit-card",
-      "deliveryNotes": "",
-      "createdAt": "2026-05-15T19:15:42.910Z",
-      "updatedAt": "2026-05-15T19:16:23.450Z"
+      "paymentMethod": "cash",
+      "deliveryNotes": "atbang dito tower",
+      "createdAt": "2026-05-16T01:55:46.691Z",
+      "updatedAt": "2026-05-16T01:56:35.094Z"
     },
     {
-      "id": "ordermp7bcotc",
-      "customerId": "mp7bc5cahh6wk9rgvcj",
-      "customerName": "Robert Avelino",
-      "customerEmail": "avelino@gmail.com",
+      "id": "ordermp7p6r54",
+      "customerId": "mp7oytx45cpao8sl6bx",
+      "customerName": "Saydon Avelino",
+      "customerEmail": "saydon@gmail.com",
       "customerPhone": "09291052281",
       "customerAddress": "Linao, Talisay City, Cebu",
       "items": [
         {
-          "id": "3",
-          "name": "Iced Coffee",
-          "description": "Refreshing iced coffee with a smooth finish",
-          "price": 100,
+          "id": "mp79kslmffb0wgq02ku",
+          "name": "Choco Float",
+          "description": "hot like desert, cold like blizzard",
+          "price": 99,
           "category": "Drinks",
           "quantity": 1
         }
       ],
-      "subtotal": 100,
-      "total": 100,
+      "subtotal": 99,
+      "total": 99,
       "status": "Delivered",
       "paymentMethod": "credit-card",
       "deliveryNotes": "",
-      "createdAt": "2026-05-15T19:31:39.552Z",
-      "updatedAt": "2026-05-15T19:32:37.635Z"
-    },
-    {
-      "id": "ordermp7beyke",
-      "customerId": "mp7bc5cahh6wk9rgvcj",
-      "customerName": "Robert Avelino",
-      "customerEmail": "avelino@gmail.com",
-      "customerPhone": "09291052281",
-      "customerAddress": "luyo sa seoil",
-      "items": [
-        {
-          "id": "2",
-          "name": "Pepperoni Pizza",
-          "description": "Crispy crust topped with mozzarella and pepperoni",
-          "price": 130,
-          "category": "Meals",
-          "quantity": 25
-        }
-      ],
-      "subtotal": 3250,
-      "total": 3250,
-      "status": "Delivered",
-      "paymentMethod": "credit-card",
-      "deliveryNotes": "",
-      "createdAt": "2026-05-15T19:33:25.502Z",
-      "updatedAt": "2026-05-15T19:34:03.596Z"
+      "createdAt": "2026-05-16T01:58:57.256Z",
+      "updatedAt": "2026-05-16T02:00:14.236Z"
     }
   ],
   "inventory": [
@@ -199,9 +167,9 @@
       "id": "1",
       "name": "Classic Burger",
       "category": "Meals",
-      "stock": 50,
+      "stock": 43,
       "status": "Available",
-      "lastUpdated": "2024-04-30T10:00:00Z"
+      "lastUpdated": "2026-05-16T01:55:46.698Z"
     },
     {
       "id": "2",
@@ -238,54 +206,30 @@
   ],
   "reviews": [
     {
-      "id": "reviewmp7atjyh",
-      "orderId": "ordermp7as6ny",
-      "customerId": "mp7aert5uy6yo8yfobk",
-      "customerName": "Robert Avelino",
+      "id": "reviewmp7p4p0w",
+      "orderId": "ordermp7p2o3n",
+      "customerId": "mp7oytx45cpao8sl6bx",
+      "customerName": "Saydon Avelino",
       "foodItemId": "1",
       "foodItemName": "Classic Burger",
       "rating": 5,
-      "comment": "The burger was so juicy",
-      "createdAt": "2026-05-15T19:16:46.793Z",
+      "comment": "The burger was so yummy and so juicy",
+      "createdAt": "2026-05-16T01:57:21.200Z",
       "hidden": false
     },
     {
-      "id": "reviewmp7becnw",
-      "orderId": "ordermp7bcotc",
-      "customerId": "mp7bc5cahh6wk9rgvcj",
-      "customerName": "Robert Avelino",
-      "foodItemId": "3",
-      "foodItemName": "Iced Coffee",
-      "rating": 5,
-      "comment": "very yummy but too sweet for me",
-      "createdAt": "2026-05-15T19:32:57.116Z",
-      "hidden": false
-    },
-    {
-      "id": "reviewmp7bg4j6",
-      "orderId": "ordermp7beyke",
-      "customerId": "mp7bc5cahh6wk9rgvcj",
-      "customerName": "Robert Avelino",
-      "foodItemId": "2",
-      "foodItemName": "Pepperoni Pizza",
-      "rating": 5,
-      "comment": "mura rag angels pizza oi",
-      "createdAt": "2026-05-15T19:34:19.890Z",
+      "id": "reviewmp7p8zj1",
+      "orderId": "ordermp7p6r54",
+      "customerId": "mp7oytx45cpao8sl6bx",
+      "customerName": "Saydon Avelino",
+      "foodItemId": "mp79kslmffb0wgq02ku",
+      "foodItemName": "Choco Float",
+      "rating": 2,
+      "comment": "It was very refreshing but kinda too sweet",
+      "createdAt": "2026-05-16T02:00:41.437Z",
       "hidden": false
     }
   ],
-  "cart_items": [
-    {
-      "id": "moxrx1eqzo0xeuye6v",
-      "customerId": "mox6imuq7zn4m00vmag",
-      "menuId": "1",
-      "name": "Classic Burger",
-      "description": "Fresh beef patty with lettuce, tomato, and special sauce",
-      "price": 150,
-      "category": "Meals",
-      "image": "https://thelocalpalate.com/wp-content/uploads/2025/04/TLP-featured-image-34-1.jpg",
-      "quantity": 1
-    }
-  ],
+  "cart_items": [],
   "$schema": "./node_modules/json-server/schema.json"
 }
