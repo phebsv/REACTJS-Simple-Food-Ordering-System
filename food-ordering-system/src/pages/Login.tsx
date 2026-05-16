@@ -11,6 +11,7 @@ import RedBtn from "../components/RedBtn";
 import { MailIcon, LockIcon } from "../components/UInput";
 import { useAuth } from "../context/AuthContext";
 import { useAdmin } from "../context/AdminContext";
+import { validateLoginForm } from "../utils/validationHelpers";
 import type { AuthUser } from "../services/api.ts";
 import "./Login.css";
 
@@ -29,14 +30,10 @@ export default function Login() {
 
     const loginId = email.trim();
 
-    if (!loginId || !password) {
-      return setLocalError("Email and password are required.");
-    }
-    if (loginId.length < 3) {
-      return setLocalError("Please enter a valid email or username.");
-    }
-    if (password.length < 8) {
-      return setLocalError("Password must be at least 8 characters.");
+    // Validate form data
+    const validation = validateLoginForm({ loginId, password });
+    if (!validation.valid) {
+      return setLocalError(validation.error || "Validation failed.");
     }
 
     const customerSuccess = await login(loginId, password, { remember });

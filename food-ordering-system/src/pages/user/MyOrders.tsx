@@ -8,14 +8,7 @@ import { apiUrl } from "../../config/api";
 import { getStoredItem } from "../../utils/storage";
 import { addReview, getReviews } from "../../services/api";
 
-const ORDER_STATUSES = [
-  "All",
-  "Pending",
-  "Preparing",
-  "Ready",
-  "Delivered",
-  "Cancelled",
-];
+const ORDER_STATUSES = ["All", "Pending", "Preparing", "Ready", "Delivered"];
 
 const formatPrice = (value?: number) => `₱${(value ?? 0).toFixed(2)}`;
 const formatDate = (value?: string) =>
@@ -23,6 +16,11 @@ const formatDate = (value?: string) =>
 const displayValue = (value?: string) => value || "Not provided";
 const getOrderTime = (order: Order) =>
   new Date(order.createdAt || order.updatedAt || 0).getTime() || 0;
+const isCancelledOrder = (order: Order) =>
+  order.status?.toLowerCase() === "cancelled";
+
+type OrderItem = Order["items"][number];
+type OrderModalMode = "details" | "reviews";
 
 type CurrentUser = {
   id: string;
@@ -104,6 +102,14 @@ const readReviewItemName = (review?: ReviewLike | null) =>
       )
     : "";
 
+const readReviewComment = (review?: ReviewLike | null) =>
+  review?.comment?.trim() || "";
+
+const readReviewRating = (review?: ReviewLike | null) => {
+  const rating = Number(review?.rating);
+  return Number.isFinite(rating) ? Math.max(1, Math.min(5, rating)) : 0;
+};
+
 const getReviewList = (response: unknown): ReviewLike[] => {
   if (Array.isArray(response)) return response as ReviewLike[];
   if (response && typeof response === "object") {
@@ -119,6 +125,46 @@ const getReviewList = (response: unknown): ReviewLike[] => {
   return [];
 };
 
+const getItemName = (item: OrderItem) => displayValue(item.name).toLowerCase();
+
+const isMatchingReview = (
+  review: ReviewLike,
+  order: Order,
+  item: OrderItem,
+) => {
+  if (review.hidden) return false;
+
+  const sameOrder = readReviewOrderId(review) === order.id;
+  const reviewItemId = readReviewItemId(review);
+  const sameItem = reviewItemId
+    ? reviewItemId === item.id
+    : readReviewItemName(review).toLowerCase() === getItemName(item);
+  const reviewCustomerId = readReviewCustomerId(review);
+  const sameCustomer =
+    !reviewCustomerId ||
+    !order.customerId ||
+    reviewCustomerId === order.customerId;
+
+  return sameOrder && sameItem && sameCustomer;
+};
+
+const findItemReview = (reviews: ReviewLike[], order: Order, item: OrderItem) =>
+  reviews.find((review) => isMatchingReview(review, order, item));
+
+const isOrderFullyReviewed = (reviews: ReviewLike[], order: Order) => {
+  const orderItems = order.items ?? [];
+  return (
+    order.status === "Delivered" &&
+    orderItems.length > 0 &&
+    orderItems.every((item) => findItemReview(reviews, order, item))
+  );
+};
+
+const renderStars = (rating: number) => {
+  const normalizedRating = Math.max(0, Math.min(5, Math.round(rating)));
+  return `${"★".repeat(normalizedRating)}${"☆".repeat(5 - normalizedRating)}`;
+};
+
 const getCurrentUser = (): CurrentUser | null => {
   const user = getStoredItem("currentUser");
   return user ? JSON.parse(user) : null;
@@ -126,13 +172,16 @@ const getCurrentUser = (): CurrentUser | null => {
 
 export default function MyOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [searchId, setSearchId] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [currentUser] = useState<CurrentUser | null>(() => getCurrentUser());
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [selectedOrderMode, setSelectedOrderMode] =
+    useState<OrderModalMode>("details");
+  const [reviews, setReviews] = useState<ReviewLike[]>([]);
   const navigate = useNavigate();
   const previousStatusRef = useRef<Record<string, string>>({});
 
@@ -142,9 +191,14 @@ export default function MyOrders() {
     return () => window.clearTimeout(t);
   }, [toastMessage]);
 
-  const fetchOrders = async (userId: string) => {
+  const fetchOrders = async (
+    userId: string,
+    options: { showLoading?: boolean } = {},
+  ) => {
     try {
-      setLoading(true);
+      if (options.showLoading) {
+        setLoading(true);
+      }
       setError("");
       const res = await fetch(apiUrl("/orders"));
       if (!res.ok) throw new Error("Failed to fetch orders");
@@ -152,7 +206,8 @@ export default function MyOrders() {
 
       // Filter orders for current customer
       const customerOrders = data.filter(
-        (order: Order) => order.customerId === userId,
+        (order: Order) =>
+          order.customerId === userId && !isCancelledOrder(order),
       );
 
       // Notify on status changes (poll-friendly)
@@ -175,7 +230,18 @@ export default function MyOrders() {
         err instanceof Error ? err.message : "Failed to load your orders.",
       );
     } finally {
-      setLoading(false);
+      if (options.showLoading) {
+        setLoading(false);
+      }
+    }
+  };
+
+  const fetchReviews = async () => {
+    try {
+      const response = await getReviews();
+      setReviews(getReviewList(response));
+    } catch {
+      setReviews([]);
     }
   };
 
@@ -188,7 +254,8 @@ export default function MyOrders() {
   useEffect(() => {
     if (currentUser?.id) {
       const initialLoad = window.setTimeout(() => {
-        fetchOrders(currentUser.id);
+        fetchOrders(currentUser.id, { showLoading: true });
+        fetchReviews();
       }, 0);
       // Refresh orders every 5 seconds to show updated status
       const interval = window.setInterval(() => {
@@ -204,10 +271,11 @@ export default function MyOrders() {
   const filteredOrders = useMemo(() => {
     let filtered = orders;
 
-    // Search filter
-    if (searchId.trim()) {
+    // Search by ordered item name
+    if (searchQuery.trim()) {
+      const query = searchQuery.trim().toLowerCase();
       filtered = filtered.filter((order) =>
-        order.id.toLowerCase().includes(searchId.toLowerCase()),
+        (order.items ?? []).some((item) => getItemName(item).includes(query)),
       );
     }
 
@@ -217,7 +285,20 @@ export default function MyOrders() {
     }
 
     return [...filtered].sort((a, b) => getOrderTime(b) - getOrderTime(a));
-  }, [orders, searchId, selectedStatus]);
+  }, [orders, searchQuery, selectedStatus]);
+
+  const openOrderModal = (order: Order, mode: OrderModalMode) => {
+    setSelectedOrder(order);
+    setSelectedOrderMode(mode);
+  };
+
+  const handleReviewSaved = (review: ReviewLike) => {
+    setReviews((prev) => [...prev, review]);
+  };
+
+  const handleOrderCancelled = (orderId: string) => {
+    setOrders((prev) => prev.filter((order) => order.id !== orderId));
+  };
 
   const statusBadgeColor = (status: string) => {
     switch (status) {
@@ -262,9 +343,9 @@ export default function MyOrders() {
           <div className="my-orders-controls">
             <input
               type="text"
-              placeholder="Search by Order ID..."
-              value={searchId}
-              onChange={(e) => setSearchId(e.target.value)}
+              placeholder="Search by item name..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="my-orders-search"
             />
           </div>
@@ -300,7 +381,10 @@ export default function MyOrders() {
               <h2>Couldn’t load orders</h2>
               <p>{error}</p>
               <button
-                onClick={() => currentUser?.id && fetchOrders(currentUser.id)}
+                onClick={() =>
+                  currentUser?.id &&
+                  fetchOrders(currentUser.id, { showLoading: true })
+                }
                 className="my-orders-action-btn"
               >
                 Try Again
@@ -321,6 +405,10 @@ export default function MyOrders() {
             <div className="my-orders-list">
               {filteredOrders.map((order) => {
                 const orderItems = order.items ?? [];
+                const canReviewOrder =
+                  order.status === "Delivered" &&
+                  orderItems.length > 0 &&
+                  !isOrderFullyReviewed(reviews, order);
 
                 return (
                   <div key={order.id} className="my-orders-card">
@@ -340,13 +428,16 @@ export default function MyOrders() {
                         <p className="order-date">
                           {formatDate(order.createdAt)}
                         </p>
-                        <p className="order-total">{formatPrice(order.total)}</p>
+                        <p className="order-total">
+                          {formatPrice(order.total)}
+                        </p>
                       </div>
                     </div>
 
                     <div className="order-card-details">
                       <p>
-                        <span>Deliver to:</span> {displayValue(order.customerAddress)}
+                        <span>Deliver to:</span>{" "}
+                        {displayValue(order.customerAddress)}
                       </p>
                       <p>
                         <span>Payment:</span>{" "}
@@ -361,7 +452,9 @@ export default function MyOrders() {
                       </p>
                       <div className="order-items-preview">
                         {orderItems.length === 0 ? (
-                          <span className="item-tag muted">No item details</span>
+                          <span className="item-tag muted">
+                            No item details
+                          </span>
                         ) : (
                           <>
                             {orderItems.slice(0, 2).map((item, idx) => (
@@ -380,16 +473,16 @@ export default function MyOrders() {
                     </div>
 
                     <div className="order-card-actions">
-                      {order.status === "Delivered" && orderItems.length > 0 && (
+                      {canReviewOrder && (
                         <button
-                          onClick={() => setSelectedOrder(order)}
+                          onClick={() => openOrderModal(order, "reviews")}
                           className="order-review-btn"
                         >
                           Review Items
                         </button>
                       )}
                       <button
-                        onClick={() => setSelectedOrder(order)}
+                        onClick={() => openOrderModal(order, "details")}
                         className="order-view-btn"
                       >
                         View Details
@@ -407,6 +500,10 @@ export default function MyOrders() {
       {selectedOrder && (
         <OrderDetailsModal
           order={selectedOrder}
+          mode={selectedOrderMode}
+          reviews={reviews}
+          onReviewSaved={handleReviewSaved}
+          onOrderCancelled={handleOrderCancelled}
           onClose={() => setSelectedOrder(null)}
         />
       )}
@@ -416,13 +513,19 @@ export default function MyOrders() {
 
 function OrderDetailsModal({
   order,
+  mode,
+  reviews,
+  onReviewSaved,
+  onOrderCancelled,
   onClose,
 }: {
   order: Order;
+  mode: OrderModalMode;
+  reviews: ReviewLike[];
+  onReviewSaved: (review: ReviewLike) => void;
+  onOrderCancelled: (orderId: string) => void;
   onClose: () => void;
 }) {
-  type OrderItem = Order["items"][number];
-
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
   const [cancelError, setCancelError] = useState("");
@@ -432,50 +535,31 @@ function OrderDetailsModal({
   const [reviewLoading, setReviewLoading] = useState(false);
   const [reviewError, setReviewError] = useState("");
   const [reviewSuccess, setReviewSuccess] = useState("");
-  const [existingReviews, setExistingReviews] = useState<ReviewLike[]>([]);
   const navigate = useNavigate();
   const orderItems = order.items ?? [];
   const canReview = order.status === "Delivered";
+  const isReviewMode = mode === "reviews";
 
   useEffect(() => {
-    if (!canReview) return;
+    const body = document.body;
+    const previousOverflow = body.style.overflow;
+    const previousPaddingRight = body.style.paddingRight;
+    const scrollbarWidth =
+      window.innerWidth - document.documentElement.clientWidth;
 
-    let isMounted = true;
-
-    getReviews()
-      .then((response) => {
-        if (isMounted) {
-          setExistingReviews(getReviewList(response));
-        }
-      })
-      .catch(() => {
-        if (isMounted) {
-          setExistingReviews([]);
-        }
-      });
+    body.style.overflow = "hidden";
+    if (scrollbarWidth > 0) {
+      body.style.paddingRight = `${scrollbarWidth}px`;
+    }
 
     return () => {
-      isMounted = false;
+      body.style.overflow = previousOverflow;
+      body.style.paddingRight = previousPaddingRight;
     };
-  }, [canReview, order.id]);
+  }, []);
 
   const findExistingReview = (item: OrderItem) =>
-    existingReviews.find((review) => {
-      if (review.hidden) return false;
-
-      const sameOrder = readReviewOrderId(review) === order.id;
-      const reviewItemId = readReviewItemId(review);
-      const sameItem = reviewItemId
-        ? reviewItemId === item.id
-        : readReviewItemName(review).toLowerCase() === item.name.toLowerCase();
-      const reviewCustomerId = readReviewCustomerId(review);
-      const sameCustomer =
-        !reviewCustomerId ||
-        !order.customerId ||
-        reviewCustomerId === order.customerId;
-
-      return sameOrder && sameItem && sameCustomer;
-    });
+    findItemReview(reviews, order, item);
 
   const startReview = (item: OrderItem) => {
     if (findExistingReview(item)) {
@@ -499,6 +583,11 @@ function OrderDetailsModal({
     if (!reviewingItem) return;
 
     const cleanComment = comment.trim();
+    if (!cleanComment) {
+      setReviewError("Please write a short review comment.");
+      return;
+    }
+
     if (cleanComment.length > 180) {
       setReviewError("Please keep your review under 180 characters.");
       return;
@@ -522,19 +611,16 @@ function OrderDetailsModal({
         foodItemName: reviewingItem.name,
         rating,
         comment: cleanComment,
-        createdAt: currentReview?.createdAt ?? currentReview?.created_at ?? now,
+        createdAt: now,
         updatedAt: now,
         hidden: false,
       };
 
       const createdReview = await addReview(reviewPayload);
-      setExistingReviews((prev) => [
-        ...prev,
-        {
-          ...reviewPayload,
-          ...createdReview,
-        },
-      ]);
+      onReviewSaved({
+        ...reviewPayload,
+        ...createdReview,
+      });
       setReviewSuccess("Thanks! Your review was submitted.");
 
       setReviewingItem(null);
@@ -566,6 +652,7 @@ function OrderDetailsModal({
 
       if (!res.ok) throw new Error("Failed to cancel order");
 
+      onOrderCancelled(order.id);
       onClose();
       navigate("/my-orders");
     } catch (err) {
@@ -582,77 +669,106 @@ function OrderDetailsModal({
       <div className="modal-overlay" onClick={onClose}></div>
       <div className="order-details-modal">
         <div className="modal-header">
-          <h2>Order Details</h2>
+          <h2>{isReviewMode ? "Review Items" : "Order Details"}</h2>
           <button onClick={onClose} className="modal-close">
             X
           </button>
         </div>
 
         <div className="modal-content">
-          <div className="detail-section">
-            <h3>Order Information</h3>
-            <div className="detail-row">
-              <span>Order ID:</span>
-              <span className="detail-value">{displayValue(order.id)}</span>
-            </div>
-            <div className="detail-row">
-              <span>Status:</span>
-              <span className="detail-value">{displayValue(order.status)}</span>
-            </div>
-            <div className="detail-row">
-              <span>Date:</span>
-              <span className="detail-value">
-                {formatDate(order.createdAt)}
-              </span>
-            </div>
-          </div>
+          {!isReviewMode && (
+            <>
+              <div className="detail-section">
+                <h3>Order Information</h3>
+                <div className="detail-row">
+                  <span>Order ID:</span>
+                  <span className="detail-value">{displayValue(order.id)}</span>
+                </div>
+                <div className="detail-row">
+                  <span>Status:</span>
+                  <span className="detail-value">
+                    {displayValue(order.status)}
+                  </span>
+                </div>
+                <div className="detail-row">
+                  <span>Date:</span>
+                  <span className="detail-value">
+                    {formatDate(order.createdAt)}
+                  </span>
+                </div>
+              </div>
+
+              <div className="detail-section">
+                <h3>Delivery Information</h3>
+                <div className="detail-row">
+                  <span>Name:</span>
+                  <span>{displayValue(order.customerName)}</span>
+                </div>
+                <div className="detail-row">
+                  <span>Phone:</span>
+                  <span>{displayValue(order.customerPhone)}</span>
+                </div>
+                <div className="detail-row">
+                  <span>Address:</span>
+                  <span>{displayValue(order.customerAddress)}</span>
+                </div>
+              </div>
+            </>
+          )}
 
           <div className="detail-section">
-            <h3>Delivery Information</h3>
-            <div className="detail-row">
-              <span>Name:</span>
-              <span>{displayValue(order.customerName)}</span>
-            </div>
-            <div className="detail-row">
-              <span>Phone:</span>
-              <span>{displayValue(order.customerPhone)}</span>
-            </div>
-            <div className="detail-row">
-              <span>Address:</span>
-              <span>{displayValue(order.customerAddress)}</span>
-            </div>
-          </div>
-
-          <div className="detail-section">
-            <h3>Items Ordered</h3>
+            <h3>{isReviewMode ? "Item Reviews" : "Items Ordered"}</h3>
             {orderItems.length === 0 ? (
               <p className="detail-placeholder">No item details available.</p>
             ) : (
               orderItems.map((item, idx) => {
                 const existingReview = findExistingReview(item);
+                const reviewRating = readReviewRating(existingReview);
+                const reviewComment = readReviewComment(existingReview);
 
                 return (
-                <div key={idx} className="order-item">
-                  <div className="item-info">
-                    <h4>{displayValue(item.name)}</h4>
-                    <p>
-                      Qty: {item.quantity ?? 0} x {formatPrice(item.price)}
-                    </p>
-                    {canReview && (
-                      <button
-                        type="button"
-                        className="item-review-btn"
-                        onClick={() => startReview(item)}
-                        disabled={Boolean(existingReview)}
-                      >
-                        {existingReview ? "Reviewed" : "Write Review"}
-                      </button>
+                  <div
+                    key={idx}
+                    className={`order-item ${isReviewMode ? "review-only-item" : ""}`}
+                  >
+                    <div className="item-info">
+                      <h4>{displayValue(item.name)}</h4>
+                      {!isReviewMode && (
+                        <p>
+                          Qty: {item.quantity ?? 0} x {formatPrice(item.price)}
+                        </p>
+                      )}
+                      {existingReview ? (
+                        <div className="submitted-review">
+                          <span className="review-status-pill">Reviewed</span>
+                          <p className="submitted-review-rating">
+                            {renderStars(reviewRating)}{" "}
+                            <span>{reviewRating}/5</span>
+                          </p>
+                          <p className="submitted-review-comment">
+                            {reviewComment || "No comment provided."}
+                          </p>
+                        </div>
+                      ) : canReview ? (
+                        <button
+                          type="button"
+                          className="item-review-btn"
+                          onClick={() => startReview(item)}
+                        >
+                          Write a Review
+                        </button>
+                      ) : (
+                        <p className="review-unavailable">
+                          Reviews open after delivery.
+                        </p>
+                      )}
+                    </div>
+                    {!isReviewMode && (
+                      <span className="item-subtotal">
+                        {formatPrice((item.price ?? 0) * (item.quantity ?? 0))}
+                      </span>
                     )}
                   </div>
-                  <span className="item-subtotal">
-                    {formatPrice((item.price ?? 0) * (item.quantity ?? 0))}
-                  </span>
-                </div>
                 );
               })
             )}
@@ -711,70 +827,74 @@ function OrderDetailsModal({
             </div>
           )}
 
-          <div className="detail-section">
-            <h3>Summary</h3>
-            <div className="detail-row">
-              <span>Subtotal:</span>
-              <span>{formatPrice(order.subtotal)}</span>
-            </div>
-            <div className="detail-row total-row">
-              <span>Total:</span>
-              <span>{formatPrice(order.total)}</span>
-            </div>
-          </div>
+          {!isReviewMode && (
+            <>
+              <div className="detail-section">
+                <h3>Summary</h3>
+                <div className="detail-row">
+                  <span>Subtotal:</span>
+                  <span>{formatPrice(order.subtotal)}</span>
+                </div>
+                <div className="detail-row total-row">
+                  <span>Total:</span>
+                  <span>{formatPrice(order.total)}</span>
+                </div>
+              </div>
 
-          <div className="detail-section">
-            <h3>Payment</h3>
-            <div className="detail-row">
-              <span>Method:</span>
-              <span className="capitalize">
-                {displayValue(order.paymentMethod?.replace("-", " "))}
-              </span>
-            </div>
-          </div>
+              <div className="detail-section">
+                <h3>Payment</h3>
+                <div className="detail-row">
+                  <span>Method:</span>
+                  <span className="capitalize">
+                    {displayValue(order.paymentMethod?.replace("-", " "))}
+                  </span>
+                </div>
+              </div>
 
-          {order.deliveryNotes && (
-            <div className="detail-section">
-              <h3>Special Instructions</h3>
-              <p>{order.deliveryNotes}</p>
-            </div>
-          )}
-
-          {["Pending", "Preparing"].includes(order.status) && (
-            <div className="modal-actions">
-              {!showCancelConfirm ? (
-                <button
-                  onClick={() => setShowCancelConfirm(true)}
-                  className="cancel-btn"
-                >
-                  Cancel Order
-                </button>
-              ) : (
-                <div className="cancel-confirm">
-                  <p>Are you sure you want to cancel this order?</p>
-                  {cancelError && (
-                    <p style={{ color: "#d32f2f", marginTop: 8 }}>
-                      {cancelError}
-                    </p>
-                  )}
-                  <div className="confirm-buttons">
-                    <button
-                      onClick={() => setShowCancelConfirm(false)}
-                      disabled={cancelLoading}
-                    >
-                      Back
-                    </button>
-                    <button
-                      onClick={handleCancelOrder}
-                      disabled={cancelLoading}
-                      className="confirm-cancel-btn"
-                    >
-                      {cancelLoading ? "Cancelling..." : "Confirm Cancel"}
-                    </button>
-                  </div>
+              {order.deliveryNotes && (
+                <div className="detail-section">
+                  <h3>Special Instructions</h3>
+                  <p>{order.deliveryNotes}</p>
                 </div>
               )}
-            </div>
+
+              {["Pending", "Preparing"].includes(order.status) && (
+                <div className="modal-actions">
+                  {!showCancelConfirm ? (
+                    <button
+                      onClick={() => setShowCancelConfirm(true)}
+                      className="cancel-btn"
+                    >
+                      Cancel Order
+                    </button>
+                  ) : (
+                    <div className="cancel-confirm">
+                      <p>Are you sure you want to cancel this order?</p>
+                      {cancelError && (
+                        <p style={{ color: "#d32f2f", marginTop: 8 }}>
+                          {cancelError}
+                        </p>
+                      )}
+                      <div className="confirm-buttons">
+                        <button
+                          onClick={() => setShowCancelConfirm(false)}
+                          disabled={cancelLoading}
+                        >
+                          Back
+                        </button>
+                        <button
+                          onClick={handleCancelOrder}
+                          disabled={cancelLoading}
+                          className="confirm-cancel-btn"
+                        >
+                          {cancelLoading ? "Cancelling..." : "Confirm Cancel"}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

@@ -472,13 +472,12 @@
   line-height: 1;
 }
 
-.menu-card-review-count,
-.menu-card-no-reviews {
+.menu-card-no-rating {
   color: var(--muted);
   font-weight: 600;
 }
 
-.menu-card-no-reviews {
+.menu-card-no-rating {
   font-size: 0.82rem;
 }
 

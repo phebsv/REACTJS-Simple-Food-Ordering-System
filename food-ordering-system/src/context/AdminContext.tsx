@@ -1,7 +1,7 @@
 // src/context/AdminContext.tsx
 // Manages admin auth state + menu items, orders, inventory, reviews
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import {
   loginAdmin,
@@ -12,6 +12,7 @@ import {
   adminGetOrders,
   adminUpdateOrderStatus,
   getReviews as apiGetReviews,
+  updateInventory,
 } from "../services/api.ts";
 import {
   getStoredItem,
@@ -37,7 +38,7 @@ interface AdminContextType {
 
   // Menu
   menuItems: FoodItem[];
-  fetchMenuItems: () => Promise<void>;
+  fetchMenuItems: (options?: { showLoading?: boolean }) => Promise<void>;
   addMenuItem: (data: Omit<FoodItem, "id">) => Promise<void>;
   updateMenuItem: (id: string, data: Partial<FoodItem>) => Promise<void>;
   deleteMenuItem: (id: string) => Promise<void>;
@@ -45,19 +46,19 @@ interface AdminContextType {
 
   // Orders
   orders: AdminOrder[];
-  fetchOrders: () => Promise<void>;
+  fetchOrders: (options?: { showLoading?: boolean }) => Promise<void>;
   updateOrderStatus: (id: string, status: OrderStatus) => Promise<void>;
   cancelOrder: (id: string) => Promise<void>;
 
   // Inventory (derived from menu items)
   inventoryItems: InventoryItem[];
-  fetchInventory: () => Promise<void>;
+  fetchInventory: (options?: { showLoading?: boolean }) => Promise<void>;
   updateStock: (id: string, quantity: number) => Promise<void>;
   updateInventoryStatus: (id: string, status: string) => Promise<void>;
 
   // Reviews
   reviews: Review[];
-  fetchReviews: () => Promise<void>;
+  fetchReviews: (options?: { showLoading?: boolean }) => Promise<void>;
   hideReview: (id: string) => Promise<void>;
   deleteReview: (id: string) => Promise<void>;
 
@@ -139,7 +140,9 @@ function mapReview(review: any): Review {
     foodItemId:
       firstValue(review.foodItemId, review.food_item_id, review.itemId) !==
       undefined
-        ? String(firstValue(review.foodItemId, review.food_item_id, review.itemId))
+        ? String(
+            firstValue(review.foodItemId, review.food_item_id, review.itemId),
+          )
         : undefined,
     foodItemName:
       firstValue(review.foodItemName, review.food_item_name, review.itemName) ||
@@ -153,6 +156,12 @@ function mapReview(review: any): Review {
     hidden: Boolean(firstValue(review.hidden, false)),
   };
 }
+
+const statusFromStock = (stock: number) => {
+  if (stock <= 0) return "Out of Stock" as const;
+  if (stock < 10) return "Low Stock" as const;
+  return "Available" as const;
+};
 
 // Helper: map PHP Order to AdminOrder
 function mapOrder(order: any, customer?: any, items?: any[]): AdminOrder {
@@ -217,7 +226,12 @@ function mapOrder(order: any, customer?: any, items?: any[]): AdminOrder {
       }),
     ),
     subtotal: Number(
-      firstValue(baseOrder.subtotal, baseOrder.total_amount, baseOrder.total, 0),
+      firstValue(
+        baseOrder.subtotal,
+        baseOrder.total_amount,
+        baseOrder.total,
+        0,
+      ),
     ),
     total: Number(firstValue(baseOrder.total, baseOrder.total_amount, 0)),
     status: firstValue(
@@ -226,8 +240,11 @@ function mapOrder(order: any, customer?: any, items?: any[]): AdminOrder {
       "Pending",
     ) as OrderStatus,
     createdAt:
-      firstValue(baseOrder.createdAt, baseOrder.created_at, baseOrder.order_date) ??
-      new Date().toISOString(),
+      firstValue(
+        baseOrder.createdAt,
+        baseOrder.created_at,
+        baseOrder.order_date,
+      ) ?? new Date().toISOString(),
     updatedAt:
       firstValue(
         baseOrder.updatedAt,
@@ -235,8 +252,14 @@ function mapOrder(order: any, customer?: any, items?: any[]): AdminOrder {
         baseOrder.order_date,
         baseOrder.createdAt,
       ) ?? new Date().toISOString(),
-    paymentMethod: firstValue(baseOrder.paymentMethod, baseOrder.payment_method),
-    deliveryNotes: firstValue(baseOrder.deliveryNotes, baseOrder.delivery_notes),
+    paymentMethod: firstValue(
+      baseOrder.paymentMethod,
+      baseOrder.payment_method,
+    ),
+    deliveryNotes: firstValue(
+      baseOrder.deliveryNotes,
+      baseOrder.delivery_notes,
+    ),
   };
 }
 
@@ -278,15 +301,19 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   };
 
   // MENU
-  const fetchMenuItems = async () => {
-    setLoading(true);
+  const fetchMenuItems = async (options: { showLoading?: boolean } = {}) => {
+    if (options.showLoading !== false) {
+      setLoading(true);
+    }
     try {
       const data = await adminGetMenuItems();
       setMenuItems(data.map(mapMenuItem));
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to fetch menu items.");
     } finally {
-      setLoading(false);
+      if (options.showLoading !== false) {
+        setLoading(false);
+      }
     }
   };
 
@@ -331,15 +358,19 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   };
 
   // ORDERS
-  const fetchOrders = async () => {
-    setLoading(true);
+  const fetchOrders = async (options: { showLoading?: boolean } = {}) => {
+    if (options.showLoading !== false) {
+      setLoading(true);
+    }
     try {
       const data = await adminGetOrders();
       setOrders(getOrderList(data).map((o: any) => mapOrder(o)));
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to fetch orders.");
     } finally {
-      setLoading(false);
+      if (options.showLoading !== false) {
+        setLoading(false);
+      }
     }
   };
 
@@ -356,42 +387,73 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   };
 
   // INVENTORY (derived from menu items)
-  const fetchInventory = async () => {
-    setLoading(true);
+  const fetchInventory = async (options: { showLoading?: boolean } = {}) => {
+    if (options.showLoading !== false) {
+      setLoading(true);
+    }
     try {
       const data = await adminGetMenuItems();
-      const mapped: InventoryItem[] = data.map((item: any) => ({
-        id: String(item.id ?? item.menu_id),
-        name: item.name ?? item.food_name ?? "",
-        category: item.category,
-        stock: item.stock ?? 100,
-        status:
-          (item.available ?? item.availability_status)
-            ? "Available"
-            : "Unavailable",
-        lastUpdated: new Date().toISOString(),
-      }));
+      const mapped: InventoryItem[] = data.map((item: any) => {
+        const stock = Number(item.stock ?? 0);
+        const baseStatus = statusFromStock(stock);
+        const isUnavailable =
+          item.available === false || item.availability_status === false;
+
+        return {
+          id: String(item.id ?? item.menu_id),
+          name: item.name ?? item.food_name ?? "",
+          category: item.category,
+          stock,
+          status:
+            baseStatus === "Available" && isUnavailable
+              ? "Unavailable"
+              : baseStatus,
+          lastUpdated: item.lastUpdated || new Date().toISOString(),
+        };
+      });
       setInventoryItems(mapped);
     } catch (err: any) {
       setError("Failed to fetch inventory.");
     } finally {
-      setLoading(false);
+      if (options.showLoading !== false) {
+        setLoading(false);
+      }
     }
   };
 
   const updateStock = async (id: string, quantity: number) => {
+    const nextStatus = statusFromStock(quantity);
+    const nextAvailable = quantity > 0;
+
+    await Promise.allSettled([
+      adminUpdateMenuItem(id, {
+        stock: quantity,
+        available: nextAvailable,
+      }),
+      updateInventory(id, {
+        stock: quantity,
+        status: nextStatus,
+      }),
+    ]);
+
+    setMenuItems((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              stock: quantity,
+              available: nextAvailable,
+            }
+          : item,
+      ),
+    );
     setInventoryItems((prev) =>
       prev.map((item) =>
         item.id === id
           ? {
               ...item,
               stock: quantity,
-              status:
-                quantity === 0
-                  ? "Out of Stock"
-                  : quantity < 10
-                    ? "Low Stock"
-                    : "Available",
+              status: nextStatus,
               lastUpdated: new Date().toISOString(),
             }
           : item,
@@ -400,6 +462,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   };
 
   const updateInventoryStatus = async (id: string, status: string) => {
+    const nextAvailable = status === "Available" || status === "Low Stock";
     setInventoryItems((prev) =>
       prev.map((item) =>
         item.id === id
@@ -413,13 +476,28 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     );
     // Sync availability_status back to PHP
     await adminUpdateMenuItem(id, {
-      available: status === "Available",
+      available: nextAvailable,
     });
+    await updateInventory(id, {
+      status,
+    });
+    setMenuItems((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              available: nextAvailable,
+            }
+          : item,
+      ),
+    );
   };
 
   // REVIEWS
-  const fetchReviews = async () => {
-    setLoading(true);
+  const fetchReviews = async (options: { showLoading?: boolean } = {}) => {
+    if (options.showLoading !== false) {
+      setLoading(true);
+    }
     try {
       const data = await apiGetReviews();
       setReviews(getReviewList(data).map(mapReview));
@@ -427,7 +505,9 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       setError(err.response?.data?.message || "Failed to fetch reviews.");
       setReviews([]);
     } finally {
-      setLoading(false);
+      if (options.showLoading !== false) {
+        setLoading(false);
+      }
     }
   };
 
@@ -440,6 +520,24 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const deleteReview = async (id: string) => {
     setReviews((prev) => prev.filter((r) => r.id !== id));
   };
+
+  useEffect(() => {
+    if (!admin) return;
+
+    fetchMenuItems({ showLoading: false });
+    fetchOrders({ showLoading: false });
+    fetchInventory({ showLoading: false });
+    fetchReviews({ showLoading: false });
+
+    const interval = window.setInterval(() => {
+      fetchMenuItems({ showLoading: false });
+      fetchOrders({ showLoading: false });
+      fetchInventory({ showLoading: false });
+      fetchReviews({ showLoading: false });
+    }, 5000);
+
+    return () => window.clearInterval(interval);
+  }, [admin]);
 
   return (
     <AdminContext.Provider

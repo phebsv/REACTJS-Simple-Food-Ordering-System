@@ -2,6 +2,28 @@ const express = require("express");
 const router = express.Router();
 const { getCollection, setCollection } = require("../data/db");
 
+const statusFromStock = (stock) => {
+  if (stock <= 0) return "Out of Stock";
+  if (stock < 10) return "Low Stock";
+  return "Available";
+};
+
+const findItemByIdOrName = (items, id, name) => {
+  if (id) {
+    const byId = items.find((item) => String(item.id) === String(id));
+    if (byId) return byId;
+  }
+
+  if (name) {
+    const lowered = String(name).toLowerCase();
+    return items.find(
+      (item) => String(item.name || "").toLowerCase() === lowered,
+    );
+  }
+
+  return undefined;
+};
+
 router.get("/", (req, res) => {
   let orders = getCollection("orders");
   if (req.query.customerId) {
@@ -57,6 +79,41 @@ router.post("/", (req, res) => {
 
   orders.push(newOrder);
   setCollection("orders", orders);
+
+  const menuItems = getCollection("menu");
+  const inventoryItems = getCollection("inventory");
+  let menuChanged = false;
+  let inventoryChanged = false;
+
+  (items || []).forEach((item) => {
+    const itemId = item?.id || item?.menuId || item?.menu_id || "";
+    const itemName = item?.name || item?.foodName || item?.food_name || "";
+    const quantity = Math.max(0, Number(item?.quantity || 0));
+
+    if (!quantity) return;
+
+    const menuItem = findItemByIdOrName(menuItems, itemId, itemName);
+    if (menuItem) {
+      const nextStock = Math.max(0, Number(menuItem.stock || 0) - quantity);
+      menuItem.stock = nextStock;
+      menuItem.available = nextStock > 0;
+      menuItem.lastUpdated = new Date().toISOString();
+      menuChanged = true;
+    }
+
+    const inventoryItem = findItemByIdOrName(inventoryItems, itemId, itemName);
+    if (inventoryItem) {
+      const currentStock = Number(inventoryItem.stock || 0);
+      const nextStock = Math.max(0, currentStock - quantity);
+      inventoryItem.stock = nextStock;
+      inventoryItem.status = statusFromStock(nextStock);
+      inventoryItem.lastUpdated = new Date().toISOString();
+      inventoryChanged = true;
+    }
+  });
+
+  if (menuChanged) setCollection("menu", menuItems);
+  if (inventoryChanged) setCollection("inventory", inventoryItems);
   return res.status(201).json(newOrder);
 });
 

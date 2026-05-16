@@ -41,6 +41,7 @@ router.post("/", requireAdmin, (req, res) => {
     image,
     available: Boolean(available),
     stock: Number(stock),
+    lastUpdated: new Date().toISOString(),
   };
 
   items.push(newItem);
@@ -66,6 +67,8 @@ router.patch("/:id", requireAdmin, (req, res) => {
   fields.forEach((f) => {
     if (req.body[f] !== undefined) items[idx][f] = req.body[f];
   });
+
+  items[idx].lastUpdated = new Date().toISOString();
 
   setCollection("menu", items);
   return res.json(items[idx]);

@@ -26,4 +26,6 @@ app.use((req, res) => {
     .json({ message: `Route ${req.method} ${req.path} not found.` });
 });
 
-app.listen(PORT, () => {});
+app.listen(PORT, () => {
+  console.log(`🍔 NomNom Backend running on http://localhost:${PORT}`);
+});
