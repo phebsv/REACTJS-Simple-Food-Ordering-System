@@ -6,24 +6,6 @@
       "passwordHash": "$2a$10$Z7yIe9z6V1hG/HkG9ho23OMEX9xlch.3WEVR6SMBvET/6hkJ/m7ty",
       "name": "Admin",
       "role": "admin"
-    },
-    {
-      "id": "mp7oytx45cpao8sl6bx",
-      "name": "Saydon Avelino",
-      "email": "saydon@gmail.com",
-      "phone": "09291052281",
-      "passwordHash": "$2a$10$2qSoCOISxgW6Ns0myL9P0.9twfpvq15i/02d1pcdmil.Vtz4pDkaa",
-      "address": "",
-      "role": "user"
-    },
-    {
-      "id": "mp7plp92f2ymxtcnnwb",
-      "name": "Jiyong Gimeno",
-      "email": "quiela@gmail.com",
-      "phone": "09611339829",
-      "passwordHash": "$2a$10$/588TbxVE3ri0G3pSA1dHO.YzidQuhcU8Mv2p26E0dg.nyNQfTWOS",
-      "address": "",
-      "role": "user"
     }
   ],
   "admins": [],
@@ -69,8 +51,8 @@
       "category": "Snacks",
       "image": "https://www.allrecipes.com/thmb/8_B6OD1w6h1V0zPi8KAGzD41Kzs=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/50223-homemade-crispy-seasoned-french-fries-VAT-Beauty-4x3-789ecb2eaed34d6e879b9a93dd56a50a.jpg",
       "available": true,
-      "stock": 45,
-      "lastUpdated": "2026-05-15T19:35:16.755Z"
+      "stock": 44,
+      "lastUpdated": "2026-05-16T02:58:17.482Z"
     },
     {
       "id": "5",
@@ -91,8 +73,8 @@
       "category": "Meals",
       "image": "https://137483765.cdn6.editmysite.com/uploads/1/3/7/4/137483765/RFY4TYOAJDV7RW2UHCD5J4FJ.jpeg",
       "available": true,
-      "stock": 12,
-      "lastUpdated": "2026-05-16T01:53:45.404Z"
+      "stock": 11,
+      "lastUpdated": "2026-05-16T02:58:17.482Z"
     },
     {
       "id": "mp79kslmffb0wgq02ku",
@@ -103,7 +85,7 @@
       "image": "https://i0.wp.com/i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/8e8a2c58-a5a3-4ca5-97d0-aacdcf27f05b_Go-Biz_20220106_110442.jpeg?resize=728%2C500",
       "available": false,
       "stock": 0,
-      "lastUpdated": "2026-05-16T01:58:57.262Z"
+      "lastUpdated": "2026-05-16T02:58:17.482Z"
     },
     {
       "id": "moxrt45pief0f4ccn8h",
@@ -113,43 +95,18 @@
       "category": "Drinks",
       "image": "https://th.bing.com/th/id/OIP.7QHS79goseDLskj7gwuAhQHaHa?w=191&h=192&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3",
       "available": true,
-      "stock": 15,
-      "lastUpdated": "2026-05-16T01:50:13.406Z"
+      "stock": 14,
+      "lastUpdated": "2026-05-16T02:50:52.276Z"
     }
   ],
   "orders": [
     {
-      "id": "ordermp7p2o3n",
+      "id": "ordermp7rb284",
       "customerId": "mp7oytx45cpao8sl6bx",
       "customerName": "Saydon Avelino",
       "customerEmail": "saydon@gmail.com",
       "customerPhone": "09291052281",
-      "customerAddress": "Linao, Talisay City, Cebu",
-      "items": [
-        {
-          "id": "1",
-          "name": "Classic Burger",
-          "description": "Fresh beef patty with lettuce, tomato, and special sauce",
-          "price": 150,
-          "category": "Meals",
-          "quantity": 1
-        }
-      ],
-      "subtotal": 150,
-      "total": 150,
-      "status": "Delivered",
-      "paymentMethod": "cash",
-      "deliveryNotes": "atbang dito tower",
-      "createdAt": "2026-05-16T01:55:46.691Z",
-      "updatedAt": "2026-05-16T01:56:35.094Z"
-    },
-    {
-      "id": "ordermp7p6r54",
-      "customerId": "mp7oytx45cpao8sl6bx",
-      "customerName": "Saydon Avelino",
-      "customerEmail": "saydon@gmail.com",
-      "customerPhone": "09291052281",
-      "customerAddress": "Linao, Talisay City, Cebu",
+      "customerAddress": "14-13, Deca Homes, Phase 1, Tungkil, Minglanilla, Cebu",
       "items": [
         {
           "id": "mp79kslmffb0wgq02ku",
@@ -158,107 +115,69 @@
           "price": 99,
           "category": "Drinks",
           "quantity": 1
-        }
-      ],
-      "subtotal": 99,
-      "total": 99,
-      "status": "Delivered",
-      "paymentMethod": "credit-card",
-      "deliveryNotes": "",
-      "createdAt": "2026-05-16T01:58:57.256Z",
-      "updatedAt": "2026-05-16T02:00:14.236Z"
-    },
-    {
-      "id": "ordermp7q6jfg",
-      "customerId": "mp7oytx45cpao8sl6bx",
-      "customerName": "Saydon Avelino",
-      "customerEmail": "saydon@gmail.com",
-      "customerPhone": "09291052281",
-      "customerAddress": "Linao, Talisay City, Cebu",
-      "items": [
+        },
         {
-          "id": "2",
-          "name": "Pepperoni Pizza",
-          "description": "Crispy crust topped with mozzarella and pepperoni",
-          "price": 130,
+          "id": "4",
+          "name": "French Fries",
+          "description": "Crispy golden fries served hot",
+          "price": 50,
+          "category": "Snacks",
+          "quantity": 1
+        },
+        {
+          "id": "moxbo18vpdrzdvkx56a",
+          "name": "Cheesy Burger",
+          "description": "Cheesy Burger with lots of cheese and flavorful sauce",
+          "price": 120,
           "category": "Meals",
           "quantity": 1
         }
       ],
-      "subtotal": 130,
-      "total": 130,
-      "status": "Pending",
+      "subtotal": 269,
+      "total": 269,
+      "status": "Delivered",
       "paymentMethod": "credit-card",
       "deliveryNotes": "",
-      "createdAt": "2026-05-16T02:26:46.876Z",
-      "updatedAt": "2026-05-16T02:26:46.876Z"
+      "createdAt": "2026-05-16T02:58:17.476Z",
+      "updatedAt": "2026-05-16T02:59:07.474Z"
     }
   ],
-  "inventory": [
-    {
-      "id": "1",
-      "name": "Classic Burger",
-      "category": "Meals",
-      "stock": 43,
-      "status": "Available",
-      "lastUpdated": "2026-05-16T01:55:46.698Z"
-    },
-    {
-      "id": "2",
-      "name": "Pepperoni Pizza",
-      "category": "Meals",
-      "stock": 49,
-      "status": "Available",
-      "lastUpdated": "2026-05-16T02:26:46.882Z"
-    },
-    {
-      "id": "3",
-      "name": "Iced Coffee",
-      "category": "Drinks",
-      "stock": 25,
-      "status": "Available",
-      "lastUpdated": "2026-05-15T19:34:54.400Z"
-    },
-    {
-      "id": "4",
-      "name": "French Fries",
-      "category": "Snacks",
-      "stock": 45,
-      "status": "Available",
-      "lastUpdated": "2026-05-15T19:35:06.206Z"
-    },
-    {
-      "id": "5",
-      "name": "Chocolate Cake",
-      "category": "Desserts",
-      "stock": 8,
-      "status": "Available",
-      "lastUpdated": "2024-04-30T10:00:00Z"
-    }
-  ],
+  "inventory": [],
   "reviews": [
     {
-      "id": "reviewmp7p4p0w",
-      "orderId": "ordermp7p2o3n",
-      "customerId": "mp7oytx45cpao8sl6bx",
-      "customerName": "Saydon Avelino",
-      "foodItemId": "1",
-      "foodItemName": "Classic Burger",
-      "rating": 5,
-      "comment": "The burger was so yummy and so juicy",
-      "createdAt": "2026-05-16T01:57:21.200Z",
-      "hidden": false
-    },
-    {
-      "id": "reviewmp7p8zj1",
-      "orderId": "ordermp7p6r54",
+      "id": "reviewmp7rcuiu",
+      "orderId": "ordermp7rb284",
       "customerId": "mp7oytx45cpao8sl6bx",
       "customerName": "Saydon Avelino",
       "foodItemId": "mp79kslmffb0wgq02ku",
       "foodItemName": "Choco Float",
-      "rating": 2,
-      "comment": "It was very refreshing but kinda too sweet",
-      "createdAt": "2026-05-16T02:00:41.437Z",
+      "rating": 3,
+      "comment": "So refreshing but too sweet for me",
+      "createdAt": "2026-05-16T02:59:40.806Z",
+      "hidden": false
+    },
+    {
+      "id": "reviewmp7rd2ts",
+      "orderId": "ordermp7rb284",
+      "customerId": "mp7oytx45cpao8sl6bx",
+      "customerName": "Saydon Avelino",
+      "foodItemId": "4",
+      "foodItemName": "French Fries",
+      "rating": 5,
+      "comment": "was good, not great",
+      "createdAt": "2026-05-16T02:59:51.568Z",
+      "hidden": false
+    },
+    {
+      "id": "reviewmp7rddq0",
+      "orderId": "ordermp7rb284",
+      "customerId": "mp7oytx45cpao8sl6bx",
+      "customerName": "Saydon Avelino",
+      "foodItemId": "moxbo18vpdrzdvkx56a",
+      "foodItemName": "Cheesy Burger",
+      "rating": 5,
+      "comment": "The burger was so juicy",
+      "createdAt": "2026-05-16T03:00:05.688Z",
       "hidden": false
     }
   ],

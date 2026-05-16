@@ -57,6 +57,12 @@ export default function Checkout() {
       return;
     }
 
+    const token = getStoredItem("customerToken");
+    if (!token) {
+      setError("Please log in again to place an order.");
+      return;
+    }
+
     setLoading(true);
     try {
       const newOrder = {
@@ -66,13 +72,13 @@ export default function Checkout() {
         customerEmail: currentUser?.email || "",
         customerPhone: phone,
         customerAddress: address,
-        items: items.map(item => ({
+        items: items.map((item) => ({
           id: item.id,
           name: item.name,
           description: item.description,
           price: item.price,
           category: item.category,
-          quantity: item.quantity
+          quantity: item.quantity,
         })),
         subtotal: parseFloat(total.toFixed(2)),
         total: parseFloat(total.toFixed(2)),
@@ -80,13 +86,16 @@ export default function Checkout() {
         paymentMethod,
         deliveryNotes: notes,
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
 
       const res = await fetch(apiUrl("/orders"), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newOrder)
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newOrder),
       });
 
       if (!res.ok) throw new Error("Failed to place order");
@@ -114,7 +123,10 @@ export default function Checkout() {
 
               <div className="form-section-group">
                 <h3 className="form-section-title">Customer Details</h3>
-                <p className="form-section-helper">Use the name and mobile number the rider can confirm on delivery.</p>
+                <p className="form-section-helper">
+                  Use the name and mobile number the rider can confirm on
+                  delivery.
+                </p>
                 <div className="checkout-form-group">
                   <label htmlFor="checkout-name">Full Name *</label>
                   <input
@@ -127,7 +139,9 @@ export default function Checkout() {
                     autoComplete="name"
                     aria-invalid={!!fieldErrors.name}
                   />
-                  {fieldErrors.name && <p className="field-error">{fieldErrors.name}</p>}
+                  {fieldErrors.name && (
+                    <p className="field-error">{fieldErrors.name}</p>
+                  )}
                 </div>
 
                 <div className="checkout-form-group">
@@ -143,13 +157,18 @@ export default function Checkout() {
                     inputMode="tel"
                     aria-invalid={!!fieldErrors.phone}
                   />
-                  {fieldErrors.phone && <p className="field-error">{fieldErrors.phone}</p>}
+                  {fieldErrors.phone && (
+                    <p className="field-error">{fieldErrors.phone}</p>
+                  )}
                 </div>
               </div>
 
               <div className="form-section-group">
                 <h3 className="form-section-title">Delivery Address</h3>
-                <p className="form-section-helper">Include house number, street, barangay, city, and any nearby landmark.</p>
+                <p className="form-section-helper">
+                  Include house number, street, barangay, city, and any nearby
+                  landmark.
+                </p>
                 <div className="checkout-form-group">
                   <label htmlFor="checkout-address">Complete Address *</label>
                   <textarea
@@ -162,11 +181,15 @@ export default function Checkout() {
                     autoComplete="street-address"
                     aria-invalid={!!fieldErrors.address}
                   />
-                  {fieldErrors.address && <p className="field-error">{fieldErrors.address}</p>}
+                  {fieldErrors.address && (
+                    <p className="field-error">{fieldErrors.address}</p>
+                  )}
                 </div>
 
                 <div className="checkout-form-group">
-                  <label htmlFor="checkout-notes">Delivery Notes (Optional)</label>
+                  <label htmlFor="checkout-notes">
+                    Delivery Notes (Optional)
+                  </label>
                   <textarea
                     id="checkout-notes"
                     placeholder="Gate code, landmark, or food preparation request"
@@ -182,7 +205,12 @@ export default function Checkout() {
                 <h3 className="form-section-title">Payment</h3>
                 <div className="checkout-form-group">
                   <label htmlFor="checkout-payment">Payment Method *</label>
-                  <select id="checkout-payment" value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} disabled={loading}>
+                  <select
+                    id="checkout-payment"
+                    value={paymentMethod}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    disabled={loading}
+                  >
                     <option value="credit-card">Credit Card</option>
                     <option value="debit-card">Debit Card</option>
                     <option value="cash">Cash on Delivery</option>
@@ -192,8 +220,8 @@ export default function Checkout() {
 
               {error && <div className="checkout-error">{error}</div>}
 
-              <button 
-                onClick={handleCheckout} 
+              <button
+                onClick={handleCheckout}
                 disabled={loading || items.length === 0}
                 className="checkout-btn"
               >

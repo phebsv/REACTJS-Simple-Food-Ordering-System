@@ -4,7 +4,11 @@ import Navbar from "../../components/Navbar";
 import BgFood from "../../components/BgFood";
 import { apiUrl } from "../../config/api";
 import "./Profile.css";
-import { getStoredItem, removeStoredItem, setStoredItem } from "../../utils/storage";
+import {
+  getStoredItem,
+  removeStoredItem,
+  setStoredItem,
+} from "../../utils/storage";
 
 export default function Profile() {
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -24,14 +28,23 @@ export default function Profile() {
       navigate("/login");
       return;
     }
-    
+
     const userData = JSON.parse(user);
     setCurrentUser(userData);
-    
+
     // Fetch fresh user data from server
     const fetchUserData = async () => {
       try {
-        const res = await fetch(apiUrl(`/users/${userData.id}`));
+        const token = getStoredItem("customerToken");
+        if (!token) {
+          navigate("/login");
+          return;
+        }
+        const res = await fetch(apiUrl(`/users/${userData.id}`), {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (res.ok) {
           const serverData = await res.json();
           setCurrentUser(serverData);
@@ -54,7 +67,7 @@ export default function Profile() {
         setAddress(userData.address || "");
       }
     };
-    
+
     fetchUserData();
   }, [navigate]);
 
@@ -80,13 +93,23 @@ export default function Profile() {
         ...currentUser,
         name,
         phone,
-        address
+        address,
       };
+
+      const token = getStoredItem("customerToken");
+      if (!token) {
+        setError("Please log in again to update your profile.");
+        setLoading(false);
+        return;
+      }
 
       const res = await fetch(apiUrl(`/users/${currentUser.id}`), {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedUser)
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedUser),
       });
 
       if (!res.ok) throw new Error("Failed to update profile");
@@ -175,7 +198,7 @@ export default function Profile() {
 
               <div className="profile-actions">
                 {!isEditing ? (
-                  <button 
+                  <button
                     onClick={() => setIsEditing(true)}
                     className="profile-btn profile-btn-edit"
                   >
@@ -183,7 +206,7 @@ export default function Profile() {
                   </button>
                 ) : (
                   <>
-                    <button 
+                    <button
                       onClick={() => {
                         setIsEditing(false);
                         setName(currentUser.name || "");
@@ -196,7 +219,7 @@ export default function Profile() {
                     >
                       Cancel
                     </button>
-                    <button 
+                    <button
                       onClick={handleSaveChanges}
                       disabled={loading}
                       className="profile-btn profile-btn-save"
@@ -212,9 +235,9 @@ export default function Profile() {
 
             <div className="profile-section">
               <h2>Account Actions</h2>
-              
+
               {!showLogoutConfirm ? (
-                <button 
+                <button
                   onClick={() => setShowLogoutConfirm(true)}
                   className="profile-btn profile-btn-logout"
                 >
@@ -224,13 +247,13 @@ export default function Profile() {
                 <div className="logout-confirm">
                   <p>Are you sure you want to logout?</p>
                   <div className="confirm-buttons">
-                    <button 
+                    <button
                       onClick={() => setShowLogoutConfirm(false)}
                       className="confirm-btn confirm-btn-cancel"
                     >
                       Cancel
                     </button>
-                    <button 
+                    <button
                       onClick={handleLogout}
                       className="confirm-btn confirm-btn-logout"
                     >

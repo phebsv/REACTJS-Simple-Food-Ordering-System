@@ -200,7 +200,15 @@ export default function MyOrders() {
         setLoading(true);
       }
       setError("");
-      const res = await fetch(apiUrl("/orders"));
+      const token = getStoredItem("customerToken");
+      if (!token) {
+        throw new Error("Please log in again to view your orders.");
+      }
+      const res = await fetch(apiUrl("/orders"), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (!res.ok) throw new Error("Failed to fetch orders");
       const data = await res.json();
 
@@ -641,9 +649,16 @@ function OrderDetailsModal({
     setCancelLoading(true);
     setCancelError("");
     try {
+      const token = getStoredItem("customerToken");
+      if (!token) {
+        throw new Error("Please log in again to cancel your order.");
+      }
       const res = await fetch(apiUrl(`/orders/${order.id}`), {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           status: "Cancelled",
           updatedAt: new Date().toISOString(),
